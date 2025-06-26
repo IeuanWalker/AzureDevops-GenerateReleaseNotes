@@ -33,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tl = __importStar(require("azure-pipelines-task-lib/task"));
+const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const util = __importStar(require("util"));
 const child_process_1 = require("child_process");
@@ -84,14 +85,17 @@ function run() {
             const commits = stdout.split("\n")
                 .filter(line => line.trim() !== "")
                 .map(line => {
+                var _a, _b, _c;
                 const parts = line.split("|");
+                const timestamp = parseInt(parts[3]);
+                const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
                 return {
-                    hash: parts[0].replace(/"/g, ""),
-                    author: parts[1],
-                    email: parts[2],
-                    date: new Date(parseInt(parts[3]) * 1000).toISOString(),
-                    subject: parts[4].replace(/"/g, ""),
-                    body: parts.length > 5 ? parts.slice(5).join("|").replace(/"/g, "") : ""
+                    hash: ((_a = parts[0]) === null || _a === void 0 ? void 0 : _a.replace(/"/g, "")) || "",
+                    author: parts[1] || "",
+                    email: parts[2] || "",
+                    date: date.toISOString(),
+                    subject: ((_b = parts[4]) === null || _b === void 0 ? void 0 : _b.replace(/"/g, "")) || "",
+                    body: parts.length > 5 ? (_c = parts.slice(5).join("|")) === null || _c === void 0 ? void 0 : _c.replace(/"/g, "") : ""
                 };
             });
             console.log(`Found ${commits.length} commits in the specified range`);
@@ -122,6 +126,10 @@ function run() {
             const templateFunc = handlebars.compile(template);
             const releaseNotes = templateFunc(releaseData);
             // Save release notes to output file
+            const outputDir = path.dirname(outputFile);
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
             fs.writeFileSync(outputFile, releaseNotes);
             console.log(`Release notes successfully generated at: ${outputFile}`);
             // Set output variable

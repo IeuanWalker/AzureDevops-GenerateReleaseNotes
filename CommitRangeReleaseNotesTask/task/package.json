@@ -1,0 +1,12 @@
+{
+  "name": "commit-range-release-notes-task",
+  "version": "1.0.3",
+  "main": "index.js",
+  "description": "Azure DevOps task to generate release notes from commit range",
+  "author": "Ieuan Walker",
+  "license": "MIT",
+  "dependencies": {
+    "azure-pipelines-task-lib": "^4.17.3",
+    "handlebars": "^4.7.7"
+  }
+}

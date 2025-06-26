@@ -61,13 +61,15 @@ async function run() {
       .filter(line => line.trim() !== "")
       .map(line => {
         const parts = line.split("|");
+        const timestamp = parseInt(parts[3]);
+        const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
         return {
-          hash: parts[0].replace(/"/g, ""),
-          author: parts[1],
-          email: parts[2],
-          date: new Date(parseInt(parts[3]) * 1000).toISOString(),
-          subject: parts[4].replace(/"/g, ""),
-          body: parts.length > 5 ? parts.slice(5).join("|").replace(/"/g, "") : ""
+          hash: parts[0]?.replace(/"/g, "") || "",
+          author: parts[1] || "",
+          email: parts[2] || "",
+          date: date.toISOString(),
+          subject: parts[4]?.replace(/"/g, "") || "",
+          body: parts.length > 5 ? parts.slice(5).join("|")?.replace(/"/g, "") : ""
         };
       });
 
@@ -103,6 +105,10 @@ async function run() {
     const releaseNotes = templateFunc(releaseData);
 
     // Save release notes to output file
+    const outputDir = path.dirname(outputFile);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
     fs.writeFileSync(outputFile, releaseNotes);
     console.log(`Release notes successfully generated at: ${outputFile}`);
     
