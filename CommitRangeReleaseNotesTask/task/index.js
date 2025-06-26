@@ -33,8 +33,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tl = __importStar(require("azure-pipelines-task-lib/task"));
-const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 const util = __importStar(require("util"));
 const child_process_1 = require("child_process");
 const commitGrouper_1 = require("./utils/commitGrouper");
@@ -45,7 +45,7 @@ function run() {
         try {
             console.log("Starting CommitRangeReleaseNotes task");
             // Get task parameters
-            const startCommit = tl.getInput("startCommit", true);
+            let startCommit = tl.getInput("startCommit", true);
             const endCommit = tl.getInput("endCommit", true);
             const outputFile = tl.getInput("outputFile", true);
             const templateFile = tl.getInput("templateFile", false);
@@ -63,6 +63,64 @@ function run() {
             // Change to repo directory
             process.chdir(repoRoot);
             console.log(`Working directory changed to: ${process.cwd()}`);
+            // Validate commits exist before trying to get the range
+            console.log(`Validating commits: ${startCommit} and ${endCommit}`);
+            try {
+                // Check if startCommit exists and is valid
+                yield execAsync(`git rev-parse --verify ${startCommit}`);
+                console.log(`✓ Start commit ${startCommit} is valid`);
+            }
+            catch (error) {
+                // Special handling for relative references like HEAD~10 in shallow repos
+                if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
+                    console.log(`⚠️  ${startCommit} not available - likely due to shallow clone with limited history`);
+                    console.log(`Checking available commit count...`);
+                    try {
+                        const { stdout: commitCount } = yield execAsync(`git rev-list --count HEAD`);
+                        const availableCommits = parseInt(commitCount.trim());
+                        console.log(`Available commits in history: ${availableCommits}`);
+                        if (availableCommits < 10) {
+                            console.log(`⚠️  Insufficient commit history. Using all available commits instead.`);
+                            // Use the first commit in the repo as start
+                            const { stdout: firstCommit } = yield execAsync(`git rev-list --max-parents=0 HEAD`);
+                            const originalStartCommit = startCommit;
+                            startCommit = firstCommit.trim();
+                            console.log(`Updated startCommit from ${originalStartCommit} to ${startCommit} (first commit)`);
+                        }
+                    }
+                    catch (historyError) {
+                        console.error('Failed to analyze commit history:', historyError);
+                    }
+                    // Try the validation again with potentially updated startCommit
+                    try {
+                        yield execAsync(`git rev-parse --verify ${startCommit}`);
+                        console.log(`✓ Updated start commit ${startCommit} is valid`);
+                    }
+                    catch (retryError) {
+                        const errorMsg = `Invalid start commit: ${startCommit}. The repository appears to have insufficient history. Consider using 'fetchDepth: 0' in your checkout step to get full history.`;
+                        console.error(errorMsg);
+                        tl.setResult(tl.TaskResult.Failed, errorMsg);
+                        return;
+                    }
+                }
+                else {
+                    const errorMsg = `Invalid start commit: ${startCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
+                    console.error(errorMsg);
+                    tl.setResult(tl.TaskResult.Failed, errorMsg);
+                    return;
+                }
+            }
+            try {
+                // Check if endCommit exists and is valid
+                yield execAsync(`git rev-parse --verify ${endCommit}`);
+                console.log(`✓ End commit ${endCommit} is valid`);
+            }
+            catch (error) {
+                const errorMsg = `Invalid end commit: ${endCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
+                console.error(errorMsg);
+                tl.setResult(tl.TaskResult.Failed, errorMsg);
+                return;
+            }
             // Fetch commit data between provided range
             console.log(`Fetching commit data between ${startCommit} and ${endCommit}`);
             let format = "--pretty=format:\"%h|%an|%ae|%at|%s\"";
@@ -70,7 +128,28 @@ function run() {
                 // For conventional commits we need the commit body too
                 format = "--pretty=format:\"%h|%an|%ae|%at|%s|%b\"";
             }
-            const { stdout } = yield execAsync(`git log ${startCommit}..${endCommit} ${format}`);
+            let stdout;
+            try {
+                const result = yield execAsync(`git log ${startCommit}..${endCommit} ${format}`);
+                stdout = result.stdout;
+            }
+            catch (error) {
+                // Try alternative syntax if the range fails
+                console.log(`Range syntax failed, trying alternative approach...`);
+                try {
+                    const result = yield execAsync(`git log ${startCommit}...${endCommit} ${format}`);
+                    stdout = result.stdout;
+                    console.log(`✓ Using symmetric difference (${startCommit}...${endCommit})`);
+                }
+                catch (altError) {
+                    const errorMsg = `Failed to get commits between ${startCommit} and ${endCommit}. Please check that these commits exist and are reachable in the current branch.`;
+                    console.error(errorMsg);
+                    console.error('Original error:', error);
+                    console.error('Alternative error:', altError);
+                    tl.setResult(tl.TaskResult.Failed, errorMsg);
+                    return;
+                }
+            }
             if (!stdout) {
                 console.log("No commits found in the specified range");
                 if (failOnError) {
@@ -85,16 +164,17 @@ function run() {
             const commits = stdout.split("\n")
                 .filter(line => line.trim() !== "")
                 .map(line => {
+                var _a, _b, _c;
                 const parts = line.split("|");
                 const timestamp = parseInt(parts[3]);
                 const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
                 return {
-                    hash: parts[0]?.replace(/"/g, "") || "",
+                    hash: ((_a = parts[0]) === null || _a === void 0 ? void 0 : _a.replace(/"/g, "")) || "",
                     author: parts[1] || "",
                     email: parts[2] || "",
                     date: date.toISOString(),
-                    subject: parts[4]?.replace(/"/g, "") || "",
-                    body: parts.length > 5 ? parts.slice(5).join("|")?.replace(/"/g, "") : ""
+                    subject: ((_b = parts[4]) === null || _b === void 0 ? void 0 : _b.replace(/"/g, "")) || "",
+                    body: parts.length > 5 ? (_c = parts.slice(5).join("|")) === null || _c === void 0 ? void 0 : _c.replace(/"/g, "") : ""
                 };
             });
             console.log(`Found ${commits.length} commits in the specified range`);
@@ -109,10 +189,33 @@ function run() {
             releaseData.generatedDate = new Date().toISOString();
             // Generate release notes using template
             let template;
-            if (templateFile && fs.existsSync(templateFile)) {
-                template = fs.readFileSync(templateFile, "utf8");
+            if (templateFile && templateFile.trim() !== "" && fs.existsSync(templateFile)) {
+                // Check if it's actually a file, not a directory
+                const stats = fs.statSync(templateFile);
+                if (stats.isFile()) {
+                    console.log(`Using custom template file: ${templateFile}`);
+                    template = fs.readFileSync(templateFile, "utf8");
+                }
+                else {
+                    console.log(`⚠️  Template path is a directory, not a file: ${templateFile}`);
+                    console.log(`Using default template instead.`);
+                    // Use default template
+                    if (conventionalCommits) {
+                        template = defaultConventionalTemplate;
+                    }
+                    else {
+                        template = defaultSimpleTemplate;
+                    }
+                }
             }
             else {
+                if (templateFile && templateFile.trim() !== "") {
+                    console.log(`⚠️  Template file not found: ${templateFile}`);
+                    console.log(`Using default template instead.`);
+                }
+                else {
+                    console.log(`Using default template (no custom template specified).`);
+                }
                 // Default template
                 if (conventionalCommits) {
                     template = defaultConventionalTemplate;

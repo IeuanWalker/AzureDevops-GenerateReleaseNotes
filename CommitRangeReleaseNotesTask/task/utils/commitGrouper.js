@@ -11,7 +11,7 @@ function groupCommitsByType(commits) {
         all: commits
     };
     for (const commit of commits) {
-        const subject = (commit.subject || "").toLowerCase();
+        const subject = commit.subject.toLowerCase();
         if (subject.startsWith('feat') || subject.startsWith('feature')) {
             result.features.push(commit);
         }
