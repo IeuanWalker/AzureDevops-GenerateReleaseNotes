@@ -1,4 +1,4 @@
-Is interface WorkItem {
+interface WorkItem {
   id: string;
   url: string;
 }
