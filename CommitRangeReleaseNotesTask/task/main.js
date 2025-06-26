@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const task_1 = __importDefault(require("azure-pipelines-task-lib/task"));
+const tl = __importStar(require("azure-pipelines-task-lib/task"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const gitUtils_1 = require("./utils/gitUtils");
@@ -48,19 +48,19 @@ const commitGrouper = __importStar(require("./utils/commitGrouper"));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let startCommit = task_1.default.getInput('startCommit', true);
-            const endCommit = task_1.default.getInput('endCommit', true);
-            const outputFile = task_1.default.getInput('outputFile', true);
-            const templateFile = task_1.default.getInput('templateFile', false) || undefined;
-            const repoRoot = task_1.default.getInput('repoRoot', false) || task_1.default.getVariable('System.DefaultWorkingDirectory') || process.cwd();
-            const conventionalCommits = task_1.default.getBoolInput('conventionalCommits', false);
-            const failOnError = task_1.default.getBoolInput('failOnError', false);
-            const generateWorkItemLinks = task_1.default.getBoolInput('generateWorkItemLinks', false);
-            const generatePRLinks = task_1.default.getBoolInput('generatePRLinks', false);
-            const generateCommitLinks = task_1.default.getBoolInput('generateCommitLinks', false);
-            const teamProject = task_1.default.getVariable('System.TeamProject') || undefined;
-            const collectionUri = task_1.default.getVariable('System.TeamFoundationCollectionUri') || undefined;
-            const repositoryName = task_1.default.getVariable('Build.Repository.Name') || undefined;
+            let startCommit = tl.getInput('startCommit', true);
+            const endCommit = tl.getInput('endCommit', true);
+            const outputFile = tl.getInput('outputFile', true);
+            const templateFile = tl.getInput('templateFile', false) || undefined;
+            const repoRoot = tl.getInput('repoRoot', false) || tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
+            const conventionalCommits = tl.getBoolInput('conventionalCommits', false);
+            const failOnError = tl.getBoolInput('failOnError', false);
+            const generateWorkItemLinks = tl.getBoolInput('generateWorkItemLinks', false);
+            const generatePRLinks = tl.getBoolInput('generatePRLinks', false);
+            const generateCommitLinks = tl.getBoolInput('generateCommitLinks', false);
+            const teamProject = tl.getVariable('System.TeamProject') || undefined;
+            const collectionUri = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
+            const repositoryName = tl.getVariable('Build.Repository.Name') || undefined;
             process.chdir(repoRoot);
             if (!(yield (0, gitUtils_1.validateCommit)(startCommit, repoRoot))) {
                 if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
@@ -69,17 +69,17 @@ function run() {
                         startCommit = yield (0, gitUtils_1.getFirstCommit)(repoRoot);
                     }
                     if (!(yield (0, gitUtils_1.validateCommit)(startCommit, repoRoot))) {
-                        task_1.default.setResult(task_1.default.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
+                        tl.setResult(tl.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
                         return;
                     }
                 }
                 else {
-                    task_1.default.setResult(task_1.default.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
+                    tl.setResult(tl.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
                     return;
                 }
             }
             if (!(yield (0, gitUtils_1.validateCommit)(endCommit, repoRoot))) {
-                task_1.default.setResult(task_1.default.TaskResult.Failed, `Invalid end commit: ${endCommit}`);
+                tl.setResult(tl.TaskResult.Failed, `Invalid end commit: ${endCommit}`);
                 return;
             }
             let format = '--pretty=format:"%h|%an|%ae|%at|%s"';
@@ -91,7 +91,7 @@ function run() {
             }
             catch (_a) {
                 if (failOnError) {
-                    task_1.default.setResult(task_1.default.TaskResult.Failed, 'No commits found in the specified range');
+                    tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
                     return;
                 }
                 fs_1.default.writeFileSync(outputFile, 'No changes in this release');
@@ -99,7 +99,7 @@ function run() {
             }
             if (!stdout) {
                 if (failOnError) {
-                    task_1.default.setResult(task_1.default.TaskResult.Failed, 'No commits found in the specified range');
+                    tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
                     return;
                 }
                 fs_1.default.writeFileSync(outputFile, 'No changes in this release');
@@ -188,11 +188,11 @@ function run() {
                 fs_1.default.mkdirSync(outputDir, { recursive: true });
             }
             fs_1.default.writeFileSync(outputFile, releaseNotes);
-            task_1.default.setVariable('ReleaseNotes', releaseNotes);
-            task_1.default.setResult(task_1.default.TaskResult.Succeeded, 'Release notes generated successfully');
+            tl.setVariable('ReleaseNotes', releaseNotes);
+            tl.setResult(tl.TaskResult.Succeeded, 'Release notes generated successfully');
         }
         catch (error) {
-            task_1.default.setResult(task_1.default.TaskResult.Failed, `Release notes generation failed: ${error.message}`);
+            tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);
         }
     });
 }
