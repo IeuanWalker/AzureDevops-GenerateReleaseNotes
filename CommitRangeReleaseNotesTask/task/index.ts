@@ -167,9 +167,29 @@ async function run() {
 
     // Generate release notes using template
     let template: string;
-    if (templateFile && fs.existsSync(templateFile)) {
-      template = fs.readFileSync(templateFile, "utf8");
+    if (templateFile && templateFile.trim() !== "" && fs.existsSync(templateFile)) {
+      // Check if it's actually a file, not a directory
+      const stats = fs.statSync(templateFile);
+      if (stats.isFile()) {
+        console.log(`Using custom template file: ${templateFile}`);
+        template = fs.readFileSync(templateFile, "utf8");
+      } else {
+        console.log(`⚠️  Template path is a directory, not a file: ${templateFile}`);
+        console.log(`Using default template instead.`);
+        // Use default template
+        if (conventionalCommits) {
+          template = defaultConventionalTemplate;
+        } else {
+          template = defaultSimpleTemplate;
+        }
+      }
     } else {
+      if (templateFile && templateFile.trim() !== "") {
+        console.log(`⚠️  Template file not found: ${templateFile}`);
+        console.log(`Using default template instead.`);
+      } else {
+        console.log(`Using default template (no custom template specified).`);
+      }
       // Default template
       if (conventionalCommits) {
         template = defaultConventionalTemplate;
