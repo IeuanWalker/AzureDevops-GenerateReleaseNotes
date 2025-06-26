@@ -6,7 +6,156 @@ import { exec } from "child_process";
 import { groupCommitsByType } from "./utils/commitGrouper";
 import * as handlebars from "handlebars";
 
+// Interfaces for better type safety
+interface Commit {
+  hash: string;
+  author: string;
+  email: string;
+  date: string;
+  subject: string;
+  body: string;
+  workItems?: WorkItem[];
+  commitUrl?: string;
+  pullRequest?: PullRequest;
+}
+
+interface WorkItem {
+  id: string;
+  url: string;
+}
+
+interface PullRequest {
+  id: string;
+  title: string;
+  url: string;
+  author: string;
+}
+
+interface ReleaseData {
+  commits: Commit[];
+  workItems: WorkItem[];
+  pullRequests: PullRequest[];
+  startCommit: string;
+  endCommit: string;
+  generatedDate: string;
+  repositoryName?: string;
+  teamProject?: string;
+  collectionUri?: string;
+  // For conventional commits
+  features?: Commit[];
+  fixes?: Commit[];
+  docs?: Commit[];
+  chores?: Commit[];
+  other?: Commit[];
+}
+
 const execAsync = util.promisify(exec);
+
+// Helper functions for parsing and linking
+function parseWorkItems(commitMessage: string): WorkItem[] {
+  const workItems: WorkItem[] = [];
+  // Match patterns like AB#123, #123, or work item 123
+  const patterns = [
+    /AB#(\d+)/gi,        // Azure Boards style
+    /#(\d+)/g,           // Simple hash style
+    /work\s+item\s+(\d+)/gi  // "work item 123" style
+  ];
+  
+  patterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(commitMessage)) !== null) {
+      const id = match[1];
+      if (!workItems.find(wi => wi.id === id)) {
+        workItems.push({
+          id,
+          url: "" // Will be filled in generateWorkItemUrl
+        });
+      }
+    }
+  });
+  
+  return workItems;
+}
+
+function generateWorkItemUrl(workItemId: string, collectionUri: string, teamProject: string): string {
+  if (!collectionUri || !teamProject) {
+    return `#${workItemId}`; // Fallback if no context
+  }
+  
+  // Clean up collection URI
+  const baseUrl = collectionUri.replace(/\/$/, '');
+  return `${baseUrl}/${teamProject}/_workitems/edit/${workItemId}`;
+}
+
+function generateCommitUrl(commitHash: string, collectionUri: string, teamProject: string, repositoryName: string): string {
+  if (!collectionUri || !teamProject || !repositoryName) {
+    return commitHash; // Fallback if no context
+  }
+  
+  const baseUrl = collectionUri.replace(/\/$/, '');
+  return `${baseUrl}/${teamProject}/_git/${repositoryName}/commit/${commitHash}`;
+}
+
+async function findPullRequestForCommit(commitHash: string, collectionUri: string, teamProject: string): Promise<PullRequest | null> {
+  // This is a simplified implementation - in a full implementation you'd use Azure DevOps REST API
+  // For now, we'll try to parse PR info from commit messages or git notes
+  try {
+    // Try to find merge commit patterns that indicate a PR
+    const { stdout } = await execAsync(`git show --format="%s%n%b" -s ${commitHash}`);
+    const mergePattern = /Merged PR (\d+): (.+)/i;
+    const match = mergePattern.exec(stdout);
+    
+    if (match) {
+      const prId = match[1];
+      const prTitle = match[2];
+      return {
+        id: prId,
+        title: prTitle,
+        url: generatePRUrl(prId, collectionUri, teamProject),
+        author: "" // Would need API call to get author
+      };
+    }
+  } catch (error) {
+    // Ignore errors - PR info is optional
+  }
+  
+  return null;
+}
+
+function generatePRUrl(prId: string, collectionUri: string, teamProject: string): string {
+  if (!collectionUri || !teamProject) {
+    return `#${prId}`;
+  }
+  
+  const baseUrl = collectionUri.replace(/\/$/, '');
+  return `${baseUrl}/${teamProject}/_git/pullrequest/${prId}`;
+}
+
+// Register Handlebars helpers
+handlebars.registerHelper('workItemLink', function(workItem: WorkItem) {
+  return new handlebars.SafeString(`[${workItem.id}](${workItem.url})`);
+});
+
+handlebars.registerHelper('commitLink', function(commit: Commit) {
+  if (commit.commitUrl) {
+    return new handlebars.SafeString(`[${commit.hash}](${commit.commitUrl})`);
+  }
+  return commit.hash;
+});
+
+handlebars.registerHelper('pullRequestLink', function(pr: PullRequest) {
+  return new handlebars.SafeString(`[PR ${pr.id}](${pr.url})`);
+});
+
+// Helper to truncate commit hashes
+handlebars.registerHelper('shortHash', function(hash: string, length: number = 7) {
+  return hash.substring(0, length);
+});
+
+// Helper to format dates
+handlebars.registerHelper('formatDate', function(isoDate: string) {
+  return new Date(isoDate).toLocaleDateString();
+});
 
 async function run() {
   try {
@@ -20,12 +169,24 @@ async function run() {
     const repoRoot = tl.getInput("repoRoot", false) || tl.getVariable("System.DefaultWorkingDirectory") || process.cwd();
     const conventionalCommits = tl.getBoolInput("conventionalCommits", false);
     const failOnError = tl.getBoolInput("failOnError", false);
+    const generateWorkItemLinks = tl.getBoolInput("generateWorkItemLinks", false);
+    const generatePRLinks = tl.getBoolInput("generatePRLinks", false);
+    const generateCommitLinks = tl.getBoolInput("generateCommitLinks", false);
+
+    // Get Azure DevOps context
+    const teamProjectId = tl.getVariable("System.TeamProjectId");
+    const teamProject = tl.getVariable("System.TeamProject");
+    const collectionUri = tl.getVariable("System.TeamFoundationCollectionUri");
+    const repositoryName = tl.getVariable("Build.Repository.Name");
+    const repositoryId = tl.getVariable("Build.Repository.ID");
 
     console.log(`Parameters received:
       - Start Commit: ${startCommit}
       - End Commit: ${endCommit}
       - Output File: ${outputFile}
       - Template File: ${templateFile || "Using default template"}
+      - Template File (raw): "${templateFile}"
+      - Template File type: ${typeof templateFile}
       - Repository Root: ${repoRoot}
       - Use Conventional Commits: ${conventionalCommits}
       - Fail on Error: ${failOnError}`);
@@ -135,39 +296,119 @@ async function run() {
     }
 
     // Parse commit data
-    const commits = stdout.split("\n")
+    const commits: Commit[] = stdout.split("\n")
       .filter(line => line.trim() !== "")
       .map(line => {
         const parts = line.split("|");
         const timestamp = parseInt(parts[3]);
         const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
-        return {
+        const subject = parts[4]?.replace(/"/g, "") || "";
+        const body = parts.length > 5 ? parts.slice(5).join("|")?.replace(/"/g, "") : "";
+        const fullMessage = `${subject}\n${body}`.trim();
+        
+        const commit: Commit = {
           hash: parts[0]?.replace(/"/g, "") || "",
           author: parts[1] || "",
           email: parts[2] || "",
           date: date.toISOString(),
-          subject: parts[4]?.replace(/"/g, "") || "",
-          body: parts.length > 5 ? parts.slice(5).join("|")?.replace(/"/g, "") : ""
+          subject: subject,
+          body: body
         };
+
+        // Parse work items from commit message if enabled
+        if (generateWorkItemLinks) {
+          commit.workItems = parseWorkItems(fullMessage);
+          // Generate URLs for work items
+          if (collectionUri && teamProject) {
+            commit.workItems.forEach(wi => {
+              wi.url = generateWorkItemUrl(wi.id, collectionUri, teamProject);
+            });
+          }
+        }
+
+        // Generate commit URL if enabled
+        if (generateCommitLinks && collectionUri && teamProject && repositoryName) {
+          commit.commitUrl = generateCommitUrl(commit.hash, collectionUri, teamProject, repositoryName);
+        }
+
+        return commit;
       });
 
     console.log(`Found ${commits.length} commits in the specified range`);
 
+    // Find pull requests for commits if enabled
+    if (generatePRLinks && collectionUri && teamProject) {
+      console.log("Looking for pull request associations...");
+      for (const commit of commits) {
+        try {
+          commit.pullRequest = await findPullRequestForCommit(commit.hash, collectionUri, teamProject);
+        } catch (error) {
+          console.log(`Could not find PR for commit ${commit.hash}: ${error.message}`);
+        }
+      }
+    }
+
+    // Collect all work items and PRs for summary
+    const allWorkItems: WorkItem[] = [];
+    const allPullRequests: PullRequest[] = [];
+    
+    commits.forEach(commit => {
+      if (commit.workItems) {
+        commit.workItems.forEach(wi => {
+          if (!allWorkItems.find(existing => existing.id === wi.id)) {
+            allWorkItems.push(wi);
+          }
+        });
+      }
+      
+      if (commit.pullRequest) {
+        if (!allPullRequests.find(existing => existing.id === commit.pullRequest!.id)) {
+          allPullRequests.push(commit.pullRequest);
+        }
+      }
+    });
+
     // Process the commits (group by type if conventional commits)
-    let releaseData: any = { commits };
+    let releaseData: ReleaseData = { 
+      commits,
+      workItems: allWorkItems,
+      pullRequests: allPullRequests,
+      startCommit,
+      endCommit,
+      generatedDate: new Date().toISOString(),
+      repositoryName,
+      teamProject,
+      collectionUri
+    };
     
     if (conventionalCommits) {
-      releaseData = groupCommitsByType(commits);
+      const grouped = groupCommitsByType(commits);
+      releaseData.features = grouped.features;
+      releaseData.fixes = grouped.fixes;
+      releaseData.docs = grouped.docs;
+      releaseData.chores = grouped.chores;
+      releaseData.other = grouped.other;
     }
 
     // Add additional release info
-    releaseData.startCommit = startCommit;
-    releaseData.endCommit = endCommit;
-    releaseData.generatedDate = new Date().toISOString();
+    // (These were already set in the releaseData initialization above)
 
     // Generate release notes using template
     let template: string;
-    if (templateFile && templateFile.trim() !== "" && fs.existsSync(templateFile)) {
+    
+    console.log(`Template file analysis:`);
+    console.log(`  - templateFile value: "${templateFile}"`);
+    console.log(`  - templateFile === repoRoot: ${templateFile === repoRoot}`);
+    console.log(`  - templateFile truthy: ${!!templateFile}`);
+    console.log(`  - templateFile trimmed: "${templateFile?.trim()}"`);
+    
+    // Check if templateFile is actually specified and is not the repository root
+    const hasValidTemplateFile = templateFile && 
+                                 templateFile.trim() !== "" && 
+                                 templateFile !== repoRoot &&
+                                 fs.existsSync(templateFile);
+    
+    if (hasValidTemplateFile) {
       // Check if it's actually a file, not a directory
       const stats = fs.statSync(templateFile);
       if (stats.isFile()) {
@@ -185,7 +426,11 @@ async function run() {
       }
     } else {
       if (templateFile && templateFile.trim() !== "") {
-        console.log(`⚠️  Template file not found: ${templateFile}`);
+        if (templateFile === repoRoot) {
+          console.log(`⚠️  Template file equals repository root - this is likely a configuration error.`);
+        } else {
+          console.log(`⚠️  Template file not found: ${templateFile}`);
+        }
         console.log(`Using default template instead.`);
       } else {
         console.log(`Using default template (no custom template specified).`);
@@ -222,21 +467,85 @@ async function run() {
 
 // Default template for simple commit list
 const defaultSimpleTemplate = `# Release Notes
-## Commits ({{commits.length}})
+
+Generated on {{formatDate generatedDate}} from {{startCommit}} to {{endCommit}}
+
+{{#if repositoryName}}
+Repository: **{{repositoryName}}**
+{{/if}}
+
+## Summary
+- **{{commits.length}}** commits
+{{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
+{{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
+
+{{#if workItems.length}}
+## 📋 Work Items
+
+{{#each workItems}}
+* {{workItemLink this}}
+{{/each}}
+{{/if}}
+
+{{#if pullRequests.length}}
+## 🔀 Pull Requests
+
+{{#each pullRequests}}
+* {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+{{/each}}
+{{/if}}
+
+## 📝 Commits ({{commits.length}})
 
 {{#each commits}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 `;
 
 // Default template for conventional commits
 const defaultConventionalTemplate = `# Release Notes
 
+Generated on {{formatDate generatedDate}} from {{startCommit}} to {{endCommit}}
+
+{{#if repositoryName}}
+Repository: **{{repositoryName}}**
+{{/if}}
+
+## Summary
+- **{{commits.length}}** commits total
+{{#if features.length}}- **{{features.length}}** features{{/if}}
+{{#if fixes.length}}- **{{fixes.length}}** bug fixes{{/if}}
+{{#if docs.length}}- **{{docs.length}}** documentation updates{{/if}}
+{{#if chores.length}}- **{{chores.length}}** chores{{/if}}
+{{#if other.length}}- **{{other.length}}** other changes{{/if}}
+{{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
+{{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
+
+{{#if workItems.length}}
+## 📋 Work Items
+
+{{#each workItems}}
+* {{workItemLink this}}
+{{/each}}
+{{/if}}
+
+{{#if pullRequests.length}}
+## 🔀 Pull Requests
+
+{{#each pullRequests}}
+* {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+{{/each}}
+{{/if}}
+
 {{#if features.length}}
 ## 🚀 Features
 
 {{#each features}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -244,7 +553,9 @@ const defaultConventionalTemplate = `# Release Notes
 ## 🐛 Bug Fixes
 
 {{#each fixes}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -252,7 +563,9 @@ const defaultConventionalTemplate = `# Release Notes
 ## 📚 Documentation
 
 {{#each docs}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -260,7 +573,9 @@ const defaultConventionalTemplate = `# Release Notes
 ## 🧹 Chores
 
 {{#each chores}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -268,7 +583,9 @@ const defaultConventionalTemplate = `# Release Notes
 ## Other Changes
 
 {{#each other}}
-* **{{subject}}** - {{author}} ({{hash}})
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
 {{/each}}
 {{/if}}
 `;

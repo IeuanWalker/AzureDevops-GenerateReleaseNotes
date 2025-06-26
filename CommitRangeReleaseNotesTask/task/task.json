@@ -8,8 +8,8 @@
   "author": "Ieuan Walker",
   "version": {
     "Major": 1,
-    "Minor": 0,
-    "Patch": 8
+    "Minor": 1,
+    "Patch": 0
   },
   "instanceNameFormat": "Generate Release Notes from Commit Range",
   "inputs": [
@@ -68,6 +68,30 @@
       "defaultValue": "true",
       "required": false,
       "helpMarkDown": "If true, the task will fail if any errors occur during release notes generation"
+    },
+    {
+      "name": "generateWorkItemLinks",
+      "type": "boolean",
+      "label": "Generate Work Item Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, work item references in commit messages will be converted to clickable links"
+    },
+    {
+      "name": "generatePRLinks", 
+      "type": "boolean",
+      "label": "Generate Pull Request Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, will attempt to find and link pull requests associated with commits"
+    },
+    {
+      "name": "generateCommitLinks",
+      "type": "boolean", 
+      "label": "Generate Commit Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, commit hashes will be converted to clickable links to view in Azure DevOps"
     }
   ],
   "execution": {

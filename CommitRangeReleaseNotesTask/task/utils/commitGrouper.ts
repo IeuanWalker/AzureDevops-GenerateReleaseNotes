@@ -1,3 +1,15 @@
+Is interface WorkItem {
+  id: string;
+  url: string;
+}
+
+interface PullRequest {
+  id: string;
+  title: string;
+  url: string;
+  author: string;
+}
+
 interface Commit {
   hash: string;
   author: string;
@@ -5,6 +17,9 @@ interface Commit {
   date: string;
   subject: string;
   body: string;
+  workItems?: WorkItem[];
+  commitUrl?: string;
+  pullRequest?: PullRequest;
 }
 
 interface GroupedCommits {

@@ -1,0 +1,99 @@
+# {{repositoryName}} Release Notes
+
+**Release:** {{startCommit}} → {{endCommit}}  
+**Generated:** {{formatDate generatedDate}}
+
+## 📊 Summary
+
+{{#if commits.length}}- **{{commits.length}}** commits{{/if}}
+{{#if features.length}}- **{{features.length}}** new features{{/if}}
+{{#if fixes.length}}- **{{fixes.length}}** bug fixes{{/if}}
+{{#if docs.length}}- **{{docs.length}}** documentation updates{{/if}}
+{{#if workItems.length}}- **{{workItems.length}}** work items addressed{{/if}}
+{{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests merged{{/if}}
+
+{{#if workItems.length}}
+## 🎯 Work Items
+
+{{#each workItems}}
+- {{workItemLink this}}
+{{/each}}
+{{/if}}
+
+{{#if pullRequests.length}}
+## 🔀 Pull Requests
+
+{{#each pullRequests}}
+- {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+{{/each}}
+{{/if}}
+
+{{#if features.length}}
+## ✨ New Features
+
+{{#each features}}
+### {{subject}}
+- **Author:** {{author}}
+- **Commit:** {{commitLink this}}
+{{#if workItems.length}}
+- **Work Items:** {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+{{#if pullRequest}}
+- **Pull Request:** {{pullRequestLink pullRequest}}
+{{/if}}
+{{#if body}}
+
+{{body}}
+{{/if}}
+
+{{/each}}
+{{/if}}
+
+{{#if fixes.length}}
+## 🐛 Bug Fixes
+
+{{#each fixes}}
+### {{subject}}
+- **Author:** {{author}}
+- **Commit:** {{commitLink this}}
+{{#if workItems.length}}
+- **Work Items:** {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+{{#if pullRequest}}
+- **Pull Request:** {{pullRequestLink pullRequest}}
+{{/if}}
+{{#if body}}
+
+{{body}}
+{{/if}}
+
+{{/each}}
+{{/if}}
+
+{{#if docs.length}}
+## 📚 Documentation
+
+{{#each docs}}
+- **{{subject}}** - {{author}} ({{commitLink this}})
+{{/each}}
+{{/if}}
+
+{{#if chores.length}}
+## 🧹 Maintenance
+
+{{#each chores}}
+- **{{subject}}** - {{author}} ({{commitLink this}})
+{{/each}}
+{{/if}}
+
+{{#if other.length}}
+## 🔧 Other Changes
+
+{{#each other}}
+- **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{/each}}
+{{/if}}
+
+---
+*Generated with Commit Range Release Notes Generator v1.1.0*
