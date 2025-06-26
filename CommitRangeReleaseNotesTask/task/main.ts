@@ -16,7 +16,7 @@ export default async function run(): Promise<void> {
         const endCommit: string = tl.getInput('endCommit', true) as string;
         const outputFile: string = tl.getInput('outputFile', true) as string;
         const templateFile: string | undefined = tl.getInput('templateFile', false) || undefined;
-        const repoRoot: string = tl.getInput('repoRoot', false) || tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
+        const repoRoot: string = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
         const conventionalCommits: boolean = tl.getBoolInput('conventionalCommits', false);
         const failOnError: boolean = tl.getBoolInput('failOnError', false);
         const generateWorkItemLinks: boolean = tl.getBoolInput('generateWorkItemLinks', false);

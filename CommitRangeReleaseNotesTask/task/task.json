@@ -46,14 +46,6 @@
       "helpMarkDown": "Optional path to a Handlebars template file for formatting the release notes. If not provided, a default template will be used."
     },
     {
-      "name": "repoRoot",
-      "type": "filePath",
-      "label": "Repository Root",
-      "defaultValue": "$(System.DefaultWorkingDirectory)",
-      "required": false,
-      "helpMarkDown": "Path to the root of the git repository. Defaults to $(System.DefaultWorkingDirectory)."
-    },
-    {
       "name": "conventionalCommits",
       "type": "boolean",
       "label": "Use Conventional Commits",
