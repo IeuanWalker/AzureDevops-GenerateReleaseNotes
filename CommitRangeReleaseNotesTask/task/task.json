@@ -71,10 +71,10 @@
     }
   ],
   "execution": {
-    "Node10": {
+    "Node16": {
       "target": "index.js"
     },
-    "Node16": {
+    "Node20": {
       "target": "index.js"
     }
   }

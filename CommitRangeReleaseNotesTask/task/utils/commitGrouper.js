@@ -2,10 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.groupCommitsByType = void 0;
 function groupCommitsByType(commits) {
-  console.log("Grouping commits:", JSON.stringify(commits.slice(0, 2), null, 2));
-
-  console.log("Grouping commits:", JSON.stringify(commits.slice(0, 2), null, 2));
-
     const result = {
         features: [],
         fixes: [],
@@ -15,7 +11,7 @@ function groupCommitsByType(commits) {
         all: commits
     };
     for (const commit of commits) {
-        const subject = commit.subject??.toLowerCase() || "other" || "other";
+        const subject = (commit.subject || "").toLowerCase();
         if (subject.startsWith('feat') || subject.startsWith('feature')) {
             result.features.push(commit);
         }

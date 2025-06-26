@@ -49,8 +49,8 @@ function run() {
             const outputFile = tl.getInput("outputFile", true);
             const templateFile = tl.getInput("templateFile", false);
             const repoRoot = tl.getInput("repoRoot", false) || tl.getVariable("System.DefaultWorkingDirectory") || process.cwd();
-            const conventionalCommits = tl.getBoolInput("conventionalCommits", false) || false;
-            const failOnError = tl.getBoolInput("failOnError", false) || true;
+            const conventionalCommits = tl.getBoolInput("conventionalCommits", false);
+            const failOnError = tl.getBoolInput("failOnError", false);
             console.log(`Parameters received:
       - Start Commit: ${startCommit}
       - End Commit: ${endCommit}

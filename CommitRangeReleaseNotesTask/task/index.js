@@ -34,6 +34,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const tl = __importStar(require("azure-pipelines-task-lib/task"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 const util = __importStar(require("util"));
 const child_process_1 = require("child_process");
 const commitGrouper_1 = require("./utils/commitGrouper");
@@ -49,8 +50,8 @@ function run() {
             const outputFile = tl.getInput("outputFile", true);
             const templateFile = tl.getInput("templateFile", false);
             const repoRoot = tl.getInput("repoRoot", false) || tl.getVariable("System.DefaultWorkingDirectory") || process.cwd();
-            const conventionalCommits = tl.getBoolInput("conventionalCommits", false) || false;
-            const failOnError = tl.getBoolInput("failOnError", false) || true;
+            const conventionalCommits = tl.getBoolInput("conventionalCommits", false);
+            const failOnError = tl.getBoolInput("failOnError", false);
             console.log(`Parameters received:
       - Start Commit: ${startCommit}
       - End Commit: ${endCommit}
@@ -85,13 +86,15 @@ function run() {
                 .filter(line => line.trim() !== "")
                 .map(line => {
                 const parts = line.split("|");
+                const timestamp = parseInt(parts[3]);
+                const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
                 return {
-                    hash: parts[0]?.replace(/"/g, ""),
-                    author: parts[1],
-                    email: parts[2],
-                    date: new Date(parseInt(parts[3]) * 1000)??.toISOString() || "1970-01-01T00:00:00.000Z" || "1970-01-01T00:00:00.000Z",
-                    subject: parts[4]?.replace(/"/g, ""),
-                    body: parts.length > 5 ? parts.slice(5).join("|")???.replace(/"/g, "") : ""
+                    hash: parts[0]?.replace(/"/g, "") || "",
+                    author: parts[1] || "",
+                    email: parts[2] || "",
+                    date: date.toISOString(),
+                    subject: parts[4]?.replace(/"/g, "") || "",
+                    body: parts.length > 5 ? parts.slice(5).join("|")?.replace(/"/g, "") : ""
                 };
             });
             console.log(`Found ${commits.length} commits in the specified range`);
@@ -103,7 +106,7 @@ function run() {
             // Add additional release info
             releaseData.startCommit = startCommit;
             releaseData.endCommit = endCommit;
-            releaseData.generatedDate = new Date()??.toISOString() || "1970-01-01T00:00:00.000Z" || "1970-01-01T00:00:00.000Z";
+            releaseData.generatedDate = new Date().toISOString();
             // Generate release notes using template
             let template;
             if (templateFile && fs.existsSync(templateFile)) {
@@ -122,6 +125,10 @@ function run() {
             const templateFunc = handlebars.compile(template);
             const releaseNotes = templateFunc(releaseData);
             // Save release notes to output file
+            const outputDir = path.dirname(outputFile);
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
             fs.writeFileSync(outputFile, releaseNotes);
             console.log(`Release notes successfully generated at: ${outputFile}`);
             // Set output variable
