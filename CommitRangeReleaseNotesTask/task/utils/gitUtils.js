@@ -1,3 +1,11 @@
+/**
+ * gitUtils.js
+ *
+ * Utility functions for interacting with the local Git repository.
+ * Provides helpers for validating commits, counting commits, finding the first commit,
+ * and retrieving commit logs in a given range. Used by the release notes generator task.
+ */
+
 const util = require('util');
 const child_process = require('child_process');
 const execAsync = util.promisify(child_process.exec);
