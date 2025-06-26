@@ -1,0 +1,105 @@
+{
+  "id": "f499ffc8-3fe2-4e27-a637-d8c273ef5532",
+  "name": "CommitRangeReleaseNotes",
+  "friendlyName": "Generate Release Notes from Commit Range",
+  "description": "Generate release notes based on a specified commit range",
+  "helpMarkDown": "[More Information](https://github.com/IeuanWalker/AzurePipelines)",
+  "category": "Utility",
+  "author": "Ieuan Walker",
+  "version": {
+    "Major": 2,
+    "Minor": 1,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Generate Release Notes from Commit Range",
+  "inputs": [
+    {
+      "name": "startCommit",
+      "type": "string",
+      "label": "Start Commit",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "The SHA or reference (like a tag) for the start of the commit range (exclusive)"
+    },
+    {
+      "name": "endCommit",
+      "type": "string",
+      "label": "End Commit",
+      "defaultValue": "HEAD",
+      "required": true,
+      "helpMarkDown": "The SHA or reference (like a tag) for the end of the commit range (inclusive)"
+    },
+    {
+      "name": "outputFile",
+      "type": "filePath",
+      "label": "Output File",
+      "defaultValue": "$(Build.ArtifactStagingDirectory)/ReleaseNotes.md",
+      "required": true,
+      "helpMarkDown": "Path where the generated release notes will be saved"
+    },
+    {
+      "name": "templateFile",
+      "type": "filePath",
+      "label": "Template File",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Optional path to a Handlebars template file for formatting the release notes. If not provided, a default template will be used."
+    },
+    {
+      "name": "repoRoot",
+      "type": "filePath",
+      "label": "Repository Root",
+      "defaultValue": "$(System.DefaultWorkingDirectory)",
+      "required": false,
+      "helpMarkDown": "Path to the root of the git repository. Defaults to $(System.DefaultWorkingDirectory)."
+    },
+    {
+      "name": "conventionalCommits",
+      "type": "boolean",
+      "label": "Use Conventional Commits",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Enable to group commits by conventional commit types (feature, fix, docs, etc.)"
+    },
+    {
+      "name": "failOnError",
+      "type": "boolean",
+      "label": "Fail on Error",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, the task will fail if any errors occur during release notes generation"
+    },
+    {
+      "name": "generateWorkItemLinks",
+      "type": "boolean",
+      "label": "Generate Work Item Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, work item references in commit messages will be converted to clickable links"
+    },
+    {
+      "name": "generatePRLinks", 
+      "type": "boolean",
+      "label": "Generate Pull Request Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, will attempt to find and link pull requests associated with commits"
+    },
+    {
+      "name": "generateCommitLinks",
+      "type": "boolean", 
+      "label": "Generate Commit Links",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, commit hashes will be converted to clickable links to view in Azure DevOps"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "dist/index.js"
+    },
+    "Node20": {
+      "target": "dist/index.js"
+    }
+  }
+}

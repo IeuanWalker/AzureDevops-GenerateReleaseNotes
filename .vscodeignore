@@ -1,0 +1,7 @@
+# Ignore node_modules and TypeScript source, but include dist for packaging
+node_modules
+*.ts
+*.tsx
+*.map
+!dist/
+!dist/**
