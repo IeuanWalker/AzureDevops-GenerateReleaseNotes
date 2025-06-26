@@ -1,6 +1,6 @@
 {
   "name": "commit-range-release-notes-task",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "description": "Azure DevOps task to generate release notes from commit range",
   "author": "Ieuan Walker",

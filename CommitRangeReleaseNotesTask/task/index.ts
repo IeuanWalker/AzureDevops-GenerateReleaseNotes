@@ -13,7 +13,7 @@ async function run() {
     console.log("Starting CommitRangeReleaseNotes task");
 
     // Get task parameters
-    const startCommit = tl.getInput("startCommit", true) as string;
+    let startCommit = tl.getInput("startCommit", true) as string;
     const endCommit = tl.getInput("endCommit", true) as string;
     const outputFile = tl.getInput("outputFile", true) as string;
     const templateFile = tl.getInput("templateFile", false);
@@ -42,10 +42,44 @@ async function run() {
       await execAsync(`git rev-parse --verify ${startCommit}`);
       console.log(`✓ Start commit ${startCommit} is valid`);
     } catch (error) {
-      const errorMsg = `Invalid start commit: ${startCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
-      console.error(errorMsg);
-      tl.setResult(tl.TaskResult.Failed, errorMsg);
-      return;
+      // Special handling for relative references like HEAD~10 in shallow repos
+      if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
+        console.log(`⚠️  ${startCommit} not available - likely due to shallow clone with limited history`);
+        console.log(`Checking available commit count...`);
+        
+        try {
+          const { stdout: commitCount } = await execAsync(`git rev-list --count HEAD`);
+          const availableCommits = parseInt(commitCount.trim());
+          console.log(`Available commits in history: ${availableCommits}`);
+          
+          if (availableCommits < 10) {
+            console.log(`⚠️  Insufficient commit history. Using all available commits instead.`);
+            // Use the first commit in the repo as start
+            const { stdout: firstCommit } = await execAsync(`git rev-list --max-parents=0 HEAD`);
+            const originalStartCommit = startCommit;
+            startCommit = firstCommit.trim();
+            console.log(`Updated startCommit from ${originalStartCommit} to ${startCommit} (first commit)`);
+          }
+        } catch (historyError) {
+          console.error('Failed to analyze commit history:', historyError);
+        }
+        
+        // Try the validation again with potentially updated startCommit
+        try {
+          await execAsync(`git rev-parse --verify ${startCommit}`);
+          console.log(`✓ Updated start commit ${startCommit} is valid`);
+        } catch (retryError) {
+          const errorMsg = `Invalid start commit: ${startCommit}. The repository appears to have insufficient history. Consider using 'fetchDepth: 0' in your checkout step to get full history.`;
+          console.error(errorMsg);
+          tl.setResult(tl.TaskResult.Failed, errorMsg);
+          return;
+        }
+      } else {
+        const errorMsg = `Invalid start commit: ${startCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
+        console.error(errorMsg);
+        tl.setResult(tl.TaskResult.Failed, errorMsg);
+        return;
+      }
     }
 
     try {
