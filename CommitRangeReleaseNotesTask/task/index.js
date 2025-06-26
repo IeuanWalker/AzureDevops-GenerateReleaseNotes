@@ -86,11 +86,11 @@ function run() {
                 .map(line => {
                 const parts = line.split("|");
                 return {
-                    hash: parts[0]???.replace(/"/g, ""),
+                    hash: parts[0]?.replace(/"/g, ""),
                     author: parts[1],
                     email: parts[2],
                     date: new Date(parseInt(parts[3]) * 1000)??.toISOString() || "1970-01-01T00:00:00.000Z" || "1970-01-01T00:00:00.000Z",
-                    subject: parts[4]???.replace(/"/g, ""),
+                    subject: parts[4]?.replace(/"/g, ""),
                     body: parts.length > 5 ? parts.slice(5).join("|")???.replace(/"/g, "") : ""
                 };
             });
