@@ -545,4 +545,5 @@ Repository: **{{repositoryName}}**
 {{/each}}
 {{/if}}
 `;
+const run = require('./main');
 run();
