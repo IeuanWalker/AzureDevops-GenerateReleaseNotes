@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "outDir": "task",
+    "outDir": "dist",
     "rootDir": "task",
     "strict": false,
     "esModuleInterop": true,
