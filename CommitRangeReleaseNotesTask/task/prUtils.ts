@@ -1,14 +1,20 @@
-const util = require('util');
-const child_process = require('child_process');
+import util from 'util';
+import child_process from 'child_process';
+
 const execAsync = util.promisify(child_process.exec);
 
-function generatePRUrl(prId, collectionUri, teamProject) {
+export function generatePRUrl(prId: string, collectionUri?: string, teamProject?: string): string {
     if (!collectionUri || !teamProject) return `#${prId}`;
     const baseUrl = collectionUri.replace(/\/$/, '');
     return `${baseUrl}/${teamProject}/_git/pullrequest/${prId}`;
 }
 
-async function findPullRequestForCommit(commitHash, collectionUri, teamProject, repoRoot) {
+export async function findPullRequestForCommit(
+    commitHash: string,
+    collectionUri: string,
+    teamProject: string,
+    repoRoot: string
+): Promise<null | { id: string; title: string; url: string; author: string }> {
     try {
         const { stdout } = await execAsync(`git show --format="%s%n%b" -s ${commitHash}`, { cwd: repoRoot });
         const mergePattern = /Merged PR (\d+): (.+)/i;
@@ -26,8 +32,3 @@ async function findPullRequestForCommit(commitHash, collectionUri, teamProject, 
     } catch {}
     return null;
 }
-
-module.exports = {
-    generatePRUrl,
-    findPullRequestForCommit,
-};

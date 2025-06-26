@@ -1,5 +1,10 @@
-function parseWorkItems(commitMessage) {
-    const workItems = [];
+export interface WorkItem {
+    id: string;
+    url: string;
+}
+
+export function parseWorkItems(commitMessage: string): WorkItem[] {
+    const workItems: WorkItem[] = [];
     const patterns = [
         /AB#(\d+)/gi,
         /#(\d+)/g,
@@ -17,13 +22,8 @@ function parseWorkItems(commitMessage) {
     return workItems;
 }
 
-function generateWorkItemUrl(workItemId, collectionUri, teamProject) {
+export function generateWorkItemUrl(workItemId: string, collectionUri?: string, teamProject?: string): string {
     if (!collectionUri || !teamProject) return `#${workItemId}`;
     const baseUrl = collectionUri.replace(/\/$/, '');
     return `${baseUrl}/${teamProject}/_workitems/edit/${workItemId}`;
 }
-
-module.exports = {
-    parseWorkItems,
-    generateWorkItemUrl,
-};

@@ -1,30 +1,30 @@
-const tl = require('azure-pipelines-task-lib/task');
-const path = require('path');
-const fs = require('fs');
-const { validateCommit, getCommitCount, getFirstCommit, getCommitsInRange } = require('./gitUtils');
-const { parseWorkItems, generateWorkItemUrl } = require('./workItemUtils');
-const { findPullRequestForCommit, generatePRUrl } = require('./prUtils');
-const { registerHelpers, handlebars } = require('./templateUtils');
-const { defaultSimpleTemplate, defaultConventionalTemplate } = require('./templates');
-const commitGrouper = require('./utils/commitGrouper');
+import tl from 'azure-pipelines-task-lib/task';
+import path from 'path';
+import fs from 'fs';
+import { validateCommit, getCommitCount, getFirstCommit, getCommitsInRange } from './utils/gitUtils';
+import { parseWorkItems, generateWorkItemUrl } from './workItemUtils';
+import { findPullRequestForCommit, generatePRUrl } from './prUtils';
+import { registerHelpers, handlebars } from './templateUtils';
+import { defaultSimpleTemplate, defaultConventionalTemplate } from './templates';
+import * as commitGrouper from './utils/commitGrouper';
 
 registerHelpers();
 
-async function run() {
+export default async function run(): Promise<void> {
     try {
-        let startCommit = tl.getInput('startCommit', true);
-        const endCommit = tl.getInput('endCommit', true);
-        const outputFile = tl.getInput('outputFile', true);
-        const templateFile = tl.getInput('templateFile', false);
-        const repoRoot = tl.getInput('repoRoot', false) || tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
-        const conventionalCommits = tl.getBoolInput('conventionalCommits', false);
-        const failOnError = tl.getBoolInput('failOnError', false);
-        const generateWorkItemLinks = tl.getBoolInput('generateWorkItemLinks', false);
-        const generatePRLinks = tl.getBoolInput('generatePRLinks', false);
-        const generateCommitLinks = tl.getBoolInput('generateCommitLinks', false);
-        const teamProject = tl.getVariable('System.TeamProject');
-        const collectionUri = tl.getVariable('System.TeamFoundationCollectionUri');
-        const repositoryName = tl.getVariable('Build.Repository.Name');
+        let startCommit: string = tl.getInput('startCommit', true) as string;
+        const endCommit: string = tl.getInput('endCommit', true) as string;
+        const outputFile: string = tl.getInput('outputFile', true) as string;
+        const templateFile: string | undefined = tl.getInput('templateFile', false) || undefined;
+        const repoRoot: string = tl.getInput('repoRoot', false) || tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
+        const conventionalCommits: boolean = tl.getBoolInput('conventionalCommits', false);
+        const failOnError: boolean = tl.getBoolInput('failOnError', false);
+        const generateWorkItemLinks: boolean = tl.getBoolInput('generateWorkItemLinks', false);
+        const generatePRLinks: boolean = tl.getBoolInput('generatePRLinks', false);
+        const generateCommitLinks: boolean = tl.getBoolInput('generateCommitLinks', false);
+        const teamProject: string | undefined = tl.getVariable('System.TeamProject') || undefined;
+        const collectionUri: string | undefined = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
+        const repositoryName: string | undefined = tl.getVariable('Build.Repository.Name') || undefined;
 
         process.chdir(repoRoot);
         if (!await validateCommit(startCommit, repoRoot)) {
@@ -48,7 +48,7 @@ async function run() {
         }
         let format = '--pretty=format:"%h|%an|%ae|%at|%s"';
         if (conventionalCommits) format = '--pretty=format:"%h|%an|%ae|%at|%s|%b"';
-        let stdout;
+        let stdout: string;
         try {
             stdout = await getCommitsInRange(startCommit, endCommit, format, repoRoot);
         } catch {
@@ -74,7 +74,7 @@ async function run() {
             const subject = (parts[4] || '').replace(/"/g, '');
             const body = parts.length > 5 ? parts.slice(5).join('|').replace(/"/g, '') : '';
             const fullMessage = `${subject}\n${body}`.trim();
-            const commit = {
+            const commit: any = {
                 hash: (parts[0] || '').replace(/"/g, ''),
                 author: parts[1] || '',
                 email: parts[2] || '',
@@ -85,7 +85,7 @@ async function run() {
             if (generateWorkItemLinks) {
                 commit.workItems = parseWorkItems(fullMessage);
                 if (collectionUri && teamProject) {
-                    commit.workItems.forEach(wi => {
+                    commit.workItems.forEach((wi: any) => {
                         wi.url = generateWorkItemUrl(wi.id, collectionUri, teamProject);
                     });
                 }
@@ -100,11 +100,11 @@ async function run() {
                 commit.pullRequest = await findPullRequestForCommit(commit.hash, collectionUri, teamProject, repoRoot);
             }
         }
-        const allWorkItems = [];
-        const allPullRequests = [];
+        const allWorkItems: any[] = [];
+        const allPullRequests: any[] = [];
         commits.forEach(commit => {
             if (commit.workItems) {
-                commit.workItems.forEach(wi => {
+                commit.workItems.forEach((wi: any) => {
                     if (!allWorkItems.find(existing => existing.id === wi.id)) {
                         allWorkItems.push(wi);
                     }
@@ -116,7 +116,7 @@ async function run() {
                 }
             }
         });
-        let releaseData = {
+        let releaseData: any = {
             commits,
             workItems: allWorkItems,
             pullRequests: allPullRequests,
@@ -135,7 +135,7 @@ async function run() {
             releaseData.chores = grouped.chores;
             releaseData.other = grouped.other;
         }
-        let template;
+        let template: string;
         const hasValidTemplateFile = templateFile && templateFile.trim() !== '' && fs.existsSync(templateFile) && fs.statSync(templateFile).isFile();
         if (hasValidTemplateFile) {
             template = fs.readFileSync(templateFile, 'utf8');
@@ -151,9 +151,7 @@ async function run() {
         fs.writeFileSync(outputFile, releaseNotes);
         tl.setVariable('ReleaseNotes', releaseNotes);
         tl.setResult(tl.TaskResult.Succeeded, 'Release notes generated successfully');
-    } catch (error) {
+    } catch (error: any) {
         tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);
     }
 }
-
-module.exports = run;
