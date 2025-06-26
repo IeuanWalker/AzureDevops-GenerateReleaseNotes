@@ -1,0 +1,60 @@
+{
+  "manifestVersion": 1,
+  "id": "IeuanWalker.ReleaseNotesGenerator",
+  "name": "Commit Range Release Notes Generator",
+  "version": "1.0.0",
+  "publisher": "IeuanWalker",
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "description": "Generate release notes from a range of commits in your repository.",
+  "categories": [
+    "Azure Pipelines"
+  ],
+  "icons": {
+    "default": "images/logo.png"
+  },
+  "files": [
+    {
+      "path": "CommitRangeReleaseNotesTask"
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ],
+  "content": {
+    "details": {
+      "path": "README.md"
+    }
+  },
+  "links": {
+    "home": {
+      "uri": "https://github.com/IeuanWalker/AzurePipelines"
+    },
+    "getstarted": {
+      "uri": "https://github.com/IeuanWalker/AzurePipelines/tree/main/Extensions/CommitRangeReleaseNotes"
+    },
+    "issues": {
+      "uri": "https://github.com/IeuanWalker/AzurePipelines/issues"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/IeuanWalker/AzurePipelines"
+  },
+  "contributions": [
+    {
+      "id": "commit-range-release-notes-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "CommitRangeReleaseNotesTask"
+      }
+    }
+  ]
+}
