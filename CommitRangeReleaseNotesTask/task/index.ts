@@ -34,6 +34,31 @@ async function run() {
     process.chdir(repoRoot);
     console.log(`Working directory changed to: ${process.cwd()}`);
 
+    // Validate commits exist before trying to get the range
+    console.log(`Validating commits: ${startCommit} and ${endCommit}`);
+    
+    try {
+      // Check if startCommit exists and is valid
+      await execAsync(`git rev-parse --verify ${startCommit}`);
+      console.log(`✓ Start commit ${startCommit} is valid`);
+    } catch (error) {
+      const errorMsg = `Invalid start commit: ${startCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
+      console.error(errorMsg);
+      tl.setResult(tl.TaskResult.Failed, errorMsg);
+      return;
+    }
+
+    try {
+      // Check if endCommit exists and is valid
+      await execAsync(`git rev-parse --verify ${endCommit}`);
+      console.log(`✓ End commit ${endCommit} is valid`);
+    } catch (error) {
+      const errorMsg = `Invalid end commit: ${endCommit}. Please ensure this commit/tag/branch exists and is accessible.`;
+      console.error(errorMsg);
+      tl.setResult(tl.TaskResult.Failed, errorMsg);
+      return;
+    }
+
     // Fetch commit data between provided range
     console.log(`Fetching commit data between ${startCommit} and ${endCommit}`);
     
@@ -43,7 +68,26 @@ async function run() {
       format = "--pretty=format:\"%h|%an|%ae|%at|%s|%b\"";
     }
     
-    const { stdout } = await execAsync(`git log ${startCommit}..${endCommit} ${format}`);
+    let stdout: string;
+    try {
+      const result = await execAsync(`git log ${startCommit}..${endCommit} ${format}`);
+      stdout = result.stdout;
+    } catch (error) {
+      // Try alternative syntax if the range fails
+      console.log(`Range syntax failed, trying alternative approach...`);
+      try {
+        const result = await execAsync(`git log ${startCommit}...${endCommit} ${format}`);
+        stdout = result.stdout;
+        console.log(`✓ Using symmetric difference (${startCommit}...${endCommit})`);
+      } catch (altError) {
+        const errorMsg = `Failed to get commits between ${startCommit} and ${endCommit}. Please check that these commits exist and are reachable in the current branch.`;
+        console.error(errorMsg);
+        console.error('Original error:', error);
+        console.error('Alternative error:', altError);
+        tl.setResult(tl.TaskResult.Failed, errorMsg);
+        return;
+      }
+    }
     
     if (!stdout) {
       console.log("No commits found in the specified range");
