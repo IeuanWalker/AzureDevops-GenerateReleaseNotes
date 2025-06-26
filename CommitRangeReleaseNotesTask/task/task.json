@@ -7,8 +7,8 @@
   "category": "Utility",
   "author": "Ieuan Walker",
   "version": {
-    "Major": 2,
-    "Minor": 2,
+    "Major": 3,
+    "Minor": 3,
     "Patch": 0
   },
   "instanceNameFormat": "Generate Release Notes from Commit Range",
@@ -92,6 +92,14 @@
       "defaultValue": "true",
       "required": false,
       "helpMarkDown": "If true, commit hashes will be converted to clickable links to view in Azure DevOps"
+    },
+    {
+      "name": "useDevopsApis",
+      "type": "boolean",
+      "label": "Use Azure DevOps APIs for PR/Work Item Lookup",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "If true, uses Azure DevOps REST APIs to find PRs and linked work items. If false, falls back to commit message parsing."
     }
   ],
   "execution": {

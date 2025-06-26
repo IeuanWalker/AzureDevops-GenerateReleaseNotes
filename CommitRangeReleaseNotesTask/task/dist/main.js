@@ -58,6 +58,8 @@ function run() {
             const generateWorkItemLinks = tl.getBoolInput('generateWorkItemLinks', false);
             const generatePRLinks = tl.getBoolInput('generatePRLinks', false);
             const generateCommitLinks = tl.getBoolInput('generateCommitLinks', false);
+            const useDevopsApis = tl.getBoolInput('useDevopsApis', false);
+            const systemAccessToken = tl.getVariable('System.AccessToken') || undefined;
             const teamProject = tl.getVariable('System.TeamProject') || undefined;
             const collectionUri = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
             const repositoryName = tl.getVariable('Build.Repository.Name') || undefined;
@@ -134,8 +136,30 @@ function run() {
                 return commit;
             });
             if (generatePRLinks && collectionUri && teamProject) {
-                for (const commit of commits) {
-                    commit.pullRequest = yield (0, prUtils_1.findPullRequestForCommit)(commit.hash, collectionUri, teamProject, repoRoot);
+                if (useDevopsApis && systemAccessToken && repositoryName) {
+                    const { findPullRequestForCommit, getWorkItemsForPullRequest } = yield Promise.resolve().then(() => __importStar(require('./prUtils')));
+                    for (const commit of commits) {
+                        // Use enhanced PR lookup
+                        const pr = yield findPullRequestForCommit(commit.hash, collectionUri, teamProject, repoRoot, repositoryName, systemAccessToken);
+                        if (pr) {
+                            commit.pullRequest = pr;
+                            // Fetch work items for this PR
+                            const workItems = yield getWorkItemsForPullRequest(collectionUri, teamProject, repositoryName, pr.id, systemAccessToken);
+                            if (workItems && workItems.length > 0) {
+                                commit.workItems = commit.workItems || [];
+                                for (const wi of workItems) {
+                                    if (wi.id && !commit.workItems.find((w) => w.id === wi.id)) {
+                                        commit.workItems.push(wi);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (const commit of commits) {
+                        commit.pullRequest = yield (0, prUtils_1.findPullRequestForCommit)(commit.hash, collectionUri, teamProject, repoRoot);
+                    }
                 }
             }
             const allWorkItems = [];
