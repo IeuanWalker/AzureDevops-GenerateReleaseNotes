@@ -52,7 +52,7 @@ function run() {
             const endCommit = tl.getInput('endCommit', true);
             const outputFile = tl.getInput('outputFile', true);
             const templateFile = tl.getInput('templateFile', false) || undefined;
-            const repoRoot = tl.getInput('repoRoot', false) || tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
+            const repoRoot = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
             const conventionalCommits = tl.getBoolInput('conventionalCommits', false);
             const failOnError = tl.getBoolInput('failOnError', false);
             const generateWorkItemLinks = tl.getBoolInput('generateWorkItemLinks', false);
