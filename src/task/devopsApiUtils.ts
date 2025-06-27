@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import * as tl from 'azure-pipelines-task-lib/task';
+import * as tl from 'azure-pipelines-task-lib';
 
 function joinUrl(...parts: string[]): string {
     return parts.map((p, i) => {

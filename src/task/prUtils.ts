@@ -1,7 +1,7 @@
 import util from 'util';
 import child_process from 'child_process';
 import fetch from 'node-fetch';
-import * as tl from 'azure-pipelines-task-lib/task';
+import * as tl from 'azure-pipelines-task-lib';
 
 const execAsync = util.promisify(child_process.exec);
 

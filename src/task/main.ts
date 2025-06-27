@@ -1,4 +1,4 @@
-import * as tl from 'azure-pipelines-task-lib/task';
+import * as tl from 'azure-pipelines-task-lib';
 import path from 'path';
 import fs from 'fs';
 import { validateCommit, getCommitCount, getFirstCommit, getCommitsInRange } from './utils/gitUtils';
