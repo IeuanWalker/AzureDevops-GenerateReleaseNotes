@@ -1,0 +1,36 @@
+# Release Notes
+
+Generated on {{formatDate generatedDate}} from {{startCommit}} to {{endCommit}}
+
+{{#if repositoryName}}
+Repository: **{{repositoryName}}**
+{{/if}}
+
+## Summary
+- **{{commits.length}}** commits
+{{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
+{{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
+
+{{#if workItems.length}}
+## 📋 Work Items
+
+{{#each workItems}}
+* {{workItemLink this}}
+{{/each}}
+{{/if}}
+
+{{#if pullRequests.length}}
+## 🔀 Pull Requests
+
+{{#each pullRequests}}
+* {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+{{/each}}
+{{/if}}
+
+## 📝 Commits ({{commits.length}})
+
+{{#each commits}}
+* **{{subject}}** - {{author}} ({{commitLink this}})
+{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
+{{/each}}
