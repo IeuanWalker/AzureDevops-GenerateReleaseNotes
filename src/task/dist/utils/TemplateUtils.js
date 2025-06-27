@@ -23,9 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlebars = exports.registerHelpers = void 0;
+exports.defaultTemplate = exports.registerHelpers = exports.handlebars = void 0;
 const Handlebars = __importStar(require("handlebars"));
 exports.handlebars = Handlebars;
+const fs_1 = require("fs");
+const path_1 = require("path");
 function registerHelpers() {
     Handlebars.registerHelper('workItemLink', function (workItem) {
         return new Handlebars.SafeString(`[${workItem.id}](${workItem.url})`);
@@ -47,3 +49,4 @@ function registerHelpers() {
     });
 }
 exports.registerHelpers = registerHelpers;
+exports.defaultTemplate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, 'defaultTemplate.hbs'), 'utf-8');

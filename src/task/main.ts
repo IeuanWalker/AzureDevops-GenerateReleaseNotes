@@ -84,7 +84,6 @@ export default async function run(): Promise<void> {
             }
 
             prs.push(pr);
-
         });
 
         // Get all pull requests from commits (flattened, unique by id)

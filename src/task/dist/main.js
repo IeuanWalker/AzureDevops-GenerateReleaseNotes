@@ -35,42 +35,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const tl = __importStar(require("azure-pipelines-task-lib/task"));
+const tl = __importStar(require("azure-pipelines-task-lib"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const gitUtils_1 = require("./utils/gitUtils");
-const workItemUtils_1 = require("./workItemUtils");
-const prUtils_1 = require("./prUtils");
-const templateUtils_1 = require("./templateUtils");
-const templates_1 = require("./templates");
-const commitGrouper = __importStar(require("./utils/commitGrouper"));
-(0, templateUtils_1.registerHelpers)();
+const CommitUtils_1 = require("./utils/CommitUtils");
+const PRUtils_1 = require("./utils/PRUtils");
+const TemplateUtils_1 = require("./utils/TemplateUtils");
+(0, TemplateUtils_1.registerHelpers)();
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            // Set variables
             let startCommit = tl.getInput('startCommit', true);
             const endCommit = tl.getInput('endCommit', true);
             const outputFile = tl.getInput('outputFile', true);
             const templateFile = tl.getInput('templateFile', false) || undefined;
             const repoRoot = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
-            const conventionalCommits = tl.getBoolInput('conventionalCommits', false);
-            const failOnError = tl.getBoolInput('failOnError', false);
-            const generateWorkItemLinks = tl.getBoolInput('generateWorkItemLinks', false);
-            const generatePRLinks = tl.getBoolInput('generatePRLinks', false);
-            const generateCommitLinks = tl.getBoolInput('generateCommitLinks', false);
-            const useDevopsApis = tl.getBoolInput('useDevopsApis', false);
             const systemAccessToken = tl.getVariable('System.AccessToken') || undefined;
             const teamProject = tl.getVariable('System.TeamProject') || undefined;
-            const collectionUri = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
             const repositoryName = tl.getVariable('Build.Repository.Name') || undefined;
+            // Validate repo root
             process.chdir(repoRoot);
-            if (!(yield (0, gitUtils_1.validateCommit)(startCommit, repoRoot))) {
+            // Validate start commit
+            if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
                 if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
-                    const availableCommits = yield (0, gitUtils_1.getCommitCount)(repoRoot);
+                    const availableCommits = yield (0, CommitUtils_1.getCommitCount)(repoRoot);
                     if (availableCommits < 10) {
-                        startCommit = yield (0, gitUtils_1.getFirstCommit)(repoRoot);
+                        startCommit = yield (0, CommitUtils_1.getFirstCommit)(repoRoot);
                     }
-                    if (!(yield (0, gitUtils_1.validateCommit)(startCommit, repoRoot))) {
+                    if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
                         tl.setResult(tl.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
                         return;
                     }
@@ -80,104 +73,50 @@ function run() {
                     return;
                 }
             }
-            if (!(yield (0, gitUtils_1.validateCommit)(endCommit, repoRoot))) {
+            // Validate end commit
+            if (!(yield (0, CommitUtils_1.validateCommit)(endCommit, repoRoot))) {
                 tl.setResult(tl.TaskResult.Failed, `Invalid end commit: ${endCommit}`);
                 return;
             }
-            let format = '--pretty=format:"%h|%an|%ae|%at|%s"';
-            if (conventionalCommits)
-                format = '--pretty=format:"%h|%an|%ae|%at|%s|%b"';
-            let stdout;
+            // Get list of commits
+            let commits;
             try {
-                stdout = yield (0, gitUtils_1.getCommitsInRange)(startCommit, endCommit, format, repoRoot);
+                commits = yield (0, CommitUtils_1.getCommitsInRange)(startCommit, endCommit, repoRoot);
             }
             catch (_a) {
-                if (failOnError) {
-                    tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
-                    return;
-                }
-                fs_1.default.writeFileSync(outputFile, 'No changes in this release');
+                tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
                 return;
             }
-            if (!stdout) {
-                if (failOnError) {
-                    tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
-                    return;
-                }
-                fs_1.default.writeFileSync(outputFile, 'No changes in this release');
+            if (!commits || commits.length === 0) {
+                tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
                 return;
             }
-            const commits = stdout.split('\n').filter(line => line.trim() !== '').map(line => {
-                const parts = line.split('|');
-                const timestamp = parseInt(parts[3]);
-                const date = isNaN(timestamp) ? new Date(0) : new Date(timestamp * 1000);
-                const subject = (parts[4] || '').replace(/"/g, '');
-                const body = parts.length > 5 ? parts.slice(5).join('|').replace(/"/g, '') : '';
-                const fullMessage = `${subject}\n${body}`.trim();
-                const commit = {
-                    hash: (parts[0] || '').replace(/"/g, ''),
-                    author: parts[1] || '',
-                    email: parts[2] || '',
-                    date: date.toISOString(),
-                    subject,
-                    body
-                };
-                if (generateWorkItemLinks) {
-                    commit.workItems = (0, workItemUtils_1.parseWorkItems)(fullMessage);
-                    if (collectionUri && teamProject) {
-                        commit.workItems.forEach((wi) => {
-                            wi.url = (0, workItemUtils_1.generateWorkItemUrl)(wi.id, collectionUri, teamProject);
-                        });
-                    }
-                }
-                if (generateCommitLinks && collectionUri && teamProject && repositoryName) {
-                    commit.commitUrl = `${collectionUri.replace(/\/$/, '')}/${teamProject}/_git/${repositoryName}/commit/${commit.hash}`;
-                }
-                return commit;
-            });
-            if (generatePRLinks && collectionUri && teamProject) {
-                if (useDevopsApis && systemAccessToken && repositoryName) {
-                    const { findPullRequestForCommit, getWorkItemsForPullRequest } = yield Promise.resolve().then(() => __importStar(require('./prUtils')));
-                    for (const commit of commits) {
-                        // Use enhanced PR lookup
-                        const pr = yield findPullRequestForCommit(commit.hash, collectionUri, teamProject, repoRoot, repositoryName, systemAccessToken);
-                        if (pr) {
-                            commit.pullRequest = pr;
-                            // Fetch work items for this PR
-                            const workItems = yield getWorkItemsForPullRequest(collectionUri, teamProject, repositoryName, pr.id, systemAccessToken);
-                            if (workItems && workItems.length > 0) {
-                                commit.workItems = commit.workItems || [];
-                                for (const wi of workItems) {
-                                    if (wi.id && !commit.workItems.find((w) => w.id === wi.id)) {
-                                        commit.workItems.push(wi);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (const commit of commits) {
-                        commit.pullRequest = yield (0, prUtils_1.findPullRequestForCommit)(commit.hash, collectionUri, teamProject, repoRoot);
-                    }
-                }
-            }
-            const allWorkItems = [];
-            const allPullRequests = [];
+            let prs = [];
             commits.forEach(commit => {
-                if (commit.workItems) {
-                    commit.workItems.forEach((wi) => {
-                        if (!allWorkItems.find(existing => existing.id === wi.id)) {
-                            allWorkItems.push(wi);
-                        }
-                    });
+                const mergePattern = /Merged PR (\d+): (.+)/i;
+                const match = mergePattern.exec(commit.subject);
+                if (!match) {
+                    return;
                 }
-                if (commit.pullRequest) {
-                    if (!allPullRequests.find(existing => existing.id === commit.pullRequest.id)) {
-                        allPullRequests.push(commit.pullRequest);
-                    }
+                const prId = match[1];
+                const prTitle = match[2];
+                var pr = (0, PRUtils_1.getPRInfo)(Number(prId), tl.getVariable('System.TeamFoundationCollectionUri') || '', teamProject || '', repositoryName, systemAccessToken);
+                if (pr == null) {
+                    tl.warning(`Failed to fetch PR details for PR ${prId}`);
+                    return;
                 }
+                prs.push(pr);
             });
+            // Get all pull requests from commits (flattened, unique by id)
+            const allPullRequests = commits
+                .map(c => c.pullRequest)
+                .filter(pr => pr) // remove undefined/null
+                .filter((pr, idx, arr) => arr.findIndex(x => x.id === pr.id) === idx);
+            // Get all work items from all pull requests (flattened, unique by id)
+            const allWorkItems = allPullRequests
+                .flatMap(pr => pr.workItems || [])
+                .filter((wi, idx, arr) => arr.findIndex(x => x.id === wi.id) === idx);
+            // Data for Handlebars template
             let releaseData = {
                 commits,
                 workItems: allWorkItems,
@@ -186,27 +125,21 @@ function run() {
                 endCommit,
                 generatedDate: new Date().toISOString(),
                 repositoryName,
-                teamProject,
-                collectionUri
+                teamProject
             };
-            if (conventionalCommits) {
-                const grouped = commitGrouper.groupCommitsByType(commits);
-                releaseData.features = grouped.features;
-                releaseData.fixes = grouped.fixes;
-                releaseData.docs = grouped.docs;
-                releaseData.chores = grouped.chores;
-                releaseData.other = grouped.other;
-            }
+            // Get template
             let template;
             const hasValidTemplateFile = templateFile && templateFile.trim() !== '' && fs_1.default.existsSync(templateFile) && fs_1.default.statSync(templateFile).isFile();
             if (hasValidTemplateFile) {
                 template = fs_1.default.readFileSync(templateFile, 'utf8');
             }
             else {
-                template = conventionalCommits ? templates_1.defaultConventionalTemplate : templates_1.defaultSimpleTemplate;
+                template = TemplateUtils_1.defaultTemplate;
             }
-            const templateFunc = templateUtils_1.handlebars.compile(template);
+            // Generate release notes
+            const templateFunc = TemplateUtils_1.handlebars.compile(template);
             const releaseNotes = templateFunc(releaseData);
+            // Save release notes to file
             const outputDir = path_1.default.dirname(outputFile);
             if (!fs_1.default.existsSync(outputDir)) {
                 fs_1.default.mkdirSync(outputDir, { recursive: true });
