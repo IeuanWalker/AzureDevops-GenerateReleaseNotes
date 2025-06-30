@@ -22,6 +22,22 @@ export function registerHelpers(): void {
     Handlebars.registerHelper('formatDate', function (isoDate: string) {
         return new Date(isoDate).toLocaleDateString() + ' ' + new Date(isoDate).toLocaleTimeString();
     });
+
+    // GroupBy helper
+    Handlebars.registerHelper('groupBy', function(items: any[], field: string, options: any) {
+        if (!Array.isArray(items)) return '';
+        const groups: Record<string, any[]> = {};
+        items.forEach(item => {
+            const key = item[field] || 'Other';
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(item);
+        });
+        let result = '';
+        Object.keys(groups).forEach(key => {
+            result += options.fn({ key, items: groups[key] });
+        });
+        return result;
+    });
 }
 
 export const defaultTemplate = readFileSync(

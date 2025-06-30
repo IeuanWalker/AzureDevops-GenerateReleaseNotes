@@ -47,6 +47,23 @@ function registerHelpers() {
     Handlebars.registerHelper('formatDate', function (isoDate) {
         return new Date(isoDate).toLocaleDateString() + ' ' + new Date(isoDate).toLocaleTimeString();
     });
+    // GroupBy helper
+    Handlebars.registerHelper('groupBy', function (items, field, options) {
+        if (!Array.isArray(items))
+            return '';
+        const groups = {};
+        items.forEach(item => {
+            const key = item[field] || 'Other';
+            if (!groups[key])
+                groups[key] = [];
+            groups[key].push(item);
+        });
+        let result = '';
+        Object.keys(groups).forEach(key => {
+            result += options.fn({ key, items: groups[key] });
+        });
+        return result;
+    });
 }
 exports.registerHelpers = registerHelpers;
 exports.defaultTemplate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', '..', 'defaultTemplate.hbs'), 'utf-8');

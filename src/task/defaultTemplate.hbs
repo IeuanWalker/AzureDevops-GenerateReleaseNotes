@@ -9,39 +9,28 @@ Repository: **{{repositoryName}}**
 ## Summary
 - **{{commits.length}}** commits
 {{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
-
+{{#groupBy workItems "workItemType"}}
+    - **{{key}}s**: {{items.length}}
+{{/groupBy}}
 
 
 {{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
 
 {{#if workItems.length}}
 ## 📋 Work Items
-
-{{#each workItems}}
+{{#groupBy workItems "workItemType"}}
+### {{key}}s
+{{#each items}}
 - [{{id}}]({{url}}) - {{title}}{{#if assignedTo}} by {{assignedTo.displayName}}{{/if}}
-
 {{/each}}
+{{/groupBy}}
+
 {{/if}}
 
 {{#if pullRequests.length}}
 ## 🔀 Pull Requests
 
 {{#each pullRequests}}
-- {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+- {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
 {{/each}}
 {{/if}}
-
-## 📝 Commits ({{commits.length}})
-
-{{#each commits}}
-* **{{subject}}** - {{author}} ({{commitLink this}})
-{{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
-{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}
-{{#if pullRequest.workItems.length}}  - Work items: 
-{{#each pullRequest.workItems}}
-    - Id:  [{{id}}]({{url}})
-{{/each}}
-{{/if}}
-{{/if}}
-
-{{/each}}
