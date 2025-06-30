@@ -37,7 +37,12 @@ const tl = __importStar(require("azure-pipelines-task-lib"));
 function getWorkItem(workItemId, organization, project, accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
         organization = 'cardiffcouncilict';
-        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1`;
+        let fields = [
+            "System.Title",
+            "System.WorkItemType",
+            "System.AssignedTo",
+        ];
+        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields}&api-version=7.1`;
         tl.debug(`Fetching work item ${workItemId} from ${url}`);
         const response = yield fetch(url, {
             headers: {
@@ -51,9 +56,20 @@ function getWorkItem(workItemId, organization, project, accessToken) {
         }
         tl.debug(`Response status for WorkItem ${workItemId}: ${response.status} ${response.statusText}`);
         const data = yield response.json();
+        // Log the full JSON response for debugging
+        JSON.stringify(data, null, 2)
+            .split('\n')
+            .forEach(line => tl.debug(line));
         let workItem = {
             id: data.id,
-            url: data.url
+            title: data.fields["System.Title"],
+            workItemType: data.fields["System.WorkItemType"],
+            url: data.url,
+            assignedTo: {
+                displayName: data.fields["System.AssignedTo"].displayName,
+                uniqueName: data.fields["System.AssignedTo"].uniqueName,
+                imageUrl: data.fields["System.AssignedTo"].imageUrl
+            },
         };
         return workItem;
     });

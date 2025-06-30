@@ -9,13 +9,17 @@ Repository: **{{repositoryName}}**
 ## Summary
 - **{{commits.length}}** commits
 {{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
+
+
+
 {{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
 
 {{#if workItems.length}}
 ## 📋 Work Items
 
 {{#each workItems}}
-- {{workItemLink this}}
+- [{{id}}]({{url}}) - {{title}}{{#if assignedTo}} by {{assignedTo.displayName}}{{/if}}
+
 {{/each}}
 {{/if}}
 
