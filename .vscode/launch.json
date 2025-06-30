@@ -1,0 +1,23 @@
+{
+    "version": "0.3.0",
+    "configurations":
+    [
+        {
+            "name": "Generate Release Notes Console Tester",
+            "program": "${workspaceFolder}/src/task/dist/main-console.js",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/src/task",
+            "type": "node",
+            "args": [ 
+                "--startCommit", "head", 
+                "--endCommit", "head^10",
+                "--outputFile", "${workspaceFolder}/output/release-notes.md",      // <-- Replace with your desired output file path
+                "--templateFile", "${workspaceFolder}/templates/template.md",      // <-- Replace with your template file path
+                "--repoRoot", "D:\\WS\\Azure-CardiffCouncilICT\\App",      // <-- Replace with your template file path
+                "--systemAccessToken", "YOUR_PERSONAL_ACCESS_TOKEN",               // <-- Replace with your actual token
+                "--teamProject", "YourTeamProjectName",                            // <-- Replace with your team project name
+                "--repositoryName", "YourRepositoryName"                           // <-- Replace with your repository name
+            ]
+        }
+    ]
+}

@@ -10,37 +10,50 @@ export interface PullRequest {
 }
 
 export async function getPRInfo(
-    prId: number,
-    collectionUri: string,
-    teamProject: string,
-    repositoryName?: string,
+    pullRequestId: number,
+    organization: string,
+    project: string,
+    repositoryId?: string,
     accessToken?: string) : Promise<PullRequest> {
-    
-    const prUrl = `${collectionUri.replace(/\/$/, '')}${teamProject}/_apis/git/repositories/${repositoryName}/pullRequests/${prId}?api-version=7.1-preview.1`;
-    tl.debug(`Fetching PR details for PR ${prId} from ${prUrl}`);
+    try {
 
-    const response = await fetch(prUrl, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
+        organization = 'cardiffcouncilict';
+
+        const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
+        tl.debug(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
+
+        const response = await fetch(prUrl, {
+            headers: {
+                'Authorization': `Basic ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if(!response.ok){
+            const text = await response.text();
+            tl.warning(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${text}`);
+            throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
         }
-    });
 
-    if(!response.ok){
-        tl.warning(`Failed to fetch PR details for PR ${prId}: ${response.status} ${response.statusText}`);
+        tl.debug(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
+        
+
+        const prJson = await response.json();
+        let prResult: PullRequest = {
+            id: pullRequestId,
+            title: prJson.title,
+            url: prJson._links?.web?.href || prUrl,
+            author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || ''
+        };
+        
+        // TODO: Get work items for PR
+        return prResult;
     }
-
-    const prJson = await response.json();
-    let prResult: PullRequest = {
-        id: prId,
-        title: prJson.title,
-        url: prJson._links?.web?.href || prUrl,
-        author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || ''
-    };
-    
-    // TODO: Get work items for PR
-
-    return prResult;
+    catch (error) { 
+        tl.warning(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
+        
+        throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${error}`);
+    }
 }
 
 // TODO: Remove if the above works

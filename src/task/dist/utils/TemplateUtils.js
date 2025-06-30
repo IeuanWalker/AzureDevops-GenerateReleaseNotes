@@ -49,4 +49,4 @@ function registerHelpers() {
     });
 }
 exports.registerHelpers = registerHelpers;
-exports.defaultTemplate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, 'defaultTemplate.hbs'), 'utf-8');
+exports.defaultTemplate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', '..', 'defaultTemplate.hbs'), 'utf-8');

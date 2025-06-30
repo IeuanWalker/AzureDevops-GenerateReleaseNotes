@@ -25,6 +25,6 @@ export function registerHelpers(): void {
 }
 
 export const defaultTemplate = readFileSync(
-  join(__dirname, 'defaultTemplate.hbs'),
+  join(__dirname, '..', '..', 'defaultTemplate.hbs'),
   'utf-8'
 );

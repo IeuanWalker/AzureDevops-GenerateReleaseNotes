@@ -3,22 +3,39 @@ import { GenerateReleaseNotes } from './main';
 
 export default async function run(): Promise<void> {
     try {
+        tl.debug("Starting release notes generation task...");
+
+        var argv = require("minimist")(process.argv.slice(2));
+
         // Set variables
-        let startCommit: string = tl.getInput('startCommit', true) as string;
-        const endCommit: string = tl.getInput('endCommit', true) as string;
-        const outputFile: string = tl.getInput('outputFile', true) as string;
-        const templateFile: string | undefined = tl.getInput('templateFile', false) || undefined;
-        const repoRoot: string = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
-        const systemAccessToken: string | undefined = tl.getVariable('System.AccessToken') || undefined;
-        const teamProject: string | undefined = tl.getVariable('System.TeamProject') || undefined;
-        const repositoryName: string | undefined = tl.getVariable('Build.Repository.Name') || undefined;
+        const startCommit: string = argv["startCommit"] as string;
+        const endCommit: string = argv["endCommit"] as string;
+        const outputFile: string = argv["outputFile"] as string;
+        const templateFile: string | undefined = argv["templateFile"] as string || undefined;
+        const repoRoot: string = argv["repoRoot"] as string;
+        const systemAccessToken: string = argv["systemAccessToken"];
+        const teamProject: string = argv["teamProject"];
+        const repositoryName: string = argv["repositoryName"] as string;
+
+        // Validate repoRoot exists
+        if (!tl.exist(repoRoot)) {
+            throw new Error(`Repository root directory does not exist: ${repoRoot}`);
+        }
+        if (!tl.exist(`${repoRoot}/.git`)) {
+            throw new Error(`The specified directory is not a valid Git repository: ${repoRoot}`);
+        }
+
+        // TODO: Validate devops variables - systemAccessToken, teamProject, repositoryName
+        // Test api call
+
+        const encodedSystemAccessToken = Buffer.from(`:${systemAccessToken}`).toString('base64');
 
         await GenerateReleaseNotes(
             startCommit,
             endCommit,
             outputFile,
             repoRoot,
-            systemAccessToken,
+            encodedSystemAccessToken,
             teamProject,
             repositoryName,
             templateFile
@@ -27,3 +44,11 @@ export default async function run(): Promise<void> {
         tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);
     }
 }
+
+run()
+  .then((result) => {
+    console.log("Tool exited");
+  })
+  .catch((err) => {
+    console.error(err);
+  });

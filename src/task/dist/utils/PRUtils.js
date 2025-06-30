@@ -34,29 +34,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPRInfo = void 0;
 const tl = __importStar(require("azure-pipelines-task-lib"));
-function getPRInfo(prId, collectionUri, teamProject, repositoryName, accessToken) {
+function getPRInfo(pullRequestId, organization, project, repositoryId, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        const prUrl = `${collectionUri.replace(/\/$/, '')}${teamProject}/_apis/git/repositories/${repositoryName}/pullRequests/${prId}?api-version=7.1-preview.1`;
-        tl.debug(`Fetching PR details for PR ${prId} from ${prUrl}`);
-        const response = yield fetch(prUrl, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
+        try {
+            organization = 'cardiffcouncilict';
+            const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
+            tl.debug(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
+            const response = yield fetch(prUrl, {
+                headers: {
+                    'Authorization': `Basic ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const text = yield response.text();
+                tl.warning(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${text}`);
+                throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
             }
-        });
-        if (!response.ok) {
-            tl.warning(`Failed to fetch PR details for PR ${prId}: ${response.status} ${response.statusText}`);
+            tl.debug(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
+            const prJson = yield response.json();
+            let prResult = {
+                id: pullRequestId,
+                title: prJson.title,
+                url: ((_b = (_a = prJson._links) === null || _a === void 0 ? void 0 : _a.web) === null || _b === void 0 ? void 0 : _b.href) || prUrl,
+                author: ((_c = prJson.createdBy) === null || _c === void 0 ? void 0 : _c.displayName) || ((_d = prJson.createdBy) === null || _d === void 0 ? void 0 : _d.uniqueName) || ''
+            };
+            // TODO: Get work items for PR
+            return prResult;
         }
-        const prJson = yield response.json();
-        let prResult = {
-            id: prId,
-            title: prJson.title,
-            url: ((_b = (_a = prJson._links) === null || _a === void 0 ? void 0 : _a.web) === null || _b === void 0 ? void 0 : _b.href) || prUrl,
-            author: ((_c = prJson.createdBy) === null || _c === void 0 ? void 0 : _c.displayName) || ((_d = prJson.createdBy) === null || _d === void 0 ? void 0 : _d.uniqueName) || ''
-        };
-        // TODO: Get work items for PR
-        return prResult;
+        catch (error) {
+            tl.warning(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
+            throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${error}`);
+        }
     });
 }
 exports.getPRInfo = getPRInfo;

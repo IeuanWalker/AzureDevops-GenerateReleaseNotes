@@ -57,32 +57,36 @@ export async function GenerateReleaseNotes(
         return;
     }
 
-    let prs = [];
-    commits.forEach(commit => {
+    await Promise.all(commits.map(async commit => {
         const mergePattern = /Merged PR (\d+): (.+)/i;
         const match = mergePattern.exec(commit.subject);
 
-        if(!match){
-            return;
+        if (!match) {
+            tl.debug(`Commit ${commit.subject} does not match PR merge pattern`);
+            return null;
         }
 
         const prId = match[1];
         const prTitle = match[2];
 
-        var pr = getPRInfo(
-            Number(prId), 
-            tl.getVariable('System.TeamFoundationCollectionUri') || '', 
-            teamProject || '', 
-            repositoryName, 
-            systemAccessToken);
+        try {
+            const pr = await getPRInfo(
+                Number(prId),
+                '',
+                teamProject || '',
+                repositoryName,
+                systemAccessToken
+            );
+            if (pr == null) {
+                tl.warning(`Failed to fetch PR details for PR ${prId}`);
+            }
 
-        if(pr == null){
-            tl.warning(`Failed to fetch PR details for PR ${prId}`);
-            return;
+            commit.pullRequest = pr;
+        } catch (err) {
+            tl.warning(`Error fetching PR details for PR ${prId}: ${err}`);
+            return null;
         }
-
-        prs.push(pr);
-    });
+    }));
 
     // Get all pull requests from commits (flattened, unique by id)
     const allPullRequests = commits

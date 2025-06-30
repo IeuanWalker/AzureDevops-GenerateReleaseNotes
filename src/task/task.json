@@ -48,10 +48,10 @@
   ],
   "execution": {
     "Node16": {
-      "target": "dist/index.js"
+      "target": "dist/main-task.js"
     },
     "Node20": {
-      "target": "dist/index.js"
+      "target": "dist/main-task.js"
     }
   }
 }
