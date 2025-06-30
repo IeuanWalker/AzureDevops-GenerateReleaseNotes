@@ -54,3 +54,10 @@ function run() {
     });
 }
 exports.default = run;
+run()
+    .then((result) => {
+    console.log("Tool exited");
+})
+    .catch((err) => {
+    console.error(err);
+});

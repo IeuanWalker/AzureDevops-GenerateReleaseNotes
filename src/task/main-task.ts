@@ -27,3 +27,11 @@ export default async function run(): Promise<void> {
         tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);
     }
 }
+
+run()
+  .then((result) => {
+    console.log("Tool exited");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
