@@ -15,7 +15,7 @@ Repository: **{{repositoryName}}**
 ## 📋 Work Items
 
 {{#each workItems}}
-* {{workItemLink this}}
+- {{workItemLink this}}
 {{/each}}
 {{/if}}
 
@@ -23,7 +23,7 @@ Repository: **{{repositoryName}}**
 ## 🔀 Pull Requests
 
 {{#each pullRequests}}
-* {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
+- {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -32,5 +32,12 @@ Repository: **{{repositoryName}}**
 {{#each commits}}
 * **{{subject}}** - {{author}} ({{commitLink this}})
 {{#if workItems.length}}  - Work Items: {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}
-{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}{{/if}}
+{{#if pullRequest}}  - Pull Request: {{pullRequestLink pullRequest}}
+{{#if pullRequest.workItems.length}}  - Work items: 
+{{#each pullRequest.workItems}}
+    - Id:  [{{id}}]({{url}})
+{{/each}}
+{{/if}}
+{{/if}}
+
 {{/each}}

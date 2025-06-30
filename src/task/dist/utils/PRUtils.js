@@ -34,11 +34,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPRInfo = void 0;
 const tl = __importStar(require("azure-pipelines-task-lib"));
+const WorkItemUtils_1 = require("./WorkItemUtils");
 function getPRInfo(pullRequestId, organization, project, repositoryId, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            organization = 'cardiffcouncilict';
             const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
             tl.debug(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
             const response = yield fetch(prUrl, {
@@ -58,8 +58,18 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
                 id: pullRequestId,
                 title: prJson.title,
                 url: ((_b = (_a = prJson._links) === null || _a === void 0 ? void 0 : _a.web) === null || _b === void 0 ? void 0 : _b.href) || prUrl,
-                author: ((_c = prJson.createdBy) === null || _c === void 0 ? void 0 : _c.displayName) || ((_d = prJson.createdBy) === null || _d === void 0 ? void 0 : _d.uniqueName) || ''
+                author: ((_c = prJson.createdBy) === null || _c === void 0 ? void 0 : _c.displayName) || ((_d = prJson.createdBy) === null || _d === void 0 ? void 0 : _d.uniqueName) || '',
+                workItems: []
             };
+            yield Promise.all(prJson.workItemRefs.map((workItemRef) => __awaiter(this, void 0, void 0, function* () {
+                tl.debug(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
+                let workItem = yield (0, WorkItemUtils_1.getWorkItem)(workItemRef.id, organization, project, accessToken);
+                if (workItem == null) {
+                    tl.warning(`Failed to fetch WorkItem details ${workItem.id}`);
+                    return;
+                }
+                prResult.workItems.push(workItem);
+            })));
             // TODO: Get work items for PR
             return prResult;
         }

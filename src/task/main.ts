@@ -70,15 +70,16 @@ export async function GenerateReleaseNotes(
         const prTitle = match[2];
 
         try {
-            const pr = await getPRInfo(
+            let pr = await getPRInfo(
                 Number(prId),
-                '',
-                teamProject || '',
+                'cardiffcouncilict',
+                teamProject,
                 repositoryName,
                 systemAccessToken
             );
             if (pr == null) {
                 tl.warning(`Failed to fetch PR details for PR ${prId}`);
+                return;
             }
 
             commit.pullRequest = pr;
@@ -110,6 +111,11 @@ export async function GenerateReleaseNotes(
         repositoryName,
         teamProject
     };
+
+
+JSON.stringify(releaseData, null, 2)
+  .split('\n')
+  .forEach(line => tl.debug(line));
 
     // Get template
     let template: string;

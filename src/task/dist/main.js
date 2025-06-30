@@ -82,7 +82,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
             return;
         }
-        let prs = yield Promise.all(commits.map((commit) => __awaiter(this, void 0, void 0, function* () {
+        yield Promise.all(commits.map((commit) => __awaiter(this, void 0, void 0, function* () {
             const mergePattern = /Merged PR (\d+): (.+)/i;
             const match = mergePattern.exec(commit.subject);
             if (!match) {
@@ -92,19 +92,18 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             const prId = match[1];
             const prTitle = match[2];
             try {
-                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), '', teamProject || '', repositoryName, systemAccessToken);
+                let pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), 'cardiffcouncilict', teamProject, repositoryName, systemAccessToken);
                 if (pr == null) {
                     tl.warning(`Failed to fetch PR details for PR ${prId}`);
+                    return;
                 }
                 commit.pullRequest = pr;
-                return pr;
             }
             catch (err) {
                 tl.warning(`Error fetching PR details for PR ${prId}: ${err}`);
                 return null;
             }
         })));
-        prs = prs.filter(pr => pr != null);
         // Get all pull requests from commits (flattened, unique by id)
         const allPullRequests = commits
             .map(c => c.pullRequest)
@@ -114,7 +113,6 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
         const allWorkItems = allPullRequests
             .flatMap(pr => pr.workItems || [])
             .filter((wi, idx, arr) => arr.findIndex(x => x.id === wi.id) === idx);
-        // todo: outpute all commits
         // Data for Handlebars template
         let releaseData = {
             commits,
@@ -126,6 +124,9 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             repositoryName,
             teamProject
         };
+        JSON.stringify(releaseData, null, 2)
+            .split('\n')
+            .forEach(line => tl.debug(line));
         // Get template
         let template;
         const hasValidTemplateFile = templateFile && templateFile.trim() !== '' && fs_1.default.existsSync(templateFile) && fs_1.default.statSync(templateFile).isFile();

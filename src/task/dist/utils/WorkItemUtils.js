@@ -32,33 +32,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateWorkItemUrl = exports.getWorkItemsForPullRequest = void 0;
+exports.generateWorkItemUrl = exports.getWorkItem = void 0;
 const tl = __importStar(require("azure-pipelines-task-lib"));
-function getWorkItemsForPullRequest(collectionUri, teamProject, repositoryName, prId, accessToken) {
+function getWorkItem(workItemId, organization, project, accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = `${collectionUri.replace(/\/$/, '')}${teamProject}/_apis/git/repositories/${repositoryName}/pullRequests/${prId}/workitems?api-version=7.1-preview.1`;
-        tl.debug(`Fetching work items for PR ${prId} from ${url}`);
-        const res = yield fetch(url, {
+        organization = 'cardiffcouncilict';
+        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1`;
+        tl.debug(`Fetching work item ${workItemId} from ${url}`);
+        const response = yield fetch(url, {
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Basic ${accessToken}`,
                 'Content-Type': 'application/json'
             }
         });
-        if (!res.ok) {
-            tl.warning(`Failed to fetch work items for PR ${prId}: ${res.status} ${res.statusText}`);
-            return [];
+        if (!response.ok) {
+            tl.warning(`Failed to fetch work items ${workItemId}: ${response.status} ${response.statusText}`);
+            return;
         }
-        const data = yield res.json();
-        return (data.value || []).map((wi) => {
-            var _a, _b, _c, _d;
-            return ({
-                id: ((_a = wi.id) === null || _a === void 0 ? void 0 : _a.toString()) || wi.id || ((_b = wi.target) === null || _b === void 0 ? void 0 : _b.id),
-                url: wi.url || ((_d = (_c = wi._links) === null || _c === void 0 ? void 0 : _c.web) === null || _d === void 0 ? void 0 : _d.href) || ''
-            });
-        });
+        tl.debug(`Response status for WorkItem ${workItemId}: ${response.status} ${response.statusText}`);
+        const data = yield response.json();
+        let workItem = {
+            id: data.id,
+            url: data.url
+        };
+        return workItem;
     });
 }
-exports.getWorkItemsForPullRequest = getWorkItemsForPullRequest;
+exports.getWorkItem = getWorkItem;
 function generateWorkItemUrl(workItemId, collectionUri, teamProject) {
     if (!collectionUri || !teamProject)
         return `#${workItemId}`;

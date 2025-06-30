@@ -45,7 +45,7 @@ function registerHelpers() {
         return hash.substring(0, length);
     });
     Handlebars.registerHelper('formatDate', function (isoDate) {
-        return new Date(isoDate).toLocaleDateString();
+        return new Date(isoDate).toLocaleDateString() + ' ' + new Date(isoDate).toLocaleTimeString();
     });
 }
 exports.registerHelpers = registerHelpers;
