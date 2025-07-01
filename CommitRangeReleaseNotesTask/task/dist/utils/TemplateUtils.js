@@ -26,8 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultTemplate = exports.registerHelpers = exports.handlebars = void 0;
 const Handlebars = __importStar(require("handlebars"));
 exports.handlebars = Handlebars;
-const fs_1 = require("fs");
-const path_1 = require("path");
+const fs = require("fs");
+const path = require("path");
 function registerHelpers() {
     Handlebars.registerHelper('workItemLink', function (workItem) {
         return new Handlebars.SafeString(`[${workItem.id}](${workItem.url})`);
@@ -66,4 +66,4 @@ function registerHelpers() {
     });
 }
 exports.registerHelpers = registerHelpers;
-exports.defaultTemplate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, '..', '..', 'defaultTemplate.hbs'), 'utf-8');
+exports.defaultTemplate = fs.readFileSync(path.join(__dirname, '..', '..', 'defaultTemplate.hbs'), 'utf-8');

@@ -1,4 +1,4 @@
-import * as tl from 'azure-pipelines-task-lib';
+import tl = require("azure-pipelines-task-lib/task");
 import { GenerateReleaseNotes } from './main';
 
 export default async function run(): Promise<void> {

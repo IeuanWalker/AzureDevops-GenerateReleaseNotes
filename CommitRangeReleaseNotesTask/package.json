@@ -4,7 +4,8 @@
   "description": "Azure DevOps extension to generate release notes from a commit range",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cd task && npm install",
+    "build-ci": "tsc && cd task && npm ci",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ieuan Walker",

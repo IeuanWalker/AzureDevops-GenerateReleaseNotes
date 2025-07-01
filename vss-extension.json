@@ -2,19 +2,49 @@
   "manifestVersion": 1,
   "id": "IeuanWalker-ReleaseNotesGenerator",
   "name": "Commit Range Release Notes Generator",
-  "version": "5.6.0",
+  "version": "5.8.0",
   "publisher": "IeuanWalker",
+  "CustomerQnASupport": {
+    "enableqna":"true",
+    "url": "https://github.com/IeuanWalker/CommitRangeReleaseNotes/issues"
+  },
+
+  "description": "Generate release notes from a range of commits in your repository.",
+  "categories": [
+    "Azure Pipelines"
+  ],
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
-  "description": "Generate release notes from a range of commits in your repository.",
-  "categories": [
-    "Azure Pipelines"
-  ],
+  "tags": [
+    "Release",
+    "Package",
+    "Publish"
+  ],   
+  "branding": {
+    "color": "#f97923",
+    "theme": "dark"
+  },
   "icons": {
     "default": "images/logo.png"
+  },
+  "links": {
+    "home": {
+      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes"
+    },
+    "getstarted": {
+      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes"
+    },
+    "issues": {
+      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes/issues"
+    }
+  },
+  "content": {
+    "details": {
+      "path": "README.md"
+    }
   },
   "files": [
     {
@@ -25,22 +55,6 @@
       "addressable": true
     }
   ],
-  "content": {
-    "details": {
-      "path": "README.md"
-    }
-  },
-  "links": {
-    "home": {
-      "uri": "https://github.com/IeuanWalker/AzurePipelines"
-    },
-    "getstarted": {
-      "uri": "https://github.com/IeuanWalker/AzurePipelines/tree/main/Extensions/CommitRangeReleaseNotes"
-    },
-    "issues": {
-      "uri": "https://github.com/IeuanWalker/AzurePipelines/issues"
-    }
-  },
   "repository": {
     "type": "git",
     "uri": "https://github.com/IeuanWalker/AzurePipelines"

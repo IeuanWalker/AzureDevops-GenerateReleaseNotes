@@ -1,6 +1,6 @@
 # Release Notes
 
-Generated on 01/07/2025 10:17:24 from head~10 to head
+Generated on 01/07/2025 10:53:13 from head~10 to head
 
 Repository: **CardiffMobileApp**
 
@@ -25,9 +25,9 @@ Repository: **CardiffMobileApp**
 - [29426](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/29426) - General - Accessibility - Error Message Colour - Dev by Coates, Sarah
 - [44853](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44853) - Operational Support - Suggestions from the public - Map key - Highways by Cuthbert, Kyle
 - [44547](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44547) - Technical - Remove AutoMapper Package - Council Tax Api - Dev by Walker, Ieuan
-- [44503](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44503) - Operational Support - Suggestions from the public - Map key - Graffiti by Cuthbert, Kyle
-- [44506](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44506) - Operational Support - Suggestions from the public - Map key - Street Cleansing by Cuthbert, Kyle
 - [44508](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44508) - Operational Support - Suggestions from the public - Map key - Flytipping by Cuthbert, Kyle
+- [44506](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44506) - Operational Support - Suggestions from the public - Map key - Street Cleansing by Cuthbert, Kyle
+- [44503](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44503) - Operational Support - Suggestions from the public - Map key - Graffiti by Cuthbert, Kyle
 
 
 ## 🔀 Pull Requests
@@ -40,5 +40,5 @@ Repository: **CardiffMobileApp**
 - [PR 6808](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6808?includeWorkItemRefs=true&api-version=7.1) - added map key to highways and corrected semantic property description by Cuthbert, Kyle ([44853](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44853))
 - [PR 6810](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6810?includeWorkItemRefs=true&api-version=7.1) - Added comment to update in the future by Walker, Ieuan ([44547](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44547))
 - [PR 6806](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6806?includeWorkItemRefs=true&api-version=7.1) - Replace mapkey_marker.svg with mapkey_reported.svg by Cuthbert, Kyle ([44851](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44851))
-- [PR 6800](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6800?includeWorkItemRefs=true&api-version=7.1) - Add MapKey by Cuthbert, Kyle ([44503](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44503), [44506](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44506), [44508](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44508))
+- [PR 6800](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6800?includeWorkItemRefs=true&api-version=7.1) - Add MapKey by Cuthbert, Kyle ([44508](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44508), [44506](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44506), [44503](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44503))
 - [PR 6802](https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_apis/git/repositories/CardiffMobileApp/pullRequests/6802?includeWorkItemRefs=true&api-version=7.1) - Fix: Infinite loader when clicking next before the map has loaded by Walker, Ieuan ([44806](https://dev.azure.com/cardiffcouncilict/_apis/wit/workItems/44806))

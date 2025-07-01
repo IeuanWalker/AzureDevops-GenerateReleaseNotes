@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "types": ["node"],
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types", "./task/node_modules/@types"],
+    "skipDefaultLibCheck": true
   },
-  "exclude": ["node_modules", "task/**/*.js"]
+  "exclude": ["node_modules", "task/**/*.js", "task/node_modules"]
 }
