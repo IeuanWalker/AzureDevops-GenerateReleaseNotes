@@ -36,7 +36,7 @@ function run() {
             // TODO: Validate devops variables - systemAccessToken, teamProject, repositoryName
             // Test api call
             const encodedSystemAccessToken = Buffer.from(`:${systemAccessToken}`).toString('base64');
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, encodedSystemAccessToken, project, apiUrl, repositoryId, templateFile);
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, `Basic ${encodedSystemAccessToken}`, project, apiUrl, repositoryId, templateFile);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

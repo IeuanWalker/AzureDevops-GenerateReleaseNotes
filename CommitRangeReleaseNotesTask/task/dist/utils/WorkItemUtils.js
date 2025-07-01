@@ -23,7 +23,7 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
         try {
             const response = yield fetch(url, {
                 headers: {
-                    'Authorization': `Basic ${accessToken}`,
+                    'Authorization': accessToken,
                     'Content-Type': 'application/json'
                 }
             });

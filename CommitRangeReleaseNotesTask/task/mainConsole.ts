@@ -36,7 +36,7 @@ export default async function run(): Promise<void> {
             endCommit,
             outputFile,
             repoRoot,
-            encodedSystemAccessToken,
+            `Basic ${encodedSystemAccessToken}`,
             project,
             apiUrl,
             repositoryId,

@@ -20,7 +20,7 @@ function getPRInfo(pullRequestId, apiUrl, project, repositoryId, accessToken) {
             console.log(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
             const response = yield fetch(prUrl, {
                 headers: {
-                    'Authorization': `Basic ${accessToken}`,
+                    'Authorization': accessToken,
                     'Content-Type': 'application/json'
                 }
             });

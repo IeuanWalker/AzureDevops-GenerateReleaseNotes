@@ -25,7 +25,7 @@ function run() {
             const project = tl.getVariable('System.TeamProject') || undefined;
             const apiUrl = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
             const repositoryId = tl.getVariable('Build.Repository.Name') || undefined;
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, project, apiUrl, repositoryId, templateFile);
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, `Bearer ${systemAccessToken}`, project, apiUrl, repositoryId, templateFile);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

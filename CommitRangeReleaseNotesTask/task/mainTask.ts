@@ -21,7 +21,7 @@ export default async function run(): Promise<void> {
             endCommit,
             outputFile,
             repoRoot,
-            systemAccessToken,
+            `Bearer ${systemAccessToken}`,
             project,
             apiUrl,
             repositoryId,

@@ -40,7 +40,7 @@ export async function getWorkItem(
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': `Basic ${accessToken}`,
+                'Authorization': accessToken,
                 'Content-Type': 'application/json'
             }
         });

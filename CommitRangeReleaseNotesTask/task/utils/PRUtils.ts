@@ -22,7 +22,7 @@ export async function getPRInfo(
 
         const response = await fetch(prUrl, {
             headers: {
-                'Authorization': `Basic ${accessToken}`,
+                'Authorization': accessToken,
                 'Content-Type': 'application/json'
             }
         });
