@@ -40,13 +40,17 @@ The extension analyses Git commits in a specified range, looking for merge commi
 ## Parameters
 | Parameter | Description | Required | Default |
 |-----------|-------------|----------|---------|
-| `startCommit` | SHA or reference for the start of commit range (exclusive) | ✅ | - |
-| `endCommit` | SHA or reference for the end of commit range (inclusive) | ✅ | `HEAD` |
+| `startCommit` | Commit reference for the start of the range (exclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | - |
+| `endCommit` | Commit reference for the end of the range (inclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | `HEAD` |
 | `outputFile` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/ReleaseNotes.md` |
 | `templateFile` | Path to custom Handlebars template file | ❌ | Built-in template |
 
-## Sample Output
+### Supported commit reference formats for `startCommit` and `endCommit`
+- Commit hash (e.g., `a1b2c3d`)
+- Git tag (e.g., `v1.0.0`)
+- `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
+## Sample Output
 ```markdown
 # Release Notes
 
