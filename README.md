@@ -1,5 +1,7 @@
 # Commit Range Release Notes Generator
-An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyzes merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
+An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyses merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
+
+Only works with squash merges, as it operates based on the commit message. i.e it finds the PR ID from the commit message in the following format `Merged PR {id}: {title}`. It then uses Azure DevOps APIs to get the PR data and the attached work items.
 
 ## Features
 - **Git-based Analysis**: Extract release notes directly from Git commit history
@@ -8,7 +10,7 @@ An Azure DevOps extension that generates release notes from commit ranges in Git
 - **Flexible Templates**: Customizable Handlebars templates with built-in helpers
 
 ## How It Works
-The extension analyzes Git commits in a specified range, looking for merge commits that follow the pattern `Merged PR {id}: {title}`. For each identified pull request, it:
+The extension analyses Git commits in a specified range, looking for merge commits that follow the pattern `Merged PR {id}: {title}`. For each identified pull request, it:
 
 1. Fetches PR details from Azure DevOps API
 2. Retrieves associated work items
@@ -59,7 +61,7 @@ Repository: **MyProject**
     - **Bugs**: 3
 
 ## 📋 Work Items
-### User Storys
+### User Stories
 - [1234](https://dev.azure.com/org/project/_workitems/edit/1234) - Add user authentication by John Doe
 - [1235](https://dev.azure.com/org/project/_workitems/edit/1235) - Implement dashboard by Jane Smith
 
@@ -74,7 +76,7 @@ Repository: **MyProject**
 - [PR 44](https://dev.azure.com/org/project/_git/pullrequest/44) - Bug fixes and improvements by Bob Wilson ([1237](https://dev.azure.com/org/project/_workitems/edit/1237), [1238](https://dev.azure.com/org/project/_workitems/edit/1238))
 ```
 
-## Template Customization
+## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
 
 ### Template Data Structure
@@ -173,16 +175,20 @@ interface WorkItem {
 ```
 
 ## Console Usage
-The task can also be run from the command line for testing:
+The task can also be run from the command line for testing.
 
-```bash
-node dist/mainConsole.js \
+- Clone the repo
+- Run `npm run build`, in the `CommitRangeReleaseNotesTask` folder
+- Run the following command from the folder `CommitRangeReleaseNotesTask\task\dist`
+```cmd
+node ./mainConsole.js \
   --startCommit "v1.0.0" \
   --endCommit "HEAD" \
-  --outputFile "release-notes.md" \
-  --repoRoot "/path/to/repo" \
+  --outputFile "C:\release-notes.md" \
+  --repoRoot "\path\to\repo" \
   --systemAccessToken "your-token" \
   --project "your-project" \
   --repositoryId "your-repo" \
   --apiUrl "https://dev.azure.com/your-org"
 ```
+> To test locally, the `systemAccessToken` will need to be a [Personal Access Token (PAT)](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows).
