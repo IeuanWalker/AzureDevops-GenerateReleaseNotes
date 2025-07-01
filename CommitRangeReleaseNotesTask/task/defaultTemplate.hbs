@@ -1,33 +1,39 @@
 # Release Notes
 
-Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from {{startCommit}} to {{endCommit}}
+_Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}** to **{{endCommit}}**_
 
-Repository: **{{repositoryId}}**
+**Repository:** {{repositoryId}}
 
-## Summary  
-- **{{pullRequests.length}}** Pull requests
-{{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
+---
+
+## 📊 Summary
+**{{pullRequests.length}}** Pull Requests
+{{#if workItems.length}}- **{{workItems.length}}** Work Items{{/if}}
 {{#groupBy workItems "workItemType"}}
-    - **{{key}}s**: {{items.length}}
+  - **{{key}}s:** {{items.length}}
 {{/groupBy}}
 
-{{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
+---
 
 {{#if workItems.length}}
 ## 📋 Work Items
+| ID | Title | Type | Assignee |
+|----|-------|------|----------|
 {{#groupBy workItems "workItemType"}}
-### {{key}}s
-{{#each items}}
-- [{{id}}]({{url}}) - {{title}}{{#if assignedTo}} _by {{assignedTo.displayName}}_{{/if}}
-{{/each}}
+  {{#each items}}
+| [{{id}}]({{url}}) | {{title}} | {{../key}} | {{#if assignedTo}}{{assignedTo.displayName}}{{else}}—{{/if}} |
+  {{/each}}
 {{/groupBy}}
 
 {{/if}}
 
 {{#if pullRequests.length}}
-## 🔀 Pull Requests
 
+## 🔀 Pull Requests
+| ID | Title | Author | Linked Work Items |
+|----|-------|--------|------------------|
 {{#each pullRequests}}
-- [{{id}}](url) - {{title}}{{#if author}} _by {{author}}_{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
+| [{{id}}]({{url}}) | {{title}} | {{#if author}}{{author}}{{else}}—{{/if}} | {{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}} |
 {{/each}}
+
 {{/if}}
