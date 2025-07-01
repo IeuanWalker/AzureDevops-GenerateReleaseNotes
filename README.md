@@ -1,16 +1,18 @@
 # Commit Range Release Notes Generator
-
-This extension provides a task for Azure DevOps pipelines that generates release notes based on a range of commits in your repository. It offers functionality similar to the popular GenerateReleaseNotes extension by rfennell, but works directly from commit history rather than the release environment.
+An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyzes merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
 
 ## Features
+- **Git-based Analysis**: Extract release notes directly from Git commit history
+- **Pull Request Detection**: Automatically identifies merge commits and fetches PR details via Azure DevOps API
+- **Work Item Integration**: Discovers work items linked to pull requests and includes them in release notes
+- **Flexible Templates**: Customizable Handlebars templates with built-in helpers
 
-- **Commit-based**: Generate release notes from any commit range, not just releases
-- **Work Item Integration**: Automatically parse and link work items from commit messages (AB#123, #123, etc.)
-- **Pull Request Detection**: Find and link pull requests associated with commits
-- **Clickable Links**: Generate Azure DevOps links for commits, work items, and pull requests
-- **Conventional Commits**: Support for grouping commits by type (features, fixes, docs, etc.)
-- **Flexible Templates**: Customizable output using Handlebars templates with built-in helpers
-- **Robust Error Handling**: Graceful handling of shallow clones and missing history
+## How It Works
+The extension analyzes Git commits in a specified range, looking for merge commits that follow the pattern `Merged PR {id}: {title}`. For each identified pull request, it:
+
+1. Fetches PR details from Azure DevOps API
+2. Retrieves associated work items
+3. Generates formatted release notes using Handlebars templates
 
 ## Task Usage
 
@@ -18,248 +20,169 @@ This extension provides a task for Azure DevOps pipelines that generates release
 ```yaml
 - task: CommitRangeReleaseNotes@1
   inputs:
-    startCommit: 'v1.0.0'               # Previous release tag/commit
-    endCommit: 'HEAD'                   # Current release (defaults to HEAD)
+    startCommit: 'v1.0.0'
+    endCommit: 'HEAD'
     outputFile: '$(Build.ArtifactStagingDirectory)/ReleaseNotes.md'
 ```
 
-### Full Featured Usage
+### With Custom Template
 ```yaml
 - task: CommitRangeReleaseNotes@1
   inputs:
     startCommit: 'v1.0.0'
-    endCommit: 'HEAD'
-    outputFile: '$(Build.ArtifactStagingDirectory)/ReleaseNotes.md'
-    conventionalCommits: true           # Enable commit type grouping
-    generateWorkItemLinks: true         # Parse and link work items
-    generatePRLinks: true               # Find and link pull requests
-    generateCommitLinks: true           # Generate clickable commit links
-    templateFile: 'templates/release-notes.hbs'  # Custom template
+    endCommit: 'v1.1.0'
+    outputFile: 'release-notes.md'
+    templateFile: 'templates/custom-release-notes.hbs'
 ```
 
 ## Parameters
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `startCommit` | The SHA or reference (like a tag) for the start of the commit range (exclusive) | *Required* |
-| `endCommit` | The SHA or reference (like a tag) for the end of the commit range (inclusive) | `HEAD` |
-| `outputFile` | Path where the generated release notes will be saved | *Required* |
-| `templateFile` | (Optional) Path to a Handlebars template file for formatting the release notes | Default template |
-| `repoRoot` | (Optional) Path to the root of the git repository | `$(System.DefaultWorkingDirectory)` |
-| `conventionalCommits` | Enable to group commits by conventional commit types | `false` |
-| `generateWorkItemLinks` | Parse commit messages for work item references and generate links | `true` |
-| `generatePRLinks` | Attempt to find and link pull requests associated with commits | `true` |
-| `generateCommitLinks` | Generate clickable links for commit hashes | `true` |
-| `failOnError` | If true, the task will fail if any errors occur during generation | `true` |
-
-## Work Item Integration
-
-The task automatically parses commit messages for work item references in these formats:
-- `AB#123` - Azure Boards style
-- `#123` - Simple hash style  
-- `work item 123` - Natural language style
-
-These are converted to clickable links like: `[123](https://dev.azure.com/org/project/_workitems/edit/123)`
+| Parameter | Description | Required | Default |
+|-----------|-------------|----------|---------|
+| `startCommit` | SHA or reference for the start of commit range (exclusive) | ✅ | - |
+| `endCommit` | SHA or reference for the end of commit range (inclusive) | ✅ | `HEAD` |
+| `outputFile` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/ReleaseNotes.md` |
+| `templateFile` | Path to custom Handlebars template file | ❌ | Built-in template |
 
 ## Sample Output
 
 ```markdown
 # Release Notes
 
-Generated on 12/26/2024 from v1.0.0 to HEAD
+Generated on 7/1/2025 from v1.0.0 to HEAD
 
 Repository: **MyProject**
 
 ## Summary
-- **15** commits
-- **3** work items
-- **2** pull requests
+- **3** Pull requests
+- **5** work items
+    - **Tasks**: 2
+    - **Bugs**: 3
 
 ## 📋 Work Items
+### User Storys
+- [1234](https://dev.azure.com/org/project/_workitems/edit/1234) - Add user authentication by John Doe
+- [1235](https://dev.azure.com/org/project/_workitems/edit/1235) - Implement dashboard by Jane Smith
 
-* [1234](https://dev.azure.com/org/project/_workitems/edit/1234)
-* [1235](https://dev.azure.com/org/project/_workitems/edit/1235)
+### Bugs
+- [1236](https://dev.azure.com/org/project/_workitems/edit/1236) - Fix login validation by John Doe
+- [1237](https://dev.azure.com/org/project/_workitems/edit/1237) - Resolve timeout issues by Jane Smith
+- [1238](https://dev.azure.com/org/project/_workitems/edit/1238) - Fix null reference exception by Bob Wilson
 
 ## 🔀 Pull Requests
-
-* [PR 42](https://dev.azure.com/org/project/_git/pullrequest/42) - Add new feature
-
-## 🚀 Features
-
-* **Add user authentication** - John Doe ([abc123](https://dev.azure.com/org/project/_git/repo/commit/abc123))
-  - Work Items: [1234](https://dev.azure.com/org/project/_workitems/edit/1234)
-  - Pull Request: [PR 42](https://dev.azure.com/org/project/_git/pullrequest/42)
-
-## 🐛 Bug Fixes
-
-* **Fix login validation** - Jane Smith ([def456](https://dev.azure.com/org/project/_git/repo/commit/def456))
-  - Work Items: [1235](https://dev.azure.com/org/project/_workitems/edit/1235)
+- [PR 42](https://dev.azure.com/org/project/_git/pullrequest/42) - Add user authentication feature by John Doe ([1234](https://dev.azure.com/org/project/_workitems/edit/1234), [1236](https://dev.azure.com/org/project/_workitems/edit/1236))
+- [PR 43](https://dev.azure.com/org/project/_git/pullrequest/43) - Implement new dashboard by Jane Smith ([1235](https://dev.azure.com/org/project/_workitems/edit/1235))
+- [PR 44](https://dev.azure.com/org/project/_git/pullrequest/44) - Bug fixes and improvements by Bob Wilson ([1237](https://dev.azure.com/org/project/_workitems/edit/1237), [1238](https://dev.azure.com/org/project/_workitems/edit/1238))
 ```
 
 ## Template Customization
+The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
 
-You can provide your own Handlebars template to format the release notes. The template has access to the following data:
+### Template Data Structure
+Your template has access to the following data:
 
-### Available Data Objects
+```typescript
+interface TemplateData {
+  commits: Commit[];
+  workItems: WorkItem[];
+  pullRequests: PullRequest[];
+  startCommit: string;
+  endCommit: string;
+  generatedDate: string;
+  repositoryId?: string;
+  project?: string;
+}
 
-```json
-{
-  "commits": [
-    {
-      "hash": "abc123",
-      "author": "John Doe", 
-      "email": "john@example.com",
-      "date": "2024-12-26T10:00:00.000Z",
-      "subject": "feat: add user authentication",
-      "body": "Implemented OAuth 2.0 authentication\n\nCloses AB#1234",
-      "workItems": [{"id": "1234", "url": "https://dev.azure.com/..."}],
-      "commitUrl": "https://dev.azure.com/.../commit/abc123",
-      "pullRequest": {"id": "42", "title": "Add authentication", "url": "..."}
-    }
-  ],
-  "workItems": [{"id": "1234", "url": "https://dev.azure.com/..."}],
-  "pullRequests": [{"id": "42", "title": "Add authentication", "url": "..."}],
-  "features": [...],    // When conventionalCommits: true
-  "fixes": [...],       // When conventionalCommits: true  
-  "docs": [...],        // When conventionalCommits: true
-  "chores": [...],      // When conventionalCommits: true
-  "other": [...],       // When conventionalCommits: true
-  "startCommit": "v1.0.0",
-  "endCommit": "HEAD",
-  "generatedDate": "2024-12-26T12:00:00.000Z",
-  "repositoryName": "MyProject",
-  "teamProject": "MyTeamProject",
-  "collectionUri": "https://dev.azure.com/myorg/"
+interface Commit {
+  hash: string;
+  author: string;
+  email: string;
+  date: string;
+  subject: string;
+  body: string;
+  pullRequest?: PullRequest;
+}
+
+interface PullRequest {
+  id: number;
+  title: string;
+  url: string;
+  author: string;
+  workItems: WorkItem[];
+}
+
+interface WorkItem {
+  id: string;
+  title: string;
+  workItemType: string; // e.g., "User Story", "Bug", "Task"
+  url: string;
+  assignedTo: {
+    displayName: string;
+    uniqueName: string;
+    imageUrl: string;
+  };
 }
 ```
 
 ### Built-in Handlebars Helpers
-
-The task provides several helpful Handlebars helpers:
-
-- `{{workItemLink workItem}}` - Generates a markdown link to a work item
-- `{{commitLink commit}}` - Generates a markdown link to a commit  
-- `{{pullRequestLink pullRequest}}` - Generates a markdown link to a pull request
-- `{{shortHash hash}}` - Truncates a commit hash to 7 characters
-- `{{formatDate isoDate}}` - Formats an ISO date string for display
+- `{{workItemLink workItem}}` - Creates markdown link: `[123](url)`
+- `{{pullRequestLink pullRequest}}` - Creates markdown link: `[PR 42](url)`
+- `{{commitLink commit}}` - Creates markdown link for commit (if commitUrl available)
+- `{{shortHash hash}}` - Truncates commit hash to 7 characters
+- `{{formatDate isoDate}}` - Formats ISO date for display
+- `{{groupBy items "field"}}` - Groups array items by specified field
 
 ### Custom Template Example
-
 ```handlebars
-# Release {{repositoryName}} v{{endCommit}}
+# Release Notes - v{{endCommit}}
+
+**Generated:** {{formatDate generatedDate}}
+**Commit Range:** {{startCommit}}..{{endCommit}}
+**Project:** {{project}}
+
+---
+
+## 📊 Summary
+{{#if pullRequests.length}}
+- {{pullRequests.length}} pull request(s) merged
+{{/if}}
+{{#if workItems.length}}
+- {{workItems.length}} work item(s) resolved
+{{/if}}
 
 {{#if workItems.length}}
-## 🎯 Resolved Work Items
-{{#each workItems}}
-- {{workItemLink this}}
+## 🎯 Work Items by Type
+{{#groupBy workItems "workItemType"}}
+### {{key}}
+{{#each items}}
+- {{workItemLink this}} - {{title}}{{#if assignedTo.displayName}} ({{assignedTo.displayName}}){{/if}}
 {{/each}}
+{{/groupBy}}
 {{/if}}
 
-## 📝 Changes
-{{#each commits}}
-- {{subject}} ({{commitLink this}}) by {{author}}
-{{#if workItems.length}}  - Addresses: {{#each workItems}}{{workItemLink this}}{{/each}}{{/if}}
+{{#if pullRequests.length}}
+## 🔀 Pull Requests
+{{#each pullRequests}}
+### {{pullRequestLink this}} - {{title}}
+**Author:** {{author}}
+{{#if workItems.length}}
+**Work Items:** {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/if}}
+
 {{/each}}
+{{/if}}
 ```
 
-## Comparison to rfennell's GenerateReleaseNotes
-
-This extension provides similar functionality to the popular GenerateReleaseNotes extension but with key differences:
-
-| Feature | This Extension | rfennell Extension |
-|---------|----------------|-------------------|
-| **Data Source** | Git commit history | Azure DevOps Release/Build API |
-| **Work Item Links** | ✅ Parsed from commit messages | ✅ From API associations |
-| **Pull Request Links** | ✅ Detected from merge commits | ✅ From API associations |
-| **Commit Links** | ✅ Generated URLs | ✅ From API data |
-| **Template Engine** | ✅ Handlebars | ✅ Handlebars (v3+) |
-| **Conventional Commits** | ✅ Built-in grouping | ➖ Manual template logic |
-| **Shallow Clone Support** | ✅ Automatic fallback | ➖ Requires full history |
-| **Cross-Platform** | ✅ Node.js based | ✅ Node.js based (v3+) |
-| **Custom Date Ranges** | ✅ Any commit range | ➖ Build/Release based only |
-
-**Choose this extension when:**
-- You want to generate release notes from any commit range, not just builds/releases
-- You work with shallow clones or limited history
-- You prefer commit-message-based work item tracking
-- You want simpler setup without API permissions
-
-**Choose rfennell's extension when:**
-- You need full Azure DevOps API integration
-- You want work items and PRs automatically discovered via API
-- You work exclusively within Azure DevOps release pipelines
-- You need advanced features like WIQL queries or manual test plans
-
-## Installation
-
-1. Download the latest `.vsix` file from the releases page
-2. Install it in your Azure DevOps organization via the Extensions marketplace
-3. Add the task to your pipeline YAML or classic editor
-
-## Building from Source
+## Console Usage
+The task can also be run from the command line for testing:
 
 ```bash
-# Install dependencies
-npm install
-
-# Build TypeScript
-npm run build
-
-# Package extension
-tfx extension create --manifest-globs vss-extension.json
-```
-
-## Contributing
-
-This extension is open source. Feel free to submit issues and enhancement requests!,
-  "startCommit": "v1.0.0",
-  "endCommit": "v1.1.0",
-  "generatedDate": "2023-01-01T00:00:00.000Z"
-}
-```
-
-### When using regular commits:
-
-```json
-{
-  "commits": [
-    { "hash": "abc123", "author": "Name", "subject": "Commit message", "date": "..." },
-    ...
-  ],
-  "startCommit": "v1.0.0",
-  "endCommit": "v1.1.0",
-  "generatedDate": "2023-01-01T00:00:00.000Z"
-}
-```
-
-## Example Template
-
-```handlebars
-# Release Notes ({{startCommit}} to {{endCommit}})
-
-Generated on: {{generatedDate}}
-
-{{#if features.length}}
-## 🚀 Features
-
-{{#each features}}
-* **{{subject}}** - {{author}} ({{hash}})
-{{/each}}
-{{/if}}
-
-{{#if fixes.length}}
-## 🐛 Bug Fixes
-
-{{#each fixes}}
-* **{{subject}}** - {{author}} ({{hash}})
-{{/each}}
-{{/if}}
-
-{{#if other.length}}
-## Other Changes
-
-{{#each other}}
-* **{{subject}}** - {{author}} ({{hash}})
-{{/each}}
-{{/if}}
+node dist/mainConsole.js \
+  --startCommit "v1.0.0" \
+  --endCommit "HEAD" \
+  --outputFile "release-notes.md" \
+  --repoRoot "/path/to/repo" \
+  --systemAccessToken "your-token" \
+  --project "your-project" \
+  --repositoryId "your-repo" \
+  --apiUrl "https://dev.azure.com/your-org"
 ```
