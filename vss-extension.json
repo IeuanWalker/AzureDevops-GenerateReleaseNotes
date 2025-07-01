@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "IeuanWalker-ReleaseNotesGenerator",
   "name": "Commit Range Release Notes Generator",
-  "version": "3.3.0",
+  "version": "5.0.0",
   "publisher": "IeuanWalker",
   "targets": [
     {
