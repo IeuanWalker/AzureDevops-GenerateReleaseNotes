@@ -1,7 +1,9 @@
-# Ignore node_modules and TypeScript source, but include dist for packaging
-node_modules
+# Ignore TypeScript source files and root node_modules, but keep task dependencies
+/node_modules
 *.ts
 *.tsx
 *.map
 !dist/
 !dist/**
+# Keep the task's node_modules (critical for Azure DevOps task runtime)
+!**/task/node_modules/**

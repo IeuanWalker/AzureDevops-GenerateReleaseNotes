@@ -1,7 +1,7 @@
 import * as Handlebars from 'handlebars';
 export { Handlebars as handlebars };
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import fs = require('fs');
+import path = require('path');
 
 export function registerHelpers(): void {
     Handlebars.registerHelper('workItemLink', function (workItem: { id: string; url: string }) {
@@ -40,7 +40,7 @@ export function registerHelpers(): void {
     });
 }
 
-export const defaultTemplate = readFileSync(
-  join(__dirname, '..', '..', 'defaultTemplate.hbs'),
+export const defaultTemplate = fs.readFileSync(
+  path.join(__dirname, '..', '..', 'defaultTemplate.hbs'),
   'utf-8'
 );

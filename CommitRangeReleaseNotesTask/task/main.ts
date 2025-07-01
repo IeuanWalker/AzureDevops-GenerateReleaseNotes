@@ -1,6 +1,6 @@
-import * as tl from 'azure-pipelines-task-lib';
-import path from 'path';
-import fs from 'fs';
+import tl = require("azure-pipelines-task-lib/task");
+import path = require('path');
+import fs = require('fs');
 import { validateCommit, getCommitCount, getFirstCommit, getCommitsInRange } from './utils/CommitUtils';
 import { PullRequest, getPRInfo } from './utils/PRUtils';
 import { registerHelpers, handlebars, defaultTemplate } from './utils/TemplateUtils';

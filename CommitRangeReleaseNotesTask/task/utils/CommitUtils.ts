@@ -4,8 +4,8 @@
  * and retrieving commit logs in a given range. Used by the release notes generator task.
  */
 
-import util from 'util';
-import child_process from 'child_process';
+import util = require('util');
+import child_process = require('child_process');
 import type { PullRequest } from './PRUtils'; 
 import type { WorkItem } from './WorkItemUtils'; 
 

@@ -8,7 +8,7 @@
   "author": "Ieuan Walker",
   "version": {
     "Major": 5,
-    "Minor": 6,
+    "Minor": 9,
     "Patch": 0
   },
   "instanceNameFormat": "Generate Release Notes from Commit Range",
@@ -47,11 +47,17 @@
     }
   ],
   "execution": {
-    "Node16": {
-      "target": "dist/mainTask.js"
+    "Node10": {
+      "target": "dist/mainTask.js",
+      "argumentFormat": ""
     },
-    "Node20": {
-      "target": "dist/mainTask.js"
+    "Node16": {
+      "target": "dist/mainTask.js",
+      "argumentFormat": ""
+    },
+    "Node20_1": {
+      "target": "dist/mainTask.js",
+      "argumentFormat": ""
     }
   }
 }
