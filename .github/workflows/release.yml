@@ -47,3 +47,11 @@ jobs:
         with:
           name: vsix-package
           path: '*.vsix'
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Publish to Visual Studio Marketplace
+        run: vsce publish --pat $VSCE_TOKEN --no-verify
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
