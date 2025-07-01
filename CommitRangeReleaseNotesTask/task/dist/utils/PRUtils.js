@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPRInfo = void 0;
 const tl = require("azure-pipelines-task-lib/task");
 const WorkItemUtils_1 = require("./WorkItemUtils");
-function getPRInfo(pullRequestId, organization, project, repositoryId, accessToken) {
+function getPRInfo(pullRequestId, apiUrl, project, repositoryId, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
+            const prUrl = `${apiUrl}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
             console.log(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
             const response = yield fetch(prUrl, {
                 headers: {
@@ -39,7 +39,7 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
             const prResult = {
                 id: pullRequestId,
                 title: prJson.title,
-                url: ((_b = (_a = prJson._links) === null || _a === void 0 ? void 0 : _a.web) === null || _b === void 0 ? void 0 : _b.href) || `https://dev.azure.com/${organization}/${project}/_git/pullrequest/${pullRequestId}`,
+                url: ((_b = (_a = prJson._links) === null || _a === void 0 ? void 0 : _a.web) === null || _b === void 0 ? void 0 : _b.href) || `${apiUrl}/${project}/_git/pullrequest/${pullRequestId}`,
                 author: ((_c = prJson.createdBy) === null || _c === void 0 ? void 0 : _c.displayName) || ((_d = prJson.createdBy) === null || _d === void 0 ? void 0 : _d.uniqueName) || 'Unknown',
                 workItems: []
             };
@@ -51,7 +51,7 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
                         return null;
                     }
                     console.log(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
-                    const workItem = yield (0, WorkItemUtils_1.getWorkItem)(workItemRef.id, organization, project, accessToken);
+                    const workItem = yield (0, WorkItemUtils_1.getWorkItem)(workItemRef.id, apiUrl, project, accessToken);
                     if (!workItem) {
                         tl.warning(`Failed to fetch WorkItem details for ${workItemRef.id}`);
                         return null;

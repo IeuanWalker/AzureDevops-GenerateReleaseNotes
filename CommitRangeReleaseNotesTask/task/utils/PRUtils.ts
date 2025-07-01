@@ -11,13 +11,13 @@ export interface PullRequest {
 
 export async function getPRInfo(
     pullRequestId: number,
-    organization: string,
+    apiUrl: string,
     project: string,
     repositoryId: string,
     accessToken: string
 ): Promise<PullRequest | null> {
     try {
-        const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
+        const prUrl = `${apiUrl}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
         console.log(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
 
         const response = await fetch(prUrl, {
@@ -46,7 +46,7 @@ export async function getPRInfo(
         const prResult: PullRequest = {
             id: pullRequestId,
             title: prJson.title,
-            url: prJson._links?.web?.href || `https://dev.azure.com/${organization}/${project}/_git/pullrequest/${pullRequestId}`,
+            url: prJson._links?.web?.href || `${apiUrl}/${project}/_git/pullrequest/${pullRequestId}`,
             author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || 'Unknown',
             workItems: []
         };
@@ -63,7 +63,7 @@ export async function getPRInfo(
 
                 const workItem = await getWorkItem(
                     workItemRef.id,
-                    organization,
+                    apiUrl,
                     project,
                     accessToken
                 );

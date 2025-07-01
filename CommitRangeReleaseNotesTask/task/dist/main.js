@@ -18,7 +18,7 @@ const PRUtils_1 = require("./utils/PRUtils");
 const TemplateUtils_1 = require("./utils/TemplateUtils");
 const JsonOutput_1 = require("./utils/JsonOutput");
 (0, TemplateUtils_1.registerHelpers)();
-function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, project, organization, repositoryId, templateFile) {
+function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, project, apiUrl, repositoryId, templateFile) {
     return __awaiter(this, void 0, void 0, function* () {
         // Variables
         console.log();
@@ -29,7 +29,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
         console.log(`Repository Root: ${repoRoot}`);
         console.log(`System Access Token: ${systemAccessToken ? 'Provided' : 'Not Provided'}`);
         console.log(`Project: ${project}`);
-        console.log(`Organization: ${organization}`);
+        console.log(`ApiUrl: ${apiUrl}`);
         console.log(`Repository ID: ${repositoryId}`);
         console.log(`Template File: ${templateFile ? templateFile : 'Default'}`);
         console.log();
@@ -112,7 +112,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
                 return;
             }
             try {
-                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), organization, project, repositoryId, systemAccessToken);
+                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), apiUrl, project, repositoryId, systemAccessToken);
                 if (pr) {
                     commit.pullRequest = pr;
                     console.log(`Successfully fetched PR ${prId} with ${pr.workItems.length} work items`);

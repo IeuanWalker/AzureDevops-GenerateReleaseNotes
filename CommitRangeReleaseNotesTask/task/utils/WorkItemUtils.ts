@@ -24,7 +24,7 @@ export interface WorkItemApiResponse {
 
 export async function getWorkItem(
     workItemId: string,
-    organization: string,
+    apiUrl: string,
     project: string,
     accessToken: string
 ): Promise<WorkItem | null> {
@@ -34,7 +34,7 @@ export async function getWorkItem(
         "System.AssignedTo",
     ];
 
-    const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
+    const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
     console.log(`Fetching work item ${workItemId} from ${url}`);
     
     try {

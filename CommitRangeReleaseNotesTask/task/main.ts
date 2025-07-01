@@ -17,7 +17,7 @@ export async function GenerateReleaseNotes(
     repoRoot: string,
     systemAccessToken: string,
     project: string,
-    organization: string,
+    apiUrl: string,
     repositoryId: string,
     templateFile?: string
 ): Promise<void> {
@@ -30,7 +30,7 @@ export async function GenerateReleaseNotes(
     console.log(`Repository Root: ${repoRoot}`);
     console.log(`System Access Token: ${systemAccessToken ? 'Provided' : 'Not Provided'}`);
     console.log(`Project: ${project}`);
-    console.log(`Organization: ${organization}`);
+    console.log(`ApiUrl: ${apiUrl}`);
     console.log(`Repository ID: ${repositoryId}`);
     console.log(`Template File: ${templateFile ? templateFile : 'Default'}`);
     console.log();
@@ -125,7 +125,7 @@ export async function GenerateReleaseNotes(
         try {
             const pr = await getPRInfo(
                 Number(prId),
-                organization,
+                apiUrl,
                 project,
                 repositoryId,
                 systemAccessToken

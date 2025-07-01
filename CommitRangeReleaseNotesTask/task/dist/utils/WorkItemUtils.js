@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWorkItem = void 0;
-function getWorkItem(workItemId, organization, project, accessToken) {
+function getWorkItem(workItemId, apiUrl, project, accessToken) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const fields = [
@@ -18,7 +18,7 @@ function getWorkItem(workItemId, organization, project, accessToken) {
             "System.WorkItemType",
             "System.AssignedTo",
         ];
-        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
+        const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
         console.log(`Fetching work item ${workItemId} from ${url}`);
         try {
             const response = yield fetch(url, {
