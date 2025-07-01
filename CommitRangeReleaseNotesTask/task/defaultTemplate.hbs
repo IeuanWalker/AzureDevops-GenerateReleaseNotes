@@ -15,25 +15,31 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 
 ---
 
+
+
 {{#if workItems.length}}
 ## 📋 Work Items
-| ID | Title | Type | Assignee |
-|----|-------|------|----------|
 {{#groupBy workItems "workItemType"}}
+---
+### {{key}}s ({{items.length}})
+| ID | Title | Assignee |
+|----|-------|----------|
   {{#each items}}
-| [{{id}}]({{url}}) | {{title}} | {{../key}} | {{#if assignedTo}}{{assignedTo.displayName}}{{else}}—{{/if}} |
+| [{{id}}]({{url}}) | {{title}} | {{#if assignedTo}}{{assignedTo.displayName}}{{else}}—{{/if}} |
   {{/each}}
 {{/groupBy}}
-
+{{else}}
+> _No work items in this range._
 {{/if}}
 
-{{#if pullRequests.length}}
 
+{{#if pullRequests.length}}
 ## 🔀 Pull Requests
 | ID | Title | Author | Linked Work Items |
 |----|-------|--------|------------------|
 {{#each pullRequests}}
-| [{{id}}]({{url}}) | {{title}} | {{#if author}}{{author}}{{else}}—{{/if}} | {{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}} |
+| [{{id}}]({{url}}) | {{title}} | {{#if author}}{{author}}{{else}}—{{/if}} | {{#if workItems.length}}{{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}}{{else}}—{{/if}} |
 {{/each}}
-
+{{else}}
+> _No pull requests in this range._
 {{/if}}
