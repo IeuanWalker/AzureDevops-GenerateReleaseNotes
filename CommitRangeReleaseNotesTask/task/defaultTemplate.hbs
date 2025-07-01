@@ -1,5 +1,4 @@
 # Release Notes
-
 _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}** to **{{endCommit}}**_
 
 **Repository:** {{repositoryId}}
@@ -7,7 +6,7 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 ---
 
 ## 📊 Summary
-**{{pullRequests.length}}** Pull Requests
+- **{{pullRequests.length}}** Pull Requests
 {{#if workItems.length}}- **{{workItems.length}}** Work Items{{/if}}
 {{#groupBy workItems "workItemType"}}
   - **{{key}}s:** {{items.length}}
@@ -15,12 +14,9 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 
 ---
 
-
-
 {{#if workItems.length}}
 ## 📋 Work Items
 {{#groupBy workItems "workItemType"}}
----
 ### {{key}}s ({{items.length}})
 | ID | Title | Assignee |
 |----|-------|----------|
@@ -32,6 +28,7 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 > _No work items in this range._
 {{/if}}
 
+---
 
 {{#if pullRequests.length}}
 ## 🔀 Pull Requests
