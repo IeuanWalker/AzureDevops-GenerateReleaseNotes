@@ -1,5 +1,5 @@
 import tl = require("azure-pipelines-task-lib/task");
-import { getWorkItem, type WorkItem } from './WorkItemUtils'; 
+import { getWorkItem, type WorkItem } from './WorkItemUtils';
 
 export interface PullRequest {
   id: number;
@@ -43,10 +43,15 @@ export async function getPRInfo(
             return null;
         }
 
+        const webUrl =
+            prJson.repository?.webUrl
+                ? `${prJson.repository.webUrl}/pullrequest/${pullRequestId}`
+                : (prJson._links?.web?.href || `${apiUrl}/${project}/_git/pullrequest/${pullRequestId}`);
+
         const prResult: PullRequest = {
             id: pullRequestId,
             title: prJson.title,
-            url: prJson._links?.web?.href || `${apiUrl}/${project}/_git/pullrequest/${pullRequestId}`,
+            url: webUrl,
             author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || 'Unknown',
             workItems: []
         };

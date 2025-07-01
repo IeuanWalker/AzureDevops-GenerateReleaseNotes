@@ -20,6 +20,9 @@ export interface WorkItemApiResponse {
         "System.WorkItemType": string;
         "System.AssignedTo"?: WorkItemAssignedTo;
     };
+    _links?: {
+        html?: { href: string };
+    };
 }
 
 export async function getWorkItem(
@@ -55,6 +58,7 @@ export async function getWorkItem(
 
         const data: WorkItemApiResponse = await response.json();
 
+
         // Validate required fields
         if (!data.fields?.["System.Title"] || !data.fields?.["System.WorkItemType"]) {
             console.warn(`Work item ${workItemId} missing required fields`);
@@ -65,7 +69,7 @@ export async function getWorkItem(
             id: data.id,
             title: data.fields["System.Title"],
             workItemType: data.fields["System.WorkItemType"],
-            url: data.url,
+            url: data._links?.html?.href || data.url,
             assignedTo: data.fields["System.AssignedTo"] ? {
                 displayName: data.fields["System.AssignedTo"].displayName || 'Unassigned',
                 uniqueName: data.fields["System.AssignedTo"].uniqueName || '',

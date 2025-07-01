@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWorkItem = void 0;
 function getWorkItem(workItemId, apiUrl, project, accessToken) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         const fields = [
             "System.Title",
@@ -43,7 +43,7 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
                 id: data.id,
                 title: data.fields["System.Title"],
                 workItemType: data.fields["System.WorkItemType"],
-                url: data.url,
+                url: ((_d = (_c = data._links) === null || _c === void 0 ? void 0 : _c.html) === null || _d === void 0 ? void 0 : _d.href) || data.url,
                 assignedTo: data.fields["System.AssignedTo"] ? {
                     displayName: data.fields["System.AssignedTo"].displayName || 'Unassigned',
                     uniqueName: data.fields["System.AssignedTo"].uniqueName || '',
