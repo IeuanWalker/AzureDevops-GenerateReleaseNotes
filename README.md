@@ -1,4 +1,4 @@
-# Commit Range Release Notes Generator
+# Release Notes Generator
 An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyses merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
 
 Only works with squash merges, as it operates based on the commit message. i.e it finds the PR ID from the commit message in the following format `Merged PR {id}: {title}`. It then uses Azure DevOps APIs to get the PR data and the attached work items.
