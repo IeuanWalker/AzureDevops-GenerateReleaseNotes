@@ -1,4 +1,4 @@
-name: Build VSIX Package
+name: Build
 
 on:
   pull_request:
