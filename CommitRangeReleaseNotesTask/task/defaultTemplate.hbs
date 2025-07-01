@@ -1,6 +1,6 @@
 # Release Notes
 
-Generated on {{moment generatedDate "YYYY-MM-DD HH:mm"}} from {{startCommit}} to {{endCommit}}
+Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from {{startCommit}} to {{endCommit}}
 
 Repository: **{{repositoryId}}**
 
@@ -18,7 +18,7 @@ Repository: **{{repositoryId}}**
 {{#groupBy workItems "workItemType"}}
 ### {{key}}s
 {{#each items}}
-- [{{id}}]({{url}}) - {{title}}{{#if assignedTo}} by {{assignedTo.displayName}}{{/if}}
+- [{{id}}]({{url}}) - {{title}}{{#if assignedTo}} _by {{assignedTo.displayName}}_{{/if}}
 {{/each}}
 {{/groupBy}}
 
@@ -28,6 +28,6 @@ Repository: **{{repositoryId}}**
 ## 🔀 Pull Requests
 
 {{#each pullRequests}}
-- [{{id}}](url) - {{title}}{{#if author}} by {{author}}{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
+- [{{id}}](url) - {{title}}{{#if author}} _by {{author}}_{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
 {{/each}}
 {{/if}}
