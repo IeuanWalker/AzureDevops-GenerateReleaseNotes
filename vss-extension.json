@@ -1,12 +1,13 @@
 {
   "manifestVersion": 1,
-  "id": "IeuanWalker-ReleaseNotesGenerator",
-  "name": "Commit Range Release Notes Generator",
-  "version": "5.15.0",
+  "id": "ReleaseNotesGenerator",
+  "name": "Release notes generator",
+  "version": "1.0.0",
   "publisher": "IeuanWalker",
+  "public": true,
   "CustomerQnASupport": {
     "enableqna":"true",
-    "url": "https://github.com/IeuanWalker/CommitRangeReleaseNotes/issues"
+    "url": "https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/issues"
   },
   "description": "Generate release notes from a range of commits in your repository.",
   "categories": [
@@ -23,7 +24,7 @@
     "Publish"
   ],   
   "branding": {
-    "color": "#f97923",
+    "color": "#3D9AE2",
     "theme": "dark"
   },
   "icons": {
@@ -31,13 +32,13 @@
   },
   "links": {
     "home": {
-      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes"
+      "uri": "https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes"
     },
     "getstarted": {
-      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes"
+      "uri": "https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes"
     },
     "issues": {
-      "uri": "https://github.com/IeuanWalker/CommitRangeReleaseNotes/issues"
+      "uri": "https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/issues"
     }
   },
   "content": {
@@ -56,7 +57,7 @@
   ],
   "repository": {
     "type": "git",
-    "uri": "https://github.com/IeuanWalker/AzurePipelines"
+    "uri": "https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes"
   },
   "contributions": [
     {

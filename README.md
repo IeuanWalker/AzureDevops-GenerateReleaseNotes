@@ -4,7 +4,7 @@ An Azure DevOps extension that generates release notes from commit ranges in Git
 Only works with squash merges, as it operates based on the commit message. i.e it finds the PR ID from the commit message in the following format `Merged PR {id}: {title}`. It then uses Azure DevOps APIs to get the PR data and the attached work items.
 
 ## Features
-- **Git-based Analysis**: Extract release notes directly from Git commit history
+- **Git-based**: Extract release notes directly from Git commit history
 - **Pull Request Detection**: Automatically identifies merge commits and fetches PR details via Azure DevOps API
 - **Work Item Integration**: Discovers work items linked to pull requests and includes them in release notes
 - **Flexible Templates**: Customizable Handlebars templates with built-in helpers
@@ -127,7 +127,7 @@ interface WorkItem {
 
 ### Built-in Handlebars Helpers
 - [Handlebars helpers](https://github.com/helpers/handlebars-helpers) is built in and loaded by default
-- A [custom grouping](https://github.com/IeuanWalker/CommitRangeReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
+- A [custom grouping](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
 
 ### Custom Template Example
 ```handlebars

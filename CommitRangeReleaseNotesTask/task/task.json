@@ -1,14 +1,14 @@
 {
   "id": "f499ffc8-3fe2-4e27-a637-d8c273ef5532",
-  "name": "CommitRangeReleaseNotes",
-  "friendlyName": "Generate Release Notes from Commit Range",
+  "name": "ReleaseNotes",
+  "friendlyName": "Release notes generator",
   "description": "Generate release notes based on a specified commit range",
-  "helpMarkDown": "[More Information](https://github.com/IeuanWalker/AzurePipelines)",
+  "helpMarkDown": "[More Information](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes)",
   "category": "Utility",
   "author": "Ieuan Walker",
   "version": {
-    "Major": 5,
-    "Minor": 15,
+    "Major": 1,
+    "Minor": 0,
     "Patch": 0
   },
   "instanceNameFormat": "Generate Release Notes from Commit Range",
