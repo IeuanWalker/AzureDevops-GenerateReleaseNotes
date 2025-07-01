@@ -19,17 +19,44 @@ const TemplateUtils_1 = require("./utils/TemplateUtils");
 (0, TemplateUtils_1.registerHelpers)();
 function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, teamProject, repositoryName, templateFile) {
     return __awaiter(this, void 0, void 0, function* () {
+        // Input validation
+        if (!(startCommit === null || startCommit === void 0 ? void 0 : startCommit.trim()) || !(endCommit === null || endCommit === void 0 ? void 0 : endCommit.trim())) {
+            tl.setResult(tl.TaskResult.Failed, 'Start and end commits are required');
+            return;
+        }
+        if (!(outputFile === null || outputFile === void 0 ? void 0 : outputFile.trim())) {
+            tl.setResult(tl.TaskResult.Failed, 'Output file path is required');
+            return;
+        }
+        if (!fs.existsSync(repoRoot)) {
+            tl.setResult(tl.TaskResult.Failed, `Repository root does not exist: ${repoRoot}`);
+            return;
+        }
         // Validate repo root
-        process.chdir(repoRoot);
+        try {
+            process.chdir(repoRoot);
+        }
+        catch (error) {
+            tl.setResult(tl.TaskResult.Failed, `Failed to change to repository directory: ${error}`);
+            return;
+        }
+        // Extract organization from system access token or use default
+        const organization = 'cardiffcouncilict'; // TODO: Make this configurable
         // Validate start commit
         if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
             if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
-                const availableCommits = yield (0, CommitUtils_1.getCommitCount)(repoRoot);
-                if (availableCommits < 10) {
-                    startCommit = yield (0, CommitUtils_1.getFirstCommit)(repoRoot);
+                try {
+                    const availableCommits = yield (0, CommitUtils_1.getCommitCount)(repoRoot);
+                    if (availableCommits < 10) {
+                        startCommit = yield (0, CommitUtils_1.getFirstCommit)(repoRoot);
+                    }
+                    if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
+                        tl.setResult(tl.TaskResult.Failed, `Invalid start commit after fallback: ${startCommit}`);
+                        return;
+                    }
                 }
-                if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
-                    tl.setResult(tl.TaskResult.Failed, `Invalid start commit: ${startCommit}`);
+                catch (error) {
+                    tl.setResult(tl.TaskResult.Failed, `Error resolving start commit: ${error}`);
                     return;
                 }
             }
@@ -48,47 +75,56 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
         try {
             commits = yield (0, CommitUtils_1.getCommitsInRange)(startCommit, endCommit, repoRoot);
         }
-        catch (_a) {
-            tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
+        catch (error) {
+            tl.setResult(tl.TaskResult.Failed, `Failed to get commits in range: ${error}`);
             return;
         }
         if (!commits || commits.length === 0) {
             tl.setResult(tl.TaskResult.Failed, 'No commits found in the specified range');
             return;
         }
-        yield Promise.all(commits.map((commit) => __awaiter(this, void 0, void 0, function* () {
-            const mergePattern = /Merged PR (\d+): (.+)/i;
+        tl.debug(`Found ${commits.length} commits in range ${startCommit}..${endCommit}`);
+        // Process commits to extract PR information
+        const mergePattern = /Merged PR (\d+): (.+)/i;
+        const prProcessingPromises = commits.map((commit) => __awaiter(this, void 0, void 0, function* () {
             const match = mergePattern.exec(commit.subject);
             if (!match) {
-                tl.debug(`Commit ${commit.subject} does not match PR merge pattern`);
-                return null;
+                tl.debug(`Commit ${commit.hash} does not match PR merge pattern: ${commit.subject}`);
+                return;
             }
             const prId = match[1];
-            const prTitle = match[2];
+            if (!systemAccessToken || !teamProject || !repositoryName) {
+                tl.warning(`Missing required parameters for PR ${prId} - skipping PR details fetch`);
+                return;
+            }
             try {
-                let pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), 'cardiffcouncilict', teamProject, repositoryName, systemAccessToken);
-                if (pr == null) {
-                    tl.warning(`Failed to fetch PR details for PR ${prId}`);
-                    return;
+                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), organization, teamProject, repositoryName, systemAccessToken);
+                if (pr) {
+                    commit.pullRequest = pr;
+                    tl.debug(`Successfully fetched PR ${prId} with ${pr.workItems.length} work items`);
                 }
-                commit.pullRequest = pr;
+                else {
+                    tl.warning(`Failed to fetch PR details for PR ${prId}`);
+                }
             }
             catch (err) {
                 tl.warning(`Error fetching PR details for PR ${prId}: ${err}`);
-                return null;
             }
-        })));
+        }));
+        // Wait for all PR processing to complete
+        yield Promise.all(prProcessingPromises);
         // Get all pull requests from commits (flattened, unique by id)
         const allPullRequests = commits
             .map(c => c.pullRequest)
-            .filter(pr => pr) // remove undefined/null
+            .filter((pr) => pr !== undefined && pr !== null)
             .filter((pr, idx, arr) => arr.findIndex(x => x.id === pr.id) === idx);
         // Get all work items from all pull requests (flattened, unique by id)
         const allWorkItems = allPullRequests
             .flatMap(pr => pr.workItems || [])
             .filter((wi, idx, arr) => arr.findIndex(x => x.id === wi.id) === idx);
+        tl.debug(`Found ${allPullRequests.length} unique pull requests and ${allWorkItems.length} unique work items`);
         // Data for Handlebars template
-        let releaseData = {
+        const releaseData = {
             commits,
             workItems: allWorkItems,
             pullRequests: allPullRequests,
@@ -98,29 +134,54 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             repositoryName,
             teamProject
         };
-        JSON.stringify(releaseData, null, 2)
-            .split('\n')
-            .forEach(line => tl.debug(line));
+        // Log release data for debugging (truncated)
+        tl.debug(`Release data summary: ${commits.length} commits, ${allPullRequests.length} PRs, ${allWorkItems.length} work items`);
         // Get template
         let template;
-        const hasValidTemplateFile = templateFile && templateFile.trim() !== '' && fs.existsSync(templateFile) && fs.statSync(templateFile).isFile();
-        if (hasValidTemplateFile) {
-            template = fs.readFileSync(templateFile, 'utf8');
+        try {
+            const hasValidTemplateFile = templateFile &&
+                templateFile.trim() !== '' &&
+                fs.existsSync(templateFile) &&
+                fs.statSync(templateFile).isFile();
+            if (hasValidTemplateFile) {
+                template = fs.readFileSync(templateFile, 'utf8');
+                tl.debug(`Using custom template: ${templateFile}`);
+            }
+            else {
+                template = TemplateUtils_1.defaultTemplate;
+                tl.debug('Using default template');
+            }
         }
-        else {
+        catch (error) {
+            tl.warning(`Error reading template file: ${error}. Using default template.`);
             template = TemplateUtils_1.defaultTemplate;
         }
         // Generate release notes
-        const templateFunc = TemplateUtils_1.handlebars.compile(template);
-        const releaseNotes = templateFunc(releaseData);
-        // Save release notes to file
-        const outputDir = path.dirname(outputFile);
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir, { recursive: true });
+        let releaseNotes;
+        try {
+            const templateFunc = TemplateUtils_1.handlebars.compile(template);
+            releaseNotes = templateFunc(releaseData);
         }
-        fs.writeFileSync(outputFile, releaseNotes);
+        catch (error) {
+            tl.setResult(tl.TaskResult.Failed, `Failed to generate release notes from template: ${error}`);
+            return;
+        }
+        // Save release notes to file
+        try {
+            const outputDir = path.dirname(outputFile);
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
+            fs.writeFileSync(outputFile, releaseNotes, 'utf8');
+            tl.debug(`Release notes written to: ${outputFile}`);
+        }
+        catch (error) {
+            tl.setResult(tl.TaskResult.Failed, `Failed to write release notes to file: ${error}`);
+            return;
+        }
+        // Set pipeline variable and result
         tl.setVariable('ReleaseNotes', releaseNotes);
-        tl.setResult(tl.TaskResult.Succeeded, 'Release notes generated successfully');
+        tl.setResult(tl.TaskResult.Succeeded, `Release notes generated successfully with ${commits.length} commits, ${allPullRequests.length} PRs, and ${allWorkItems.length} work items`);
     });
 }
 exports.GenerateReleaseNotes = GenerateReleaseNotes;

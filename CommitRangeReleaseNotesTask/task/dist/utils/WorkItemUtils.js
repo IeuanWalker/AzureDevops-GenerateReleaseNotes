@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33,45 +10,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateWorkItemUrl = exports.getWorkItem = void 0;
-const tl = __importStar(require("azure-pipelines-task-lib"));
+const tl = require("azure-pipelines-task-lib/task");
 function getWorkItem(workItemId, organization, project, accessToken) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        organization = 'cardiffcouncilict';
-        let fields = [
+        const fields = [
             "System.Title",
             "System.WorkItemType",
             "System.AssignedTo",
         ];
-        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields}&api-version=7.1`;
+        const url = `https://dev.azure.com/${organization}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
         tl.debug(`Fetching work item ${workItemId} from ${url}`);
-        const response = yield fetch(url, {
-            headers: {
-                'Authorization': `Basic ${accessToken}`,
-                'Content-Type': 'application/json'
+        try {
+            const response = yield fetch(url, {
+                headers: {
+                    'Authorization': `Basic ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = yield response.text();
+                tl.warning(`Failed to fetch work item ${workItemId}: ${response.status} ${response.statusText}. Response: ${errorText}`);
+                return null;
             }
-        });
-        if (!response.ok) {
-            tl.warning(`Failed to fetch work items ${workItemId}: ${response.status} ${response.statusText}`);
-            return;
+            tl.debug(`Response status for WorkItem ${workItemId}: ${response.status} ${response.statusText}`);
+            const data = yield response.json();
+            // Log the full JSON response for debugging
+            JSON.stringify(data, null, 2)
+                .split('\n')
+                .forEach(line => tl.debug(line));
+            // Validate required fields
+            if (!((_a = data.fields) === null || _a === void 0 ? void 0 : _a["System.Title"]) || !((_b = data.fields) === null || _b === void 0 ? void 0 : _b["System.WorkItemType"])) {
+                tl.warning(`Work item ${workItemId} missing required fields`);
+                return null;
+            }
+            const workItem = {
+                id: data.id,
+                title: data.fields["System.Title"],
+                workItemType: data.fields["System.WorkItemType"],
+                url: data.url || generateWorkItemUrl(workItemId, undefined, project),
+                assignedTo: data.fields["System.AssignedTo"] ? {
+                    displayName: data.fields["System.AssignedTo"].displayName || 'Unassigned',
+                    uniqueName: data.fields["System.AssignedTo"].uniqueName || '',
+                    imageUrl: data.fields["System.AssignedTo"].imageUrl || ''
+                } : {
+                    displayName: 'Unassigned',
+                    uniqueName: '',
+                    imageUrl: ''
+                }
+            };
+            return workItem;
         }
-        tl.debug(`Response status for WorkItem ${workItemId}: ${response.status} ${response.statusText}`);
-        const data = yield response.json();
-        // Log the full JSON response for debugging
-        JSON.stringify(data, null, 2)
-            .split('\n')
-            .forEach(line => tl.debug(line));
-        let workItem = {
-            id: data.id,
-            title: data.fields["System.Title"],
-            workItemType: data.fields["System.WorkItemType"],
-            url: data.url,
-            assignedTo: {
-                displayName: data.fields["System.AssignedTo"].displayName,
-                uniqueName: data.fields["System.AssignedTo"].uniqueName,
-                imageUrl: data.fields["System.AssignedTo"].imageUrl
-            },
-        };
-        return workItem;
+        catch (error) {
+            tl.error(`Error fetching work item ${workItemId}: ${error}`);
+            return null;
+        }
     });
 }
 exports.getWorkItem = getWorkItem;

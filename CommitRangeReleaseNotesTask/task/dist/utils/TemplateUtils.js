@@ -30,29 +30,49 @@ const fs = require("fs");
 const path = require("path");
 function registerHelpers() {
     Handlebars.registerHelper('workItemLink', function (workItem) {
+        if (!(workItem === null || workItem === void 0 ? void 0 : workItem.id) || !(workItem === null || workItem === void 0 ? void 0 : workItem.url))
+            return (workItem === null || workItem === void 0 ? void 0 : workItem.id) || 'Unknown';
         return new Handlebars.SafeString(`[${workItem.id}](${workItem.url})`);
     });
     Handlebars.registerHelper('commitLink', function (commit) {
+        if (!(commit === null || commit === void 0 ? void 0 : commit.hash))
+            return 'Unknown';
         if (commit.commitUrl) {
             return new Handlebars.SafeString(`[${commit.hash}](${commit.commitUrl})`);
         }
         return commit.hash;
     });
     Handlebars.registerHelper('pullRequestLink', function (pr) {
+        if (!(pr === null || pr === void 0 ? void 0 : pr.id) || !(pr === null || pr === void 0 ? void 0 : pr.url))
+            return (pr === null || pr === void 0 ? void 0 : pr.id) || 'Unknown';
         return new Handlebars.SafeString(`[PR ${pr.id}](${pr.url})`);
     });
     Handlebars.registerHelper('shortHash', function (hash, length = 7) {
-        return hash.substring(0, length);
+        if (!hash || typeof hash !== 'string')
+            return 'Unknown';
+        return hash.substring(0, Math.max(1, length));
     });
     Handlebars.registerHelper('formatDate', function (isoDate) {
-        return new Date(isoDate).toLocaleDateString() + ' ' + new Date(isoDate).toLocaleTimeString();
+        if (!isoDate)
+            return 'Unknown';
+        try {
+            const date = new Date(isoDate);
+            if (isNaN(date.getTime()))
+                return 'Invalid Date';
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        catch (_a) {
+            return 'Invalid Date';
+        }
     });
     // GroupBy helper
     Handlebars.registerHelper('groupBy', function (items, field, options) {
-        if (!Array.isArray(items))
+        if (!Array.isArray(items) || !field)
             return '';
         const groups = {};
         items.forEach(item => {
+            if (!item || typeof item !== 'object')
+                return;
             const key = item[field] || 'Other';
             if (!groups[key])
                 groups[key] = [];

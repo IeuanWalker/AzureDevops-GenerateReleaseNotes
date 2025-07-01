@@ -17,14 +17,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCommitsInRange = exports.getFirstCommit = exports.getCommitCount = exports.validateCommit = void 0;
 const util = require("util");
 const child_process = require("child_process");
+const tl = require("azure-pipelines-task-lib/task");
 const execAsync = util.promisify(child_process.exec);
 function validateCommit(commit, repoRoot) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!(commit === null || commit === void 0 ? void 0 : commit.trim())) {
+            return false;
+        }
         try {
             yield execAsync(`git rev-parse --verify ${commit}`, { cwd: repoRoot });
             return true;
         }
-        catch (_a) {
+        catch (error) {
+            tl.debug(`Invalid commit ${commit}: ${error}`);
             return false;
         }
     });
@@ -32,15 +37,35 @@ function validateCommit(commit, repoRoot) {
 exports.validateCommit = validateCommit;
 function getCommitCount(repoRoot) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { stdout } = yield execAsync('git rev-list --count HEAD', { cwd: repoRoot });
-        return parseInt(stdout.trim());
+        try {
+            const { stdout } = yield execAsync('git rev-list --count HEAD', { cwd: repoRoot });
+            const count = parseInt(stdout.trim(), 10);
+            if (isNaN(count)) {
+                throw new Error('Invalid commit count returned from git');
+            }
+            return count;
+        }
+        catch (error) {
+            tl.error(`Failed to get commit count: ${error}`);
+            throw error;
+        }
     });
 }
 exports.getCommitCount = getCommitCount;
 function getFirstCommit(repoRoot) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { stdout } = yield execAsync('git rev-list --max-parents=0 HEAD', { cwd: repoRoot });
-        return stdout.trim();
+        try {
+            const { stdout } = yield execAsync('git rev-list --max-parents=0 HEAD', { cwd: repoRoot });
+            const firstCommit = stdout.trim();
+            if (!firstCommit) {
+                throw new Error('No commits found in repository');
+            }
+            return firstCommit;
+        }
+        catch (error) {
+            tl.error(`Failed to get first commit: ${error}`);
+            throw error;
+        }
     });
 }
 exports.getFirstCommit = getFirstCommit;
@@ -71,18 +96,34 @@ exports.getCommitsInRange = getCommitsInRange;
 function parseGitLog(log) {
     if (!log.trim())
         return [];
-    // Split by the custom commit separator
-    return log.split('---END---\n').filter(Boolean).map(line => {
-        // Remove any trailing newlines and split by first five pipes
-        const [hash, author, email, date, subject, ...bodyParts] = line.trim().split('|');
-        const body = bodyParts.join('|').replace(/\n+$/, '');
-        return {
-            hash,
-            author,
-            email,
-            date: new Date(parseInt(date, 10) * 1000).toISOString(),
-            subject,
-            body,
-        };
-    });
+    try {
+        // Split by the custom commit separator
+        return log.split('---END---\n').filter(Boolean).map(line => {
+            // Remove any trailing newlines and split by first five pipes
+            const parts = line.trim().split('|');
+            if (parts.length < 5) {
+                tl.warning(`Malformed git log entry: ${line}`);
+                return null;
+            }
+            const [hash, author, email, date, subject, ...bodyParts] = parts;
+            const body = bodyParts.join('|').replace(/\n+$/, '');
+            // Validate timestamp
+            const timestamp = parseInt(date, 10);
+            if (isNaN(timestamp)) {
+                tl.warning(`Invalid timestamp in commit ${hash}: ${date}`);
+            }
+            return {
+                hash: hash || '',
+                author: author || 'Unknown',
+                email: email || '',
+                date: isNaN(timestamp) ? new Date().toISOString() : new Date(timestamp * 1000).toISOString(),
+                subject: subject || '',
+                body: body || '',
+            };
+        }).filter(commit => commit !== null);
+    }
+    catch (error) {
+        tl.error(`Error parsing git log: ${error}`);
+        return [];
+    }
 }

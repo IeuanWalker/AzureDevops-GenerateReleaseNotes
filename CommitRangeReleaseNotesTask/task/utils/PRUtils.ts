@@ -1,4 +1,4 @@
-import * as tl from 'azure-pipelines-task-lib';
+import tl = require("azure-pipelines-task-lib/task");
 import { getWorkItem, type WorkItem, type generateWorkItemUrl } from './WorkItemUtils'; 
 
 export interface PullRequest {
@@ -14,7 +14,8 @@ export async function getPRInfo(
     organization: string,
     project: string,
     repositoryId: string,
-    accessToken: string) : Promise<PullRequest> {
+    accessToken: string
+): Promise<PullRequest | null> {
     try {
         const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
         tl.debug(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
@@ -26,49 +27,63 @@ export async function getPRInfo(
             }
         });
 
-        if(!response.ok){
-            const text = await response.text();
-            tl.warning(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${text}`);
-            throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            tl.warning(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${errorText}`);
+            return null;
         }
 
         tl.debug(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
 
         const prJson = await response.json();
-        let prResult: PullRequest = {
+        
+        // Validate required fields
+        if (!prJson.title) {
+            tl.warning(`PR ${pullRequestId} missing required title field`);
+            return null;
+        }
+
+        const prResult: PullRequest = {
             id: pullRequestId,
             title: prJson.title,
-            url: prJson._links?.web?.href || prUrl,
-            author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || '',
+            url: prJson._links?.web?.href || `https://dev.azure.com/${organization}/${project}/_git/pullrequest/${pullRequestId}`,
+            author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || 'Unknown',
             workItems: []
         };
 
-        await Promise.all(prJson.workItemRefs.map(async workItemRef => {
+        // Fetch work items if they exist
+        if (prJson.workItemRefs && Array.isArray(prJson.workItemRefs)) {
+            const workItemPromises = prJson.workItemRefs.map(async (workItemRef: any) => {
+                if (!workItemRef?.id) {
+                    tl.debug(`Skipping invalid work item reference: ${JSON.stringify(workItemRef)}`);
+                    return null;
+                }
 
-            tl.debug(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
+                tl.debug(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
 
-            let workItem = await getWorkItem(
-                workItemRef.id,
-                organization,
-                project,
-                accessToken
-            );
+                const workItem = await getWorkItem(
+                    workItemRef.id,
+                    organization,
+                    project,
+                    accessToken
+                );
 
-            if (workItem == null) {
-                tl.warning(`Failed to fetch WorkItem details ${workItem.id}`);
-                return;
-            }
+                if (!workItem) {
+                    tl.warning(`Failed to fetch WorkItem details for ${workItemRef.id}`);
+                    return null;
+                }
 
-            prResult.workItems.push(workItem);   
-        }));
+                return workItem;
+            });
+
+            const workItems = await Promise.all(workItemPromises);
+            prResult.workItems = workItems.filter(wi => wi !== null);
+        }
         
-        // TODO: Get work items for PR
         return prResult;
-    }
-    catch (error) { 
-        tl.warning(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
-        
-        throw new Error(`Failed to fetch PR details for PR ${pullRequestId}: ${error}`);
+    } catch (error) { 
+        tl.error(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
+        return null;
     }
 }
 
