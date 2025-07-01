@@ -171,6 +171,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
         // Generate release notes
         let releaseNotes;
         try {
+            require('handlebars-helpers')({ handlebars: TemplateUtils_1.handlebars });
             const templateFunc = TemplateUtils_1.handlebars.compile(template);
             releaseNotes = templateFunc(releaseData);
         }

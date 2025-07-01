@@ -193,6 +193,7 @@ export async function GenerateReleaseNotes(
     // Generate release notes
     let releaseNotes: string;
     try {
+        require('handlebars-helpers')({ handlebars });
         const templateFunc = handlebars.compile(template);
         releaseNotes = templateFunc(releaseData);
     } catch (error) {

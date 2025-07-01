@@ -1,10 +1,10 @@
 # Release Notes
 
-Generated on {{formatDate generatedDate}} from {{startCommit}} to {{endCommit}}
+Generated on {{moment generatedDate "YYYY-MM-DD HH:mm"}} from {{startCommit}} to {{endCommit}}
 
 Repository: **{{repositoryId}}**
 
-## Summary
+## Summary  
 - **{{pullRequests.length}}** Pull requests
 {{#if workItems.length}}- **{{workItems.length}}** work items{{/if}}
 {{#groupBy workItems "workItemType"}}
@@ -28,6 +28,6 @@ Repository: **{{repositoryId}}**
 ## 🔀 Pull Requests
 
 {{#each pullRequests}}
-- {{pullRequestLink this}} - {{title}}{{#if author}} by {{author}}{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
+- [{{id}}](url) - {{title}}{{#if author}} by {{author}}{{/if}} ({{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}})
 {{/each}}
 {{/if}}
