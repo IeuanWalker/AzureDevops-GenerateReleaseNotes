@@ -8,7 +8,7 @@
   "author": "Ieuan Walker",
   "version": {
     "Major": 5,
-    "Minor": 11,
+    "Minor": 12,
     "Patch": 0
   },
   "instanceNameFormat": "Generate Release Notes from Commit Range",

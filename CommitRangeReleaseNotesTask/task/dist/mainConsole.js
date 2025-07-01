@@ -23,8 +23,9 @@ function run() {
             const templateFile = argv["templateFile"] || undefined;
             const repoRoot = argv["repoRoot"];
             const systemAccessToken = argv["systemAccessToken"];
-            const teamProject = argv["teamProject"];
-            const repositoryName = argv["repositoryName"];
+            const project = argv["project"];
+            const repositoryId = argv["repositoryId"];
+            const organization = argv["organization"];
             // Validate repoRoot exists
             if (!tl.exist(repoRoot)) {
                 throw new Error(`Repository root directory does not exist: ${repoRoot}`);
@@ -35,7 +36,7 @@ function run() {
             // TODO: Validate devops variables - systemAccessToken, teamProject, repositoryName
             // Test api call
             const encodedSystemAccessToken = Buffer.from(`:${systemAccessToken}`).toString('base64');
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, encodedSystemAccessToken, teamProject, repositoryName, templateFile);
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, encodedSystemAccessToken, project, organization, repositoryId, templateFile);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

@@ -2,9 +2,7 @@
 
 Generated on {{formatDate generatedDate}} from {{startCommit}} to {{endCommit}}
 
-{{#if repositoryName}}
-Repository: **{{repositoryName}}**
-{{/if}}
+Repository: **{{repositoryId}}**
 
 ## Summary
 - **{{pullRequests.length}}** Pull requests
@@ -12,7 +10,6 @@ Repository: **{{repositoryName}}**
 {{#groupBy workItems "workItemType"}}
     - **{{key}}s**: {{items.length}}
 {{/groupBy}}
-
 
 {{#if pullRequests.length}}- **{{pullRequests.length}}** pull requests{{/if}}
 

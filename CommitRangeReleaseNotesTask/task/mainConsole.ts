@@ -14,8 +14,9 @@ export default async function run(): Promise<void> {
         const templateFile: string | undefined = argv["templateFile"] as string || undefined;
         const repoRoot: string = argv["repoRoot"] as string;
         const systemAccessToken: string = argv["systemAccessToken"];
-        const teamProject: string = argv["teamProject"];
-        const repositoryName: string = argv["repositoryName"] as string;
+        const project: string = argv["project"];
+        const repositoryId: string = argv["repositoryId"] as string;
+        const organization: string = argv["organization"] as string;
 
         // Validate repoRoot exists
         if (!tl.exist(repoRoot)) {
@@ -36,8 +37,9 @@ export default async function run(): Promise<void> {
             outputFile,
             repoRoot,
             encodedSystemAccessToken,
-            teamProject,
-            repositoryName,
+            project,
+            organization,
+            repositoryId,
             templateFile
         );
     } catch (error: any) {

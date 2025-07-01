@@ -21,9 +21,10 @@ function run() {
             const templateFile = tl.getInput('templateFile', false) || undefined;
             const repoRoot = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
             const systemAccessToken = tl.getVariable('System.AccessToken') || undefined;
-            const teamProject = tl.getVariable('System.TeamProject') || undefined;
-            const repositoryName = tl.getVariable('Build.Repository.Name') || undefined;
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, teamProject, repositoryName, templateFile);
+            const project = tl.getVariable('System.TeamProject') || undefined;
+            const organization = tl.getVariable('System.Organization') || undefined;
+            const repositoryId = tl.getVariable('Build.Repository.Name') || undefined;
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, project, organization, repositoryId, templateFile);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

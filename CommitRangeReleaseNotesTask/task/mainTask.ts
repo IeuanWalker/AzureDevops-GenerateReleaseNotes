@@ -10,8 +10,9 @@ export default async function run(): Promise<void> {
         const templateFile: string | undefined = tl.getInput('templateFile', false) || undefined;
         const repoRoot: string = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
         const systemAccessToken: string | undefined = tl.getVariable('System.AccessToken') || undefined;
-        const teamProject: string | undefined = tl.getVariable('System.TeamProject') || undefined;
-        const repositoryName: string | undefined = tl.getVariable('Build.Repository.Name') || undefined;
+        const project: string | undefined = tl.getVariable('System.TeamProject') || undefined;
+        const organization: string | undefined = tl.getVariable('System.Organization') || undefined;
+        const repositoryId: string | undefined = tl.getVariable('Build.Repository.Name') || undefined;
 
         await GenerateReleaseNotes(
             startCommit,
@@ -19,8 +20,9 @@ export default async function run(): Promise<void> {
             outputFile,
             repoRoot,
             systemAccessToken,
-            teamProject,
-            repositoryName,
+            project,
+            organization,
+            repositoryId,
             templateFile
         );
     } catch (error: any) {

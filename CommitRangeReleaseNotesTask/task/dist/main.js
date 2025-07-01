@@ -17,7 +17,7 @@ const CommitUtils_1 = require("./utils/CommitUtils");
 const PRUtils_1 = require("./utils/PRUtils");
 const TemplateUtils_1 = require("./utils/TemplateUtils");
 (0, TemplateUtils_1.registerHelpers)();
-function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, teamProject, repositoryName, templateFile) {
+function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, systemAccessToken, project, organization, repositoryId, templateFile) {
     return __awaiter(this, void 0, void 0, function* () {
         // Input validation
         if (!(startCommit === null || startCommit === void 0 ? void 0 : startCommit.trim()) || !(endCommit === null || endCommit === void 0 ? void 0 : endCommit.trim())) {
@@ -40,8 +40,6 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             tl.setResult(tl.TaskResult.Failed, `Failed to change to repository directory: ${error}`);
             return;
         }
-        // Extract organization from system access token or use default
-        const organization = 'cardiffcouncilict'; // TODO: Make this configurable
         // Validate start commit
         if (!(yield (0, CommitUtils_1.validateCommit)(startCommit, repoRoot))) {
             if (startCommit.includes('HEAD~') || startCommit.includes('HEAD^')) {
@@ -93,12 +91,12 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
                 return;
             }
             const prId = match[1];
-            if (!systemAccessToken || !teamProject || !repositoryName) {
+            if (!systemAccessToken || !project || !repositoryId) {
                 tl.warning(`Missing required parameters for PR ${prId} - skipping PR details fetch`);
                 return;
             }
             try {
-                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), organization, teamProject, repositoryName, systemAccessToken);
+                const pr = yield (0, PRUtils_1.getPRInfo)(Number(prId), organization, project, repositoryId, systemAccessToken);
                 if (pr) {
                     commit.pullRequest = pr;
                     tl.debug(`Successfully fetched PR ${prId} with ${pr.workItems.length} work items`);
@@ -131,8 +129,8 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFile, repoRoot, syst
             startCommit,
             endCommit,
             generatedDate: new Date().toISOString(),
-            repositoryName,
-            teamProject
+            repositoryId,
+            project
         };
         // Log release data for debugging (truncated)
         tl.debug(`Release data summary: ${commits.length} commits, ${allPullRequests.length} PRs, ${allWorkItems.length} work items`);

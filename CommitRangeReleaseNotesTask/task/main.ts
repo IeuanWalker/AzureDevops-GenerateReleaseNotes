@@ -15,8 +15,9 @@ export async function GenerateReleaseNotes(
     outputFile: string,
     repoRoot: string,
     systemAccessToken: string,
-    teamProject: string,
-    repositoryName: string,
+    project: string,
+    organization: string,
+    repositoryId: string,
     templateFile?: string
 ): Promise<void> {
     // Input validation
@@ -42,9 +43,6 @@ export async function GenerateReleaseNotes(
         tl.setResult(tl.TaskResult.Failed, `Failed to change to repository directory: ${error}`);
         return;
     }
-
-    // Extract organization from system access token or use default
-    const organization = 'cardiffcouncilict'; // TODO: Make this configurable
 
     // Validate start commit
     if (!await validateCommit(startCommit, repoRoot)) {
@@ -102,7 +100,7 @@ export async function GenerateReleaseNotes(
 
         const prId = match[1];
         
-        if (!systemAccessToken || !teamProject || !repositoryName) {
+        if (!systemAccessToken || !project || !repositoryId) {
             tl.warning(`Missing required parameters for PR ${prId} - skipping PR details fetch`);
             return;
         }
@@ -111,8 +109,8 @@ export async function GenerateReleaseNotes(
             const pr = await getPRInfo(
                 Number(prId),
                 organization,
-                teamProject,
-                repositoryName,
+                project,
+                repositoryId,
                 systemAccessToken
             );
             
@@ -151,8 +149,8 @@ export async function GenerateReleaseNotes(
         startCommit,
         endCommit,
         generatedDate: new Date().toISOString(),
-        repositoryName,
-        teamProject
+        repositoryId,
+        project
     };
 
     // Log release data for debugging (truncated)
@@ -213,6 +211,6 @@ interface TemplateData {
     startCommit: string;
     endCommit: string;
     generatedDate: string;
-    repositoryName?: string;
-    teamProject?: string;
+    repositoryId?: string;
+    project?: string;
 }
