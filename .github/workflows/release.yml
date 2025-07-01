@@ -49,6 +49,4 @@ jobs:
           path: '*.vsix'
 
       - name: Publish to Visual Studio Marketplace
-        run: tfx extension publish --vsix $(ls *.vsix) --token $(AZURE_DEVOPS_PAT)
-        env:
-          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: tfx extension publish --vsix $(ls *.vsix) --token ${{ secrets.AZURE_DEVOPS_PAT }}
