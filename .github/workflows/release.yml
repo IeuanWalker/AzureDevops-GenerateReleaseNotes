@@ -48,10 +48,7 @@ jobs:
           name: vsix-package
           path: '*.vsix'
 
-      - name: Install vsce
-        run: npm install -g @vscode/vsce
-
       - name: Publish to Visual Studio Marketplace
-        run: vsce publish --pat $VSCE_TOKEN --no-verify
+        run: tfx extension publish --vsix $(ls *.vsix) --token $(AZURE_DEVOPS_PAT)
         env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
