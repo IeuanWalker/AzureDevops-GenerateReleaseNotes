@@ -61,7 +61,7 @@ Repository: **MyProject**
     - **Bugs**: 3
 
 ## 📋 Work Items
-### User Stories
+### Tasks
 - [1234](https://dev.azure.com/org/project/_workitems/edit/1234) - Add user authentication by John Doe
 - [1235](https://dev.azure.com/org/project/_workitems/edit/1235) - Implement dashboard by Jane Smith
 
