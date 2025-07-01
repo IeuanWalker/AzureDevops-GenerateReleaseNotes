@@ -14,7 +14,7 @@ const main_1 = require("./main");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            tl.debug("Starting release notes generation task...");
+            console.log("Starting release notes generation task...");
             var argv = require("minimist")(process.argv.slice(2));
             // Set variables
             const startCommit = argv["startCommit"];

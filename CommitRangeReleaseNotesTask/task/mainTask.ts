@@ -3,6 +3,8 @@ import { GenerateReleaseNotes } from './main';
 
 export default async function run(): Promise<void> {
     try {
+        console.log("Starting release notes generation task...");
+
         // Set variables
         let startCommit: string = tl.getInput('startCommit', true) as string;
         const endCommit: string = tl.getInput('endCommit', true) as string;

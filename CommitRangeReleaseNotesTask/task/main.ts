@@ -6,6 +6,7 @@ import { PullRequest, getPRInfo } from './utils/PRUtils';
 import { registerHelpers, handlebars, defaultTemplate } from './utils/TemplateUtils';
 import type { Commit } from './utils/CommitUtils'; 
 import { WorkItem } from './utils/WorkItemUtils';
+import { printJson } from './utils/JsonOutput';
 
 registerHelpers();
 
@@ -20,6 +21,20 @@ export async function GenerateReleaseNotes(
     repositoryId: string,
     templateFile?: string
 ): Promise<void> {
+    // Variables
+    console.log();
+    console.log('VARIABLES');
+    console.log(`Start Commit: ${startCommit}`);
+    console.log(`End Commit: ${endCommit}`);
+    console.log(`Output File: ${outputFile}`);
+    console.log(`Repository Root: ${repoRoot}`);
+    console.log(`System Access Token: ${systemAccessToken ? 'Provided' : 'Not Provided'}`);
+    console.log(`Project: ${project}`);
+    console.log(`Organization: ${organization}`);
+    console.log(`Repository ID: ${repositoryId}`);
+    console.log(`Template File: ${templateFile ? templateFile : 'Default'}`);
+    console.log();
+
     // Input validation
     if (!startCommit?.trim() || !endCommit?.trim()) {
         tl.setResult(tl.TaskResult.Failed, 'Start and end commits are required');
@@ -86,7 +101,9 @@ export async function GenerateReleaseNotes(
         return;
     }
 
-    tl.debug(`Found ${commits.length} commits in range ${startCommit}..${endCommit}`);
+    console.log();
+    console.log(`Found ${commits.length} commits in range ${startCommit}..${endCommit}`);
+    console.log();
 
     // Process commits to extract PR information
     const mergePattern = /Merged PR (\d+): (.+)/i;
@@ -94,14 +111,14 @@ export async function GenerateReleaseNotes(
         const match = mergePattern.exec(commit.subject);
 
         if (!match) {
-            tl.debug(`Commit ${commit.hash} does not match PR merge pattern: ${commit.subject}`);
+            console.warn(`Commit ${commit.hash} does not match PR merge pattern: ${commit.subject}`);
             return;
         }
 
         const prId = match[1];
         
         if (!systemAccessToken || !project || !repositoryId) {
-            tl.warning(`Missing required parameters for PR ${prId} - skipping PR details fetch`);
+            console.warn(`Missing required parameters for PR ${prId} - skipping PR details fetch`);
             return;
         }
 
@@ -116,12 +133,12 @@ export async function GenerateReleaseNotes(
             
             if (pr) {
                 commit.pullRequest = pr;
-                tl.debug(`Successfully fetched PR ${prId} with ${pr.workItems.length} work items`);
+                console.log(`Successfully fetched PR ${prId} with ${pr.workItems.length} work items`);
             } else {
-                tl.warning(`Failed to fetch PR details for PR ${prId}`);
+                console.warn(`Failed to fetch PR details for PR ${prId}`);
             }
         } catch (err) {
-            tl.warning(`Error fetching PR details for PR ${prId}: ${err}`);
+            console.warn(`Error fetching PR details for PR ${prId}: ${err}`);
         }
     });
 
@@ -139,8 +156,6 @@ export async function GenerateReleaseNotes(
         .flatMap(pr => pr.workItems || [])
         .filter((wi, idx, arr) => arr.findIndex(x => x.id === wi.id) === idx);
 
-    tl.debug(`Found ${allPullRequests.length} unique pull requests and ${allWorkItems.length} unique work items`);
-
     // Data for Handlebars template
     const releaseData: TemplateData = {
         commits,
@@ -153,8 +168,7 @@ export async function GenerateReleaseNotes(
         project
     };
 
-    // Log release data for debugging (truncated)
-    tl.debug(`Release data summary: ${commits.length} commits, ${allPullRequests.length} PRs, ${allWorkItems.length} work items`);
+    printJson(releaseData);
 
     // Get template
     let template: string;
@@ -166,13 +180,13 @@ export async function GenerateReleaseNotes(
             
         if (hasValidTemplateFile) {
             template = fs.readFileSync(templateFile, 'utf8');
-            tl.debug(`Using custom template: ${templateFile}`);
+            console.log(`Using custom template: ${templateFile}`);
         } else {
             template = defaultTemplate;
-            tl.debug('Using default template');
+            console.log('Using default template');
         }
     } catch (error) {
-        tl.warning(`Error reading template file: ${error}. Using default template.`);
+        console.warn(`Error reading template file: ${error}. Using default template.`);
         template = defaultTemplate;
     }
 
@@ -193,14 +207,12 @@ export async function GenerateReleaseNotes(
             fs.mkdirSync(outputDir, { recursive: true });
         }
         fs.writeFileSync(outputFile, releaseNotes, 'utf8');
-        tl.debug(`Release notes written to: ${outputFile}`);
+        console.log(`Release notes written to: ${outputFile}`);
     } catch (error) {
         tl.setResult(tl.TaskResult.Failed, `Failed to write release notes to file: ${error}`);
         return;
     }
 
-    // Set pipeline variable and result
-    tl.setVariable('ReleaseNotes', releaseNotes);
     tl.setResult(tl.TaskResult.Succeeded, `Release notes generated successfully with ${commits.length} commits, ${allPullRequests.length} PRs, and ${allWorkItems.length} work items`);
 }
 

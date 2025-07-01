@@ -6,7 +6,6 @@
 
 import util = require('util');
 import child_process = require('child_process');
-import tl = require("azure-pipelines-task-lib/task");
 import type { PullRequest } from './PRUtils'; 
 import type { WorkItem } from './WorkItemUtils'; 
 
@@ -21,7 +20,7 @@ export async function validateCommit(commit: string, repoRoot: string): Promise<
         await execAsync(`git rev-parse --verify ${commit}`, { cwd: repoRoot });
         return true;
     } catch (error) {
-        tl.debug(`Invalid commit ${commit}: ${error}`);
+        console.log(`Invalid commit ${commit}: ${error}`);
         return false;
     }
 }
@@ -35,7 +34,7 @@ export async function getCommitCount(repoRoot: string): Promise<number> {
         }
         return count;
     } catch (error) {
-        tl.error(`Failed to get commit count: ${error}`);
+        console.error(`Failed to get commit count: ${error}`);
         throw error;
     }
 }
@@ -49,7 +48,7 @@ export async function getFirstCommit(repoRoot: string): Promise<string> {
         }
         return firstCommit;
     } catch (error) {
-        tl.error(`Failed to get first commit: ${error}`);
+        console.error(`Failed to get first commit: ${error}`);
         throw error;
     }
 }
@@ -96,7 +95,7 @@ function parseGitLog(log: string): Commit[] {
             // Remove any trailing newlines and split by first five pipes
             const parts = line.trim().split('|');
             if (parts.length < 5) {
-                tl.warning(`Malformed git log entry: ${line}`);
+                console.warn(`Malformed git log entry: ${line}`);
                 return null;
             }
             
@@ -106,7 +105,7 @@ function parseGitLog(log: string): Commit[] {
             // Validate timestamp
             const timestamp = parseInt(date, 10);
             if (isNaN(timestamp)) {
-                tl.warning(`Invalid timestamp in commit ${hash}: ${date}`);
+                console.warn(`Invalid timestamp in commit ${hash}: ${date}`);
             }
             
             return {
@@ -119,11 +118,10 @@ function parseGitLog(log: string): Commit[] {
             } as Commit;
         }).filter(commit => commit !== null);
     } catch (error) {
-        tl.error(`Error parsing git log: ${error}`);
+        console.error(`Error parsing git log: ${error}`);
         return [];
     }
 }
-
 
 export interface Commit {
   hash: string;

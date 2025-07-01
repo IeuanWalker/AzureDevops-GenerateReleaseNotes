@@ -14,6 +14,7 @@ const main_1 = require("./main");
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log("Starting release notes generation task...");
             // Set variables
             let startCommit = tl.getInput('startCommit', true);
             const endCommit = tl.getInput('endCommit', true);

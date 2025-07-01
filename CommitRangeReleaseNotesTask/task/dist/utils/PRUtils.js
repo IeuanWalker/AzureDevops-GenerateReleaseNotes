@@ -17,7 +17,7 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const prUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}?includeWorkItemRefs=true&api-version=7.1`;
-            tl.debug(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
+            console.log(`Fetching PR details for PR ${pullRequestId} from ${prUrl}`);
             const response = yield fetch(prUrl, {
                 headers: {
                     'Authorization': `Basic ${accessToken}`,
@@ -26,14 +26,14 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
             });
             if (!response.ok) {
                 const errorText = yield response.text();
-                tl.warning(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${errorText}`);
+                console.warn(`Failed to fetch PR details for PR ${pullRequestId}: ${response.status} ${response.statusText}. Response: ${errorText}`);
                 return null;
             }
-            tl.debug(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
+            console.log(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
             const prJson = yield response.json();
             // Validate required fields
             if (!prJson.title) {
-                tl.warning(`PR ${pullRequestId} missing required title field`);
+                console.warn(`PR ${pullRequestId} missing required title field`);
                 return null;
             }
             const prResult = {
@@ -47,10 +47,10 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
             if (prJson.workItemRefs && Array.isArray(prJson.workItemRefs)) {
                 const workItemPromises = prJson.workItemRefs.map((workItemRef) => __awaiter(this, void 0, void 0, function* () {
                     if (!(workItemRef === null || workItemRef === void 0 ? void 0 : workItemRef.id)) {
-                        tl.debug(`Skipping invalid work item reference: ${JSON.stringify(workItemRef)}`);
+                        console.log(`Skipping invalid work item reference: ${JSON.stringify(workItemRef)}`);
                         return null;
                     }
-                    tl.debug(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
+                    console.log(`Fetching work item details for WorkItemRef ${JSON.stringify(workItemRef)}`);
                     const workItem = yield (0, WorkItemUtils_1.getWorkItem)(workItemRef.id, organization, project, accessToken);
                     if (!workItem) {
                         tl.warning(`Failed to fetch WorkItem details for ${workItemRef.id}`);
@@ -64,16 +64,9 @@ function getPRInfo(pullRequestId, organization, project, repositoryId, accessTok
             return prResult;
         }
         catch (error) {
-            tl.error(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
+            console.error(`Error fetching PR details for PR ${pullRequestId}: ${error}`);
             return null;
         }
     });
 }
 exports.getPRInfo = getPRInfo;
-// TODO: Remove if the above works
-function generatePRUrl(prId, collectionUri, teamProject) {
-    if (!collectionUri || !teamProject)
-        return `#${prId}`;
-    const baseUrl = collectionUri.replace(/\/$/, '');
-    return `${baseUrl}/${teamProject}/_git/pullrequest/${prId}`;
-}

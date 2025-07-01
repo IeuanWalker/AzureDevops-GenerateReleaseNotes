@@ -3,7 +3,7 @@ import { GenerateReleaseNotes } from './main';
 
 export default async function run(): Promise<void> {
     try {
-        tl.debug("Starting release notes generation task...");
+        console.log("Starting release notes generation task...");
 
         var argv = require("minimist")(process.argv.slice(2));
 

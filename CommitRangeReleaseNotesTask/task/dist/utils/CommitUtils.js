@@ -17,7 +17,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCommitsInRange = exports.getFirstCommit = exports.getCommitCount = exports.validateCommit = void 0;
 const util = require("util");
 const child_process = require("child_process");
-const tl = require("azure-pipelines-task-lib/task");
 const execAsync = util.promisify(child_process.exec);
 function validateCommit(commit, repoRoot) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,7 +28,7 @@ function validateCommit(commit, repoRoot) {
             return true;
         }
         catch (error) {
-            tl.debug(`Invalid commit ${commit}: ${error}`);
+            console.log(`Invalid commit ${commit}: ${error}`);
             return false;
         }
     });
@@ -46,7 +45,7 @@ function getCommitCount(repoRoot) {
             return count;
         }
         catch (error) {
-            tl.error(`Failed to get commit count: ${error}`);
+            console.error(`Failed to get commit count: ${error}`);
             throw error;
         }
     });
@@ -63,7 +62,7 @@ function getFirstCommit(repoRoot) {
             return firstCommit;
         }
         catch (error) {
-            tl.error(`Failed to get first commit: ${error}`);
+            console.error(`Failed to get first commit: ${error}`);
             throw error;
         }
     });
@@ -102,7 +101,7 @@ function parseGitLog(log) {
             // Remove any trailing newlines and split by first five pipes
             const parts = line.trim().split('|');
             if (parts.length < 5) {
-                tl.warning(`Malformed git log entry: ${line}`);
+                console.warn(`Malformed git log entry: ${line}`);
                 return null;
             }
             const [hash, author, email, date, subject, ...bodyParts] = parts;
@@ -110,7 +109,7 @@ function parseGitLog(log) {
             // Validate timestamp
             const timestamp = parseInt(date, 10);
             if (isNaN(timestamp)) {
-                tl.warning(`Invalid timestamp in commit ${hash}: ${date}`);
+                console.warn(`Invalid timestamp in commit ${hash}: ${date}`);
             }
             return {
                 hash: hash || '',
@@ -123,7 +122,7 @@ function parseGitLog(log) {
         }).filter(commit => commit !== null);
     }
     catch (error) {
-        tl.error(`Error parsing git log: ${error}`);
+        console.error(`Error parsing git log: ${error}`);
         return [];
     }
 }

@@ -2,13 +2,12 @@
   "manifestVersion": 1,
   "id": "IeuanWalker-ReleaseNotesGenerator",
   "name": "Commit Range Release Notes Generator",
-  "version": "5.12.0",
+  "version": "5.14.0",
   "publisher": "IeuanWalker",
   "CustomerQnASupport": {
     "enableqna":"true",
     "url": "https://github.com/IeuanWalker/CommitRangeReleaseNotes/issues"
   },
-
   "description": "Generate release notes from a range of commits in your repository.",
   "categories": [
     "Azure Pipelines"
