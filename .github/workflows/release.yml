@@ -22,6 +22,23 @@ jobs:
       - name: Install tfx-cli
         run: npm install -g tfx-cli
 
+
+      - name: Update version numbers from tag
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+
+          jq --arg v "$VERSION" '.version = $v' vss-extension.json > tmp.$$.json && mv tmp.$$.json vss-extension.json
+
+          jq --argjson major $MAJOR --argjson minor $MINOR --argjson patch $PATCH \
+            '.version = {Major: $major, Minor: $minor, Patch: $patch}' \
+            CommitRangeReleaseNotesTask/task/task.json > tmp.$$.json && mv tmp.$$.json CommitRangeReleaseNotesTask/task/task.json
+
+          echo "Updated versions to $VERSION"
+        shell: bash
+
       - name: Package Azure DevOps Extension
         run: tfx extension create --manifest-globs vss-extension.json
 
