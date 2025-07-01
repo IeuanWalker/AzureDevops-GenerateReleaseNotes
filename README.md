@@ -126,12 +126,8 @@ interface WorkItem {
 ```
 
 ### Built-in Handlebars Helpers
-- `{{workItemLink workItem}}` - Creates markdown link: `[123](url)`
-- `{{pullRequestLink pullRequest}}` - Creates markdown link: `[PR 42](url)`
-- `{{commitLink commit}}` - Creates markdown link for commit (if commitUrl available)
-- `{{shortHash hash}}` - Truncates commit hash to 7 characters
-- `{{formatDate isoDate}}` - Formats ISO date for display
-- `{{groupBy items "field"}}` - Groups array items by specified field
+- [Handlebars helpers](https://github.com/helpers/handlebars-helpers) is built in and loaded by default
+- A [custom grouping](https://github.com/IeuanWalker/CommitRangeReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
 
 ### Custom Template Example
 ```handlebars
