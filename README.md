@@ -1,7 +1,7 @@
 # Release Notes Generator
 An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyses merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
 
-Only works with squash merges, as it operates based on the commit message. i.e it finds the PR ID from the commit message in the following format `Merged PR {id}: {title}`. It then uses Azure DevOps APIs to get the PR data and the attached work items.
+Only works with squash merges, as it operates based on the commit message. It finds the PR ID from commit messages in the format: `Merged PR {id}: {title}`.
 
 ## Features
 - **Git-based**: Extract release notes directly from Git commit history
@@ -20,7 +20,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 
 ### Basic Usage
 ```yaml
-- task: CommitRangeReleaseNotes@1
+- task: ReleaseNotes@2
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'HEAD'
@@ -30,7 +30,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 
 ### With Custom Template
 ```yaml
-- task: CommitRangeReleaseNotes@1
+- task: ReleaseNotes@2
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'v1.1.0'
@@ -45,7 +45,8 @@ The extension analyses Git commits in a specified range, looking for merge commi
 |-----------|-------------|----------|---------|
 | `startCommit` | Commit reference for the start of the range (exclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | - |
 | `endCommit` | Commit reference for the end of the range (inclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | `HEAD` |
-| `outputFileMarkdown` and `outputFileHtml` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/release-notes.html` and `$(Build.ArtifactStagingDirectory)/release-notes.html` |
+| `outputFileMarkdown` | Path for markdown output | ✅ | `$(Build.ArtifactStagingDirectory)/release-notes.md` |
+| `outputFileHtml`     | Path for HTML output     | ✅ | `$(Build.ArtifactStagingDirectory)/release-notes.html` |
 | `templateFileMarkdown` and `templateFileHtml` | Path to custom Handlebars template file | ❌ | Built-in template |
 
 ### Supported commit reference formats for `startCommit` and `endCommit`

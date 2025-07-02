@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
+    /* --- Base Styles --- */
     body {
       background: #ececec;
       margin: 0;
@@ -21,6 +22,20 @@
       box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
     }
 
+    @media (max-width: 600px) {
+      .document {
+        padding: 1em 0.5em;
+        max-width: 100vw;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.95em;
+      }
+    }
+
+    /* --- Table Styles --- */
     table {
       border-collapse: collapse;
       width: 100%;
@@ -44,13 +59,27 @@
       color: #2c3e50;
     }
 
+    th.dontWrap,
+    td.dontWrap {
+      white-space: nowrap;
+      width: 1%;
+    }
+
+    /* --- Row Styles --- */
     .expandable-row {
       cursor: pointer;
       transition: background 0.2s;
+      outline: none;
     }
 
-    .expandable-row:active {
+    .expandable-row:active,
+    .expandable-row:focus {
       background: #e0eaff;
+    }
+
+    .expandable-row.highlight {
+      background: #e0eaff !important;
+      transition: background 0.4s;
     }
 
     .description-row {
@@ -66,15 +95,6 @@
       background: #f9f9f9;
     }
 
-    .desc-content {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 0 12px;
-      margin: 0;
-    }
-
     .description-row.open td {
       height: auto !important;
     }
@@ -85,35 +105,14 @@
       padding: 10px 12px;
     }
 
-    .avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin-right: 8px;
-      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.10);
-      background: #eee;
-      object-fit: cover;
-    }
-
-    a {
-      color: #2c3e50;
-      text-decoration: underline;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: #0078d4;
-    }
-
-    th.dontWrap,
-    td.dontWrap {
-      white-space: nowrap;
-      width: 1%;
-    }
-
-    .userCell {
-      white-space: nowrap;
+    /* --- Description Content --- */
+    .desc-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 12px;
+      margin: 0;
     }
 
     .description-cell {
@@ -131,6 +130,7 @@
       max-width: 100%;
       height: auto;
       display: block;
+      cursor: zoom-in;
     }
 
     .description-cell table {
@@ -144,16 +144,41 @@
       word-break: break-all;
     }
 
-.expandable-row.highlight {
-  background: #e0eaff !important;
-  transition: background 0.4s;
-}
+    /* --- User/Avatar Styles --- */
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.10);
+      background: #eee;
+      object-fit: cover;
+    }
+
+    .userCell {
+      white-space: nowrap;
+    }
+
+    /* --- Link Styles --- */
+    a {
+      color: #2c3e50;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #0078d4;
+    }
+
+    /* --- Muted Text --- */
     .muted {
       color: #888;
       font-style: italic;
     }
 
-        footer {
+    /* --- Footer --- */
+    footer {
       margin-top: 3em;
       padding: 1.5em 0 0 0;
       border-top: 1px solid #e0e0e0;
@@ -162,15 +187,82 @@
       text-align: center;
       background: transparent;
     }
+
     footer a {
       color: #0078d4;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s;
     }
+
     footer a:hover {
       color: #005a9e;
       text-decoration: underline;
+    }
+
+    /* --- Lightbox Styles --- */
+    html.lightbox-open,
+    body.lightbox-open {
+      overflow: hidden !important;
+      height: 100%;
+    }
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+      transition: opacity 0.2s;
+      opacity: 0;
+    }
+
+    .lightbox-overlay.open {
+      display: flex;
+      opacity: 1;
+      animation: lightbox-fade-in 0.2s;
+    }
+
+    .lightbox-overlay.fade-out {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      box-shadow: 0 4px 32px rgba(44, 62, 80, 0.25);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      animation: lightbox-in 0.2s;
+    }
+
+    @keyframes lightbox-in {
+      from {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes lightbox-fade-in {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -213,7 +305,7 @@
       </thead>
       <tbody>
         {{#each items}}
-        <tr class="expandable-row dontWrap" data-row-id="workitem-{{id}}">
+        <tr class="expandable-row dontWrap" data-row-id="workitem-{{id}}" tabindex="0" aria-expanded="false">
           <td><a href="{{url}}" target="_blank">{{id}}</a></td>
           <td>{{title}}</td>
           <td class="userCell">
@@ -270,7 +362,7 @@
       </thead>
       <tbody>
         {{#each pullRequests}}
-        <tr class="expandable-row dontWrap" data-row-id="pr-{{id}}">
+        <tr class="expandable-row dontWrap" data-row-id="pr-{{id}}" tabindex="0" aria-expanded="false">
           <td><a href="{{url}}" target="_blank">{{id}}</a></td>
           <td>{{title}}</td>
           <td class="userCell">
@@ -287,7 +379,8 @@
           <td class="dontWrap">
             {{#if workItems.length}}
             {{#each workItems}}
-            <a href="#workitem-{{id}}" class="workitem-link" data-workitem-id="{{id}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            <a href="#workitem-{{id}}" class="workitem-link" data-workitem-id="{{id}}">{{id}}</a>{{#unless @last}},
+            {{/unless}}
             {{/each}}
             {{else}}
             &mdash;
@@ -313,18 +406,23 @@
     <p class="muted">No pull requests in this range.</p>
     {{/if}}
   </div>
-<script>
-  // Smooth scroll helper
-  function smoothScrollTo(element, duration = 600, offset = -120) {
+  <!-- Lightbox overlay -->
+  <div class="lightbox-overlay" id="lightboxOverlay" role="dialog" aria-modal="true">
+    <img class="lightbox-img" id="lightboxImg" src="" alt="Enlarged image" aria-label="Enlarged image">
+  </div>
+  <script>
+    // Consistent scroll offset
+    const SCROLL_OFFSET = -120;
+
+    // Smooth scroll helper
+    function smoothScrollTo(element, duration = 600, offset = SCROLL_OFFSET) {
       const rect = element.getBoundingClientRect();
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       let targetY = rect.top + scrollTop + offset;
-      // Prevent scrolling above the top
       if (targetY < 0) targetY = 0;
       const startY = window.scrollY;
       const diff = targetY - startY;
       let start;
-
       function step(timestamp) {
         if (!start) start = timestamp;
         const time = timestamp - start;
@@ -337,9 +435,60 @@
       window.requestAnimationFrame(step);
     }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.expandable-row').forEach(function (row) {
-      row.addEventListener('click', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+      let lastScrollY = 0;
+
+      document.body.addEventListener('click', function (e) {
+        if (e.target.matches('.desc-content img')) {
+          var overlay = document.getElementById('lightboxOverlay');
+          var overlayImg = document.getElementById('lightboxImg');
+          overlayImg.src = e.target.src;
+          overlay.style.display = 'flex';
+          lastScrollY = window.scrollY; // Store scroll position
+          document.body.classList.add('lightbox-open');
+          document.documentElement.classList.add('lightbox-open');
+          setTimeout(function () {
+            overlay.classList.add('open');
+          }, 10);
+        }
+      });
+
+      function closeLightbox() {
+        var overlay = document.getElementById('lightboxOverlay');
+        overlay.classList.remove('open');
+        overlay.classList.add('fade-out');
+        setTimeout(function () {
+          overlay.style.display = 'none';
+          overlay.classList.remove('fade-out');
+          document.getElementById('lightboxImg').src = '';
+          document.body.classList.remove('lightbox-open');
+          document.documentElement.classList.remove('lightbox-open');
+          window.scrollTo(0, lastScrollY); // Restore scroll position
+        }, 200);
+      }
+
+      var overlay = document.getElementById('lightboxOverlay');
+      overlay.addEventListener('click', closeLightbox);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+          closeLightbox();
+        }
+      });
+
+      // Expandable rows: click and keyboard (Enter/Space)
+      document.querySelectorAll('.expandable-row').forEach(function (row) {
+        row.addEventListener('click', function () {
+          toggleRow(row);
+        });
+        row.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleRow(row);
+          }
+        });
+      });
+
+      function toggleRow(row) {
         var id = row.getAttribute('data-row-id');
         var descRow = document.getElementById('desc-' + id);
         var isOpen = descRow.classList.contains('open');
@@ -347,75 +496,83 @@
         document.querySelectorAll('.description-row').forEach(function (desc) {
           desc.classList.remove('open');
         });
+        // Update ARIA
+        document.querySelectorAll('.expandable-row').forEach(function (r) {
+          r.setAttribute('aria-expanded', 'false');
+        });
         // Toggle: open if not open, close if open
         if (!isOpen) {
           descRow.classList.add('open');
+          row.setAttribute('aria-expanded', 'true');
         }
-      });
-    });
-    // On page load, ensure all are closed
-    document.querySelectorAll('.description-row').forEach(function (desc) {
-      desc.classList.remove('open');
-    });
+      }
 
-    // Add handler for PR links in work items
-    document.querySelectorAll('.pr-link').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        var prId = link.getAttribute('data-pr-id');
-        var prRow = document.querySelector('.expandable-row[data-row-id="pr-' + prId + '"]');
-        var descRow = document.getElementById('desc-pr-' + prId);
-        if (prRow && descRow) {
-          smoothScrollTo(prRow, 600, -80);
-          // Collapse all
-          document.querySelectorAll('.description-row').forEach(function (desc) {
-            desc.classList.remove('open');
-          });
-          // Remove highlight from all rows
-          document.querySelectorAll('.expandable-row').forEach(function (row) {
-            row.classList.remove('highlight');
-          });
-          // Expand and highlight the PR row
-          setTimeout(function () {
-            descRow.classList.add('open');
-            prRow.classList.add('highlight');
-            setTimeout(function () {
-              prRow.classList.remove('highlight');
-            }, 1500);
-          }, 100); // slight delay to ensure collapse completes before opening
-        }
+      // On page load, ensure all are closed and ARIA is set
+      document.querySelectorAll('.description-row').forEach(function (desc) {
+        desc.classList.remove('open');
       });
-    });
+      document.querySelectorAll('.expandable-row').forEach(function (row) {
+        row.setAttribute('aria-expanded', 'false');
+      });
 
-    document.querySelectorAll('.workitem-link').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        var workItemId = link.getAttribute('data-workitem-id');
-        var workItemRow = document.querySelector('.expandable-row[data-row-id="workitem-' + workItemId + '"]');
-        var descRow = document.getElementById('desc-workitem-' + workItemId);
-        if (workItemRow && descRow) {
-          smoothScrollTo(workItemRow, 600, -80);
-          // Collapse all
-          document.querySelectorAll('.description-row').forEach(function (desc) {
-            desc.classList.remove('open');
-          });
-          // Remove highlight from all rows
-          document.querySelectorAll('.expandable-row').forEach(function (row) {
-            row.classList.remove('highlight');
-          });
-          // Expand and highlight the Work Item row
-          setTimeout(function () {
-            descRow.classList.add('open');
-            workItemRow.classList.add('highlight');
+      // Add handler for PR links in work items
+      document.querySelectorAll('.pr-link').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          var prId = link.getAttribute('data-pr-id');
+          var prRow = document.querySelector('.expandable-row[data-row-id="pr-' + prId + '"]');
+          var descRow = document.getElementById('desc-pr-' + prId);
+          if (prRow && descRow) {
+            smoothScrollTo(prRow, 600, SCROLL_OFFSET);
+            // Collapse all
+            document.querySelectorAll('.description-row').forEach(function (desc) {
+              desc.classList.remove('open');
+            });
+            document.querySelectorAll('.expandable-row').forEach(function (row) {
+              row.classList.remove('highlight');
+              row.setAttribute('aria-expanded', 'false');
+            });
             setTimeout(function () {
-              workItemRow.classList.remove('highlight');
-            }, 1500);
-          }, 100);
-        }
+              descRow.classList.add('open');
+              prRow.classList.add('highlight');
+              prRow.setAttribute('aria-expanded', 'true');
+              setTimeout(function () {
+                prRow.classList.remove('highlight');
+              }, 1500);
+            }, 100);
+          }
+        });
+      });
+
+      // Add handler for Work Item links in PRs
+      document.querySelectorAll('.workitem-link').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          var workItemId = link.getAttribute('data-workitem-id');
+          var workItemRow = document.querySelector('.expandable-row[data-row-id="workitem-' + workItemId + '"]');
+          var descRow = document.getElementById('desc-workitem-' + workItemId);
+          if (workItemRow && descRow) {
+            smoothScrollTo(workItemRow, 600, SCROLL_OFFSET);
+            document.querySelectorAll('.description-row').forEach(function (desc) {
+              desc.classList.remove('open');
+            });
+            document.querySelectorAll('.expandable-row').forEach(function (row) {
+              row.classList.remove('highlight');
+              row.setAttribute('aria-expanded', 'false');
+            });
+            setTimeout(function () {
+              descRow.classList.add('open');
+              workItemRow.classList.add('highlight');
+              workItemRow.setAttribute('aria-expanded', 'true');
+              setTimeout(function () {
+                workItemRow.classList.remove('highlight');
+              }, 1500);
+            }, 100);
+          }
+        });
       });
     });
-  });
-</script>
+  </script>
 </body>
 
 </html>
