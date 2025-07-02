@@ -51,33 +51,38 @@ The extension analyses Git commits in a specified range, looking for merge commi
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
 ## Sample Output
+The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplate.hbs) outputs the following format - 
 ```markdown
-# Release Notes
+## 📊 Summary
+- **3** Pull Requests
+- **5** Work Items
+  - **Tasks**: 2
+  - **Bugs**: 3
 
-Generated on 7/1/2025 from v1.0.0 to HEAD
-
-Repository: **MyProject**
-
-## Summary
-- **3** Pull requests
-- **5** work items
-    - **Tasks**: 2
-    - **Bugs**: 3
+---
 
 ## 📋 Work Items
-### Tasks
-- [1234](https://dev.azure.com/org/project/_workitems/edit/1234) - Add user authentication by John Doe
-- [1235](https://dev.azure.com/org/project/_workitems/edit/1235) - Implement dashboard by Jane Smith
+### Tasks (2)
+| ID                                                             | Title                   | Assignee   | Linked PRs                                                  |
+| -------------------------------------------------------------- | ----------------------- | ---------- | ----------------------------------------------------------- |
+| [1234](https://dev.azure.com/org/project/_workitems/edit/1234) | Add user authentication | John Doe   | [42](https://dev.azure.com/org/project/_git/pullrequest/42) |
+| [1235](https://dev.azure.com/org/project/_workitems/edit/1235) | Implement dashboard     | Jane Smith | [43](https://dev.azure.com/org/project/_git/pullrequest/43) |
 
-### Bugs
-- [1236](https://dev.azure.com/org/project/_workitems/edit/1236) - Fix login validation by John Doe
-- [1237](https://dev.azure.com/org/project/_workitems/edit/1237) - Resolve timeout issues by Jane Smith
-- [1238](https://dev.azure.com/org/project/_workitems/edit/1238) - Fix null reference exception by Bob Wilson
+### Bugs (3)
+| ID                                                             | Title                    | Assignee   | Linked PRs                                                  |
+| -------------------------------------------------------------- | ------------------------ | ---------- | ----------------------------------------------------------- |
+| [1236](https://dev.azure.com/org/project/_workitems/edit/1236) | Fix login validation     | John Doe   | [42](https://dev.azure.com/org/project/_git/pullrequest/42) |
+| [1237](https://dev.azure.com/org/project/_workitems/edit/1237) | Resolve timeout issues   | Jane Smith | [44](https://dev.azure.com/org/project/_git/pullrequest/44) |
+| [1238](https://dev.azure.com/org/project/_workitems/edit/1238) | Fix null reference error | Bob Wilson | [44](https://dev.azure.com/org/project/_git/pullrequest/44) |
+
+---
 
 ## 🔀 Pull Requests
-- [PR 42](https://dev.azure.com/org/project/_git/pullrequest/42) - Add user authentication feature by John Doe ([1234](https://dev.azure.com/org/project/_workitems/edit/1234), [1236](https://dev.azure.com/org/project/_workitems/edit/1236))
-- [PR 43](https://dev.azure.com/org/project/_git/pullrequest/43) - Implement new dashboard by Jane Smith ([1235](https://dev.azure.com/org/project/_workitems/edit/1235))
-- [PR 44](https://dev.azure.com/org/project/_git/pullrequest/44) - Bug fixes and improvements by Bob Wilson ([1237](https://dev.azure.com/org/project/_workitems/edit/1237), [1238](https://dev.azure.com/org/project/_workitems/edit/1238))
+| ID                                                          | Title                           | Author     | Linked Work Items                                                                                                              |
+| ----------------------------------------------------------- | ------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [42](https://dev.azure.com/org/project/_git/pullrequest/42) | Add user authentication feature | John Doe   | [1234](https://dev.azure.com/org/project/_workitems/edit/1234), [1236](https://dev.azure.com/org/project/_workitems/edit/1236) |
+| [43](https://dev.azure.com/org/project/_git/pullrequest/43) | Implement new dashboard         | Jane Smith | [1235](https://dev.azure.com/org/project/_workitems/edit/1235)                                                                 |
+| [44](https://dev.azure.com/org/project/_git/pullrequest/44) | Bug fixes and improvements      | Bob Wilson |
 ```
 
 ## Template Customisation
@@ -89,7 +94,7 @@ Your template has access to the following data:
 ```typescript
 interface TemplateData {
   commits: Commit[];
-  workItems: WorkItem[];
+  workItems: WorkItemList[];
   pullRequests: PullRequest[];
   startCommit: string;
   endCommit: string;
@@ -126,6 +131,19 @@ interface WorkItem {
     uniqueName: string;
     imageUrl: string;
   };
+}
+
+interface WorkItemList {
+    id: string;
+    title: string;
+    workItemType: string; 
+    url: string;
+    assignedTo: {
+      displayName: string;
+      uniqueName: string;
+      imageUrl: string;
+    };
+    pullRequests: PullRequest[];
 }
 ```
 
