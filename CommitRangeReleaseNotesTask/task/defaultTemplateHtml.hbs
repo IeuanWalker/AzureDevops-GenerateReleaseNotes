@@ -314,6 +314,29 @@
     {{/if}}
   </div>
 <script>
+  // Smooth scroll helper
+  function smoothScrollTo(element, duration = 600, offset = -120) {
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      let targetY = rect.top + scrollTop + offset;
+      // Prevent scrolling above the top
+      if (targetY < 0) targetY = 0;
+      const startY = window.scrollY;
+      const diff = targetY - startY;
+      let start;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        const time = timestamp - start;
+        const percent = Math.min(time / duration, 1);
+        window.scrollTo(0, startY + diff * percent);
+        if (percent < 1) {
+          window.requestAnimationFrame(step);
+        }
+      }
+      window.requestAnimationFrame(step);
+    }
+
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.expandable-row').forEach(function (row) {
       row.addEventListener('click', function () {
@@ -336,14 +359,14 @@
     });
 
     // Add handler for PR links in work items
-   document.querySelectorAll('.pr-link').forEach(function (link) {
+    document.querySelectorAll('.pr-link').forEach(function (link) {
       link.addEventListener('click', function (e) {
         e.preventDefault();
         var prId = link.getAttribute('data-pr-id');
         var prRow = document.querySelector('.expandable-row[data-row-id="pr-' + prId + '"]');
         var descRow = document.getElementById('desc-pr-' + prId);
         if (prRow && descRow) {
-          prRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          smoothScrollTo(prRow, 600, -80);
           // Collapse all
           document.querySelectorAll('.description-row').forEach(function (desc) {
             desc.classList.remove('open');
@@ -371,7 +394,7 @@
         var workItemRow = document.querySelector('.expandable-row[data-row-id="workitem-' + workItemId + '"]');
         var descRow = document.getElementById('desc-workitem-' + workItemId);
         if (workItemRow && descRow) {
-          workItemRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          smoothScrollTo(workItemRow, 600, -80);
           // Collapse all
           document.querySelectorAll('.description-row').forEach(function (desc) {
             desc.classList.remove('open');
