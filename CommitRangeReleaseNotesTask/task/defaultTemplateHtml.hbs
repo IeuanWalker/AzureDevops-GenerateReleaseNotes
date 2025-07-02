@@ -34,11 +34,6 @@
       background: #f4f4f4;
     }
 
-    .summary-list {
-      list-style: none;
-      padding: 0;
-    }
-
     .summary-list li {
       margin-bottom: 0.5em;
     }
@@ -50,6 +45,9 @@
 
     hr {
       margin: 2em 0;
+    }
+    ul{
+      margin-top: 0.5em;;
     }
   </style>
 </head>
@@ -67,13 +65,15 @@
   <ul class="summary-list">
     <li><strong>{{pullRequests.length}}</strong> Pull Requests</li>
     {{#if workItems.length}}
-    <li><strong>{{workItems.length}}</strong> Work Items</li>
+    <li><strong>{{workItems.length}}</strong> Work Items
+      <ul>
+        {{#groupBy workItems "workItemType"}}
+        <li><strong>{{key}}s:</strong> {{items.length}}</li>
+        {{/groupBy}}
+      </ul>
+    </li>
     {{/if}}
-    {{#groupBy workItems "workItemType"}}
-    <li><strong>{{key}}s:</strong> {{items.length}}</li>
-    {{/groupBy}}
   </ul>
-  <hr>
 
   {{#if workItems.length}}
   <h2>📋 Work Items</h2>
