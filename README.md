@@ -51,6 +51,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
 ## Sample Output
+The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplate.hbs) outputs the following format - 
 ```markdown
 ## 📊 Summary
 - **3** Pull Requests
