@@ -5,6 +5,7 @@ import { printJson } from "./JsonOutput";
 export interface PullRequest {
   id: number;
   title: string;
+  description: string;
   url: string;
   author: PrAuthor;
   workItems: WorkItem[]; 
@@ -66,6 +67,7 @@ export async function getPRInfo(
         const prResult: PullRequest = {
             id: pullRequestId,
             title: prJson.title,
+            description: prJson.description || '',
             url: webUrl,
             author: prAuthor,
             workItems: []

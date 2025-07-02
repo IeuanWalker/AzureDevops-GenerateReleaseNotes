@@ -110,6 +110,7 @@
       border-top: none;
       font-size: 0.97em;
       color: #444;
+      white-space: pre-line;
     }
 
     .avatar {
@@ -171,7 +172,7 @@
   <div class="document">
     <h1>Release Notes</h1>
     <p class="muted">
-      Generated on 02/07/2025 11:25 from <strong>Release-iOS-3.0.1-40-14490</strong> to
+      Generated on 02/07/2025 11:32 from <strong>Release-iOS-3.0.1-40-14490</strong> to
       <strong>HEAD</strong>
     </p>
     <p><strong>Repository:</strong> CardiffMobileApp</p>
@@ -731,8 +732,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6897" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -749,8 +749,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6896" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -767,8 +766,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6837" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -785,8 +783,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6862" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -803,9 +800,8 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6834" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            change colour of error messages on dark theme to a ligher yellow (better contrast)
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6808">
@@ -821,9 +817,8 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6808" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            added map key to highways and corrected semantic property description
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6810">
@@ -839,8 +834,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6810" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -857,9 +851,10 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6806" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            Replace mapkey_marker.svg with mapkey_reported.svg
+
+Removed mapkey_marker.svg and added mapkey_reported.svg to update the map key icon. Updated references in MapPage.xaml.cs to use the new file, ensuring the application reflects the updated visual representation.
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6800">
@@ -877,8 +872,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6800" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -895,9 +889,16 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6802" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            If you clicked next on the map page before the map has loaded, it would trigger the WebView code to call the JS to get the location, the WebView code would never return and the loader would stay on the app and the user would have to close/ restart the app
+
+![image.png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6802/attachments/image.png) 
+
+Added a 3s timeout too that code to prevent the infinite loader in the future.
+
+Issue with the timeout the user would see the general error message &quot;something gone wrong...&quot;
+
+Too prevent the user even getting into this position the next button now doesn&#x27;t appear until the map has loaded using a new property &#x60;MapReady&#x60; binded to the NextBack button &#x60;HasContinueButton&#x60;
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6787">
@@ -913,9 +914,13 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6787" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            Example search that used to fail - 
+- 123 union street
+- 176 and 183 place
+- 146, 148 and 150 PENCISELY ROAD
+- 60 &amp;&amp; 62 OAKLEY PLACE
+- 4 and 5 kirkwall crt cf24 2qu
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6786">
@@ -931,8 +936,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6786" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -949,8 +953,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6784" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -967,8 +970,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6756" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -985,9 +987,8 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6758" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            Same as previous fix, but for SetSemanticFocusForcefully - https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6754">
@@ -1003,9 +1004,16 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6754" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            I added a console log every in the Javascript file, just so i can see where/ what it was doing.
+ 
+Using that, after a lot of attempt once it failed, i saw that it called &#x60;await window.HybridWebView.InvokeDotNet(&quot;MapLoadedCSharp&quot;);&#x60; before ishare fully loaded, the way it would determine if ishare was loaded was just if the ishare loader wasnt there anymore. But i think it was doing that check a split second before ishare initialised/ started the loader _(very intermittently/ rare)_
+ 
+So our code would think ishare has loaded even though it hasnt.
+ 
+It would then fail to set the location and get stuck.
+ 
+Using the extra logs though i could see that &#x60;remove_map_listener&#x60; was always getting logged after ishare loaded, which gets triggered via ishares &#x60;dataLayersLoaded&#x60; event, so moved the map loaded callback to there instead
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6755">
@@ -1021,8 +1029,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6755" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1039,8 +1046,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6753" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1057,8 +1063,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6752" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1075,9 +1080,10 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6744" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            2 fixes - 
+- Slow loading message/ button appears after 7s (see vid attached to bug)
+- Improved map loading times when centering based on GPS and user is outside cardiff
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6743">
@@ -1093,8 +1099,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6743" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1112,8 +1117,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6725" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1130,8 +1134,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6733" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1148,8 +1151,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6731" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1166,8 +1168,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6730" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1184,9 +1185,8 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6653" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            This PR adds some unit tests to make it easier to add more later
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6681">
@@ -1202,9 +1202,13 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6681" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            _MauiForceXamlCForDebug prevented hot reload from working at all, more info here - https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884
+
+Once hot reload was working when you save a change it essential just reloads the XAML. The main content of the page would disappear becuase the base pages set the IsVisble to false by default, and in C# it then uses &#x60;IsContentVisible&#x60; to set the content visibility manually. Issue is HotReload only re-renders the xaml and does not trigger the C# code behind the page so was never being set back to true.
+
+&#x60;IsContentVisible&#x60; is not used, and was something just copied over from XF so can just be removed. So hot reload works on all pages now
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6721">
@@ -1220,8 +1224,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6721" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1238,8 +1241,7 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6727" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
+          <td colspan="4"><strong>Description:</strong>
             <span class="muted">No description available.</span>
           </td>
         </tr>
@@ -1256,9 +1258,16 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-6720" style="display:none;">
-          <td colspan="4">
-            <strong>Description:</strong>
-            <span class="muted">No description available.</span>
+          <td colspan="4"><strong>Description:</strong>
+            New pipelines added to run mend reports for Android + iOS
+
+No vunerabilities in MAUI version atm - 
+
+| Before | After |
+| -------- | ------- |
+|  ![image.png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image.png)  |  ![image (2).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%282%29.png)  |
+| ![image (3).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%283%29.png)  | ![image (4).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%284%29.png)  |
+
           </td>
         </tr>
       </tbody>

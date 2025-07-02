@@ -51,6 +51,7 @@ function getPRInfo(pullRequestId, apiUrl, project, repositoryId, accessToken) {
             const prResult = {
                 id: pullRequestId,
                 title: prJson.title,
+                description: prJson.description || '',
                 url: webUrl,
                 author: prAuthor,
                 workItems: []
