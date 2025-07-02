@@ -56,8 +56,8 @@ The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleas
 ## 📊 Summary
 - **3** Pull Requests
 - **5** Work Items
-  - **Task**s: 2
-  - **Bug**s: 3
+  - **Tasks**: 2
+  - **Bugs**: 3
 
 ---
 
