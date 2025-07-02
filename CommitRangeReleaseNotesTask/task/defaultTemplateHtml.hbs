@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
-      body {
+    body {
       background: #ececec;
       margin: 0;
       padding: 2em 0;
@@ -133,11 +133,13 @@
     a:hover {
       color: #0078d4;
     }
+
     th.dontWrap,
     td.dontWrap {
       white-space: nowrap;
       width: 1%;
     }
+
     .userCell {
       white-space: nowrap;
     }
@@ -151,12 +153,14 @@
       text-align: center;
       background: transparent;
     }
+
     footer a {
       color: #0078d4;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s;
     }
+
     footer a:hover {
       color: #005a9e;
       text-decoration: underline;
@@ -172,7 +176,6 @@
       <strong>{{endCommit}}</strong>
     </p>
     <p><strong>Repository:</strong> {{repositoryId}}</p>
-    <hr>
 
     <h2>📊 Summary</h2>
     <ul class="summary-list">
@@ -203,10 +206,10 @@
       </thead>
       <tbody>
         {{#each items}}
-        <tr class="dontWrap" data-row-id="workitem-{{id}}">
+        <tr class="expandable-row dontWrap" data-row-id="workitem-{{id}}">
           <td><a href="{{url}}">{{id}}</a></td>
           <td>{{title}}</td>
-          <td class="assignee-col userCell">
+          <td class="userCell">
             {{#if assignedTo}}
             {{#if assignedTo.imageUrl}}
             <img src="{{assignedTo.imageUrl}}" alt="{{assignedTo.displayName}}" class="avatar"
@@ -244,7 +247,6 @@
     {{else}}
     <p class="muted">No work items in this range.</p>
     {{/if}}
-    <hr>
 
     {{#if pullRequests.length}}
     <h2>🔀 Pull Requests</h2>
@@ -259,10 +261,10 @@
       </thead>
       <tbody>
         {{#each pullRequests}}
-        <tr class="dontWrap" data-row-id="pr-{{id}}">
+        <tr class="expandable-row dontWrap" data-row-id="pr-{{id}}">
           <td><a href="{{url}}">{{id}}</a></td>
           <td>{{title}}</td>
-          <td class="assignee-col userCell">
+          <td class="userCell">
             {{#if author}}
             {{#if author.imageUrl}}
             <img src="{{author.imageUrl}}" alt="{{author.displayName}}" class="avatar"
