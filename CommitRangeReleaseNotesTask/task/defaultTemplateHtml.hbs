@@ -7,31 +7,70 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
+      body {
+      background: #ececec;
+      margin: 0;
+      padding: 2em 0;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+
+    .document {
+      background: #fff;
+      max-width: 900px;
+      margin: 2em auto;
+      padding: 2.5em 3em;
+      border-radius: 10px;
+      box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
     }
 
     h1,
     h2,
     h3 {
       color: #2c3e50;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 1.4em;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 0.2em;
+      margin-bottom: 1em;
+    }
+
+    h3 {
+      font-size: 1.1em;
+      color: #3a4a5d;
+      margin-bottom: 0.7em;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
       margin-bottom: 2em;
+      background: #fafbfc;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.03);
     }
 
     th,
     td {
-      border: 1px solid #ddd;
-      padding: 8px;
+      border: 1px solid #e0e0e0;
+      padding: 10px 12px;
+      text-align: left;
     }
 
     th {
-      background: #f4f4f4;
+      background: #f7f7fa;
+      font-weight: 600;
+      color: #2c3e50;
     }
 
     .summary-list li {
@@ -44,12 +83,14 @@
     }
 
     hr {
-      margin: 2em 0;
+      margin: 2.5em 0 2em 0;
+      border: none;
+      border-top: 1.5px solid #e0e0e0;
     }
 
     ul {
       margin-top: 0.5em;
-      ;
+      margin-bottom: 0.5em;
     }
 
     tr:hover {
@@ -68,156 +109,208 @@
     .description-row td {
       background: #f9f9f9;
       border-top: none;
-      font-size: 0.95em;
+      font-size: 0.97em;
+      color: #444;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.10);
+      background: #eee;
+      object-fit: cover;
+    }
+
+    a {
+      color: #2c3e50;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #0078d4;
+    }
+    th.assignee-col,
+    td.assignee-col {
+      white-space: nowrap;
+      width: 1%;
+    }
+
+    footer {
+      margin-top: 3em;
+      padding: 1.5em 0 0 0;
+      border-top: 1px solid #e0e0e0;
+      color: #888;
+      font-size: 0.97em;
+      text-align: center;
+      background: transparent;
+    }
+    footer a {
+      color: #0078d4;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    footer a:hover {
+      color: #005a9e;
+      text-decoration: underline;
     }
   </style>
 </head>
 
 <body>
-  <h1>Release Notes</h1>
-  <p class="muted">
-    Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from <strong>{{startCommit}}</strong> to
-    <strong>{{endCommit}}</strong>
-  </p>
-  <p><strong>Repository:</strong> {{repositoryId}}</p>
-  <hr>
+  <div class="document">
+    <h1>Release Notes</h1>
+    <p class="muted">
+      Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from <strong>{{startCommit}}</strong> to
+      <strong>{{endCommit}}</strong>
+    </p>
+    <p><strong>Repository:</strong> {{repositoryId}}</p>
+    <hr>
 
-  <h2>📊 Summary</h2>
-  <ul class="summary-list">
-    <li><strong>{{pullRequests.length}}</strong> Pull Requests</li>
+    <h2>📊 Summary</h2>
+    <ul class="summary-list">
+      <li><strong>{{pullRequests.length}}</strong> Pull Requests</li>
+      {{#if workItems.length}}
+      <li><strong>{{workItems.length}}</strong> Work Items
+        <ul>
+          {{#groupBy workItems "workItemType"}}
+          <li><strong>{{key}}s:</strong> {{items.length}}</li>
+          {{/groupBy}}
+        </ul>
+      </li>
+      {{/if}}
+    </ul>
+
     {{#if workItems.length}}
-    <li><strong>{{workItems.length}}</strong> Work Items
-      <ul>
-        {{#groupBy workItems "workItemType"}}
-        <li><strong>{{key}}s:</strong> {{items.length}}</li>
-        {{/groupBy}}
-      </ul>
-    </li>
+    <h2>📋 Work Items</h2>
+    {{#groupBy workItems "workItemType"}}
+    <h3>{{key}}s ({{items.length}})</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th class="assignee-col">Assignee</th>
+          <th>Linked PRs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each items}}
+        <tr class="expandable-row" data-row-id="workitem-{{id}}">
+          <td><a href="{{url}}">{{id}}</a></td>
+          <td>{{title}}</td>
+          <td class="assignee-col">
+            {{#if assignedTo}}
+            {{#if assignedTo.imageUrl}}
+            <img src="{{assignedTo.imageUrl}}" alt="{{assignedTo.displayName}}" class="avatar"
+              onerror="this.style.display='none';">
+            {{/if}}
+            {{assignedTo.displayName}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+          <td>
+            {{#if pullRequests.length}}
+            {{#each pullRequests}}
+            <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            {{/each}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+        </tr>
+        <tr class="description-row" id="desc-workitem-{{id}}" style="display:none;">
+          <td colspan="4">
+            <strong>Description:</strong>
+            {{#if description}}
+            {{description}}
+            {{else}}
+            <span class="muted">No description available.</span>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{/groupBy}}
+    {{else}}
+    <p class="muted">No work items in this range.</p>
     {{/if}}
-  </ul>
+    <hr>
 
-  {{#if workItems.length}}
-  <h2>📋 Work Items</h2>
-  {{#groupBy workItems "workItemType"}}
-  <h3>{{key}}s ({{items.length}})</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Assignee</th>
-        <th>Linked PRs</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each items}}
-      <tr class="expandable-row" data-row-id="workitem-{{id}}">
-        <td><a href="{{url}}">{{id}}</a></td>
-        <td>{{title}}</td>
-        <td>
-          {{#if assignedTo}}
-          {{#if assignedTo.imageUrl}}
-          <img src="{{assignedTo.imageUrl}}" alt="{{assignedTo.displayName}}"
-            style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:6px;"
-            onerror="this.style.display='none';">
-          {{/if}}
-          {{assignedTo.displayName}}
-          {{else}}
-          &mdash;
-          {{/if}}
-        </td>
-        <td>
-          {{#if pullRequests.length}}
-          {{#each pullRequests}}
-          <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
-          {{/each}}
-          {{else}}
-          &mdash;
-          {{/if}}
-        </td>
-      </tr>
-      <tr class="description-row" id="desc-workitem-{{id}}" style="display:none;">
-        <td colspan="4">
-          <strong>Description:</strong>
-          {{#if description}}
-          {{description}}
-          {{else}}
-          <span class="muted">No description available.</span>
-          {{/if}}
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
-  {{/groupBy}}
-  {{else}}
-  <p class="muted">No work items in this range.</p>
-  {{/if}}
-  <hr>
+    {{#if pullRequests.length}}
+    <h2>🔀 Pull Requests</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th class="assignee-col">Author</th>
+          <th>Linked Work Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each pullRequests}}
+        <tr class="expandable-row" data-row-id="pr-{{id}}">
+          <td><a href="{{url}}">{{id}}</a></td>
+          <td>{{title}}</td>
+          <td class="assignee-col">
+            {{#if author}}
+            {{#if author.imageUrl}}
+            <img src="{{author.imageUrl}}" alt="{{author.displayName}}" class="avatar"
+              onerror="this.style.display='none';">
+            {{/if}}
+            {{author.displayName}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+          <td>
+            {{#if workItems.length}}
+            {{#each workItems}}
+            <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            {{/each}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+        </tr>
+        <tr class="description-row" id="desc-pr-{{id}}" style="display:none;">
+          <td colspan="4">
+            <strong>Description:</strong>
+            {{#if description}}
+            {{description}}
+            {{else}}
+            <span class="muted">No description available.</span>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p class="muted">No pull requests in this range.</p>
+    {{/if}}
 
-  {{#if pullRequests.length}}
-  <h2>🔀 Pull Requests</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Linked Work Items</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each pullRequests}}
-      <tr class="expandable-row" data-row-id="pr-{{id}}">
-        <td><a href="{{url}}">{{id}}</a></td>
-        <td>{{title}}</td>
-        <td>
-          {{#if author}}
-          {{author}}
-          {{else}}
-          &mdash;
-          {{/if}}
-        </td>
-        <td>
-          {{#if workItems.length}}
-          {{#each workItems}}
-          <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
-          {{/each}}
-          {{else}}
-          &mdash;
-          {{/if}}
-        </td>
-      </tr>
-      <tr class="description-row" id="desc-pr-{{id}}" style="display:none;">
-        <td colspan="4">
-          <strong>Description:</strong>
-          {{#if description}}
-          {{description}}
-          {{else}}
-          <span class="muted">No description available.</span>
-          {{/if}}
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
-  {{else}}
-  <p class="muted">No pull requests in this range.</p>
-  {{/if}}
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.expandable-row').forEach(function (row) {
-        row.addEventListener('click', function () {
-          var id = row.getAttribute('data-row-id');
-          var descRow = document.getElementById('desc-' + id);
-          if (descRow) {
-            descRow.style.display = descRow.style.display === 'none' ? '' : 'none';
-          }
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.expandable-row').forEach(function (row) {
+          row.addEventListener('click', function () {
+            var id = row.getAttribute('data-row-id');
+            var descRow = document.getElementById('desc-' + id);
+            if (descRow) {
+              descRow.style.display = descRow.style.display === 'none' ? '' : 'none';
+            }
+          });
         });
       });
-    });
-  </script>
+    </script>
+  </div>
 </body>
 
 </html>
