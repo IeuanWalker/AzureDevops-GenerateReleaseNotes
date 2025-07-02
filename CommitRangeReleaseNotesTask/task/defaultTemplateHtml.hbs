@@ -144,6 +144,10 @@
       word-break: break-all;
     }
 
+.expandable-row.highlight {
+  background: #e0eaff !important;
+  transition: background 0.4s;
+}
     .muted {
       color: #888;
       font-style: italic;
@@ -226,7 +230,7 @@
           <td class="dontWrap">
             {{#if pullRequests.length}}
             {{#each pullRequests}}
-            <a href="{{url}}" target="_blank">{{id}}</a>{{#unless @last}}, {{/unless}}
+            <a href="#pr-{{id}}" class="pr-link" data-pr-id="{{id}}">{{id}}</a>{{#unless @last}}, {{/unless}}
             {{/each}}
             {{else}}
             &mdash;
@@ -283,7 +287,7 @@
           <td class="dontWrap">
             {{#if workItems.length}}
             {{#each workItems}}
-            <a href="{{url}}" target="_blank">{{id}}</a>{{#unless @last}}, {{/unless}}
+            <a href="#workitem-{{id}}" class="workitem-link" data-workitem-id="{{id}}">{{id}}</a>{{#unless @last}}, {{/unless}}
             {{/each}}
             {{else}}
             &mdash;
@@ -329,6 +333,63 @@
     // On page load, ensure all are closed
     document.querySelectorAll('.description-row').forEach(function (desc) {
       desc.classList.remove('open');
+    });
+
+    // Add handler for PR links in work items
+   document.querySelectorAll('.pr-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var prId = link.getAttribute('data-pr-id');
+        var prRow = document.querySelector('.expandable-row[data-row-id="pr-' + prId + '"]');
+        var descRow = document.getElementById('desc-pr-' + prId);
+        if (prRow && descRow) {
+          prRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Collapse all
+          document.querySelectorAll('.description-row').forEach(function (desc) {
+            desc.classList.remove('open');
+          });
+          // Remove highlight from all rows
+          document.querySelectorAll('.expandable-row').forEach(function (row) {
+            row.classList.remove('highlight');
+          });
+          // Expand and highlight the PR row
+          setTimeout(function () {
+            descRow.classList.add('open');
+            prRow.classList.add('highlight');
+            setTimeout(function () {
+              prRow.classList.remove('highlight');
+            }, 1500);
+          }, 100); // slight delay to ensure collapse completes before opening
+        }
+      });
+    });
+
+    document.querySelectorAll('.workitem-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var workItemId = link.getAttribute('data-workitem-id');
+        var workItemRow = document.querySelector('.expandable-row[data-row-id="workitem-' + workItemId + '"]');
+        var descRow = document.getElementById('desc-workitem-' + workItemId);
+        if (workItemRow && descRow) {
+          workItemRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Collapse all
+          document.querySelectorAll('.description-row').forEach(function (desc) {
+            desc.classList.remove('open');
+          });
+          // Remove highlight from all rows
+          document.querySelectorAll('.expandable-row').forEach(function (row) {
+            row.classList.remove('highlight');
+          });
+          // Expand and highlight the Work Item row
+          setTimeout(function () {
+            descRow.classList.add('open');
+            workItemRow.classList.add('highlight');
+            setTimeout(function () {
+              workItemRow.classList.remove('highlight');
+            }, 1500);
+          }, 100);
+        }
+      });
     });
   });
 </script>
