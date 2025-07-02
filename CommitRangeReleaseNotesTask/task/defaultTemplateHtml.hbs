@@ -5,13 +5,14 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
+    /* --- Base Styles --- */
     body {
       background: #ececec;
       margin: 0;
       padding: 2em 0;
       font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
-
+  
     .document {
       background: #fff;
       max-width: 900px;
@@ -20,7 +21,8 @@
       border-radius: 10px;
       box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
     }
-
+  
+    /* --- Table Styles --- */
     table {
       border-collapse: collapse;
       width: 100%;
@@ -30,34 +32,46 @@
       overflow: hidden;
       box-shadow: 0 1px 2px rgba(44, 62, 80, 0.03);
     }
-
+  
     th,
     td {
       border: 1px solid #e0e0e0;
       padding: 10px 12px;
       text-align: left;
     }
-
+  
     th {
       background: #f7f7fa;
       font-weight: 600;
       color: #2c3e50;
     }
-
+  
+    th.dontWrap,
+    td.dontWrap {
+      white-space: nowrap;
+      width: 1%;
+    }
+  
+    /* --- Row Styles --- */
     .expandable-row {
       cursor: pointer;
       transition: background 0.2s;
     }
-
+  
     .expandable-row:active {
       background: #e0eaff;
     }
-
+  
+    .expandable-row.highlight {
+      background: #e0eaff !important;
+      transition: background 0.4s;
+    }
+  
     .description-row {
       padding: 0 !important;
       height: 0 !important;
     }
-
+  
     .description-row td {
       padding: 0 !important;
       border-top: none;
@@ -65,7 +79,18 @@
       vertical-align: top;
       background: #f9f9f9;
     }
-
+  
+    .description-row.open td {
+      height: auto !important;
+    }
+  
+    .description-row.open .desc-content {
+      max-height: 500px;
+      opacity: 1;
+      padding: 10px 12px;
+    }
+  
+    /* --- Description Content --- */
     .desc-content {
       max-height: 0;
       opacity: 0;
@@ -74,17 +99,36 @@
       padding: 0 12px;
       margin: 0;
     }
-
-    .description-row.open td {
-      height: auto !important;
+  
+    .description-cell {
+      max-width: 0;
+      overflow-x: auto;
+      padding: 0;
     }
-
-    .description-row.open .desc-content {
-      max-height: 500px;
-      opacity: 1;
-      padding: 10px 12px;
+  
+    .description-cell>* {
+      max-width: 100%;
+      box-sizing: border-box;
     }
-
+  
+    .description-cell img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  
+    .description-cell table {
+      max-width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+    }
+  
+    .description-cell pre {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  
+    /* --- User/Avatar Styles --- */
     .avatar {
       width: 24px;
       height: 24px;
@@ -95,65 +139,30 @@
       background: #eee;
       object-fit: cover;
     }
-
+  
+    .userCell {
+      white-space: nowrap;
+    }
+  
+    /* --- Link Styles --- */
     a {
       color: #2c3e50;
       text-decoration: underline;
       transition: color 0.2s;
     }
-
+  
     a:hover {
       color: #0078d4;
     }
-
-    th.dontWrap,
-    td.dontWrap {
-      white-space: nowrap;
-      width: 1%;
-    }
-
-    .userCell {
-      white-space: nowrap;
-    }
-
-    .description-cell {
-      max-width: 0;
-      overflow-x: auto;
-      padding: 0;
-    }
-
-    .description-cell>* {
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-
-    .description-cell img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .description-cell table {
-      max-width: 100%;
-      overflow-x: auto;
-      border-collapse: collapse;
-    }
-
-    .description-cell pre {
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-
-.expandable-row.highlight {
-  background: #e0eaff !important;
-  transition: background 0.4s;
-}
+  
+    /* --- Muted Text --- */
     .muted {
       color: #888;
       font-style: italic;
     }
-
-        footer {
+  
+    /* --- Footer --- */
+    footer {
       margin-top: 3em;
       padding: 1.5em 0 0 0;
       border-top: 1px solid #e0e0e0;
@@ -162,45 +171,60 @@
       text-align: center;
       background: transparent;
     }
+  
     footer a {
       color: #0078d4;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s;
     }
+  
     footer a:hover {
       color: #005a9e;
       text-decoration: underline;
     }
-
-    /* ...existing styles... */
+  
+    /* --- Lightbox Styles --- */
     .lightbox-overlay {
       display: none;
       position: fixed;
       z-index: 9999;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
       justify-content: center;
       align-items: center;
       cursor: zoom-out;
       transition: opacity 0.2s;
     }
+  
     .lightbox-overlay.open {
       display: flex;
       opacity: 1;
     }
+  
     .lightbox-img {
       max-width: 90vw;
       max-height: 90vh;
-      box-shadow: 0 4px 32px rgba(44,62,80,0.25);
+      box-shadow: 0 4px 32px rgba(44, 62, 80, 0.25);
       border-radius: 8px;
       background: #fff;
       padding: 8px;
       animation: lightbox-in 0.2s;
     }
+  
     @keyframes lightbox-in {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+  
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -404,7 +428,7 @@
         }, 200);
       }
     });
-    
+
     document.querySelectorAll('.expandable-row').forEach(function (row) {
       row.addEventListener('click', function () {
         var id = row.getAttribute('data-row-id');
