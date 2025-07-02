@@ -172,7 +172,7 @@
   <div class="document">
     <h1>Release Notes</h1>
     <p class="muted">
-      Generated on 02/07/2025 12:16 from <strong>Release-iOS-3.0.1-40-14490</strong> to
+      Generated on 02/07/2025 12:46 from <strong>Release-iOS-3.0.1-40-14490</strong> to
       <strong>HEAD</strong>
     </p>
     <p><strong>Repository:</strong> CardiffMobileApp</p>
@@ -778,7 +778,8 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
         </tr>
         <tr class="description-row" id="desc-pr-6834" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            change colour of error messages on dark theme to a ligher yellow (better contrast)
+            <p>change colour of error messages on dark theme to a ligher yellow (better contrast)</p>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6808">
@@ -795,7 +796,8 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
         </tr>
         <tr class="description-row" id="desc-pr-6808" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            added map key to highways and corrected semantic property description
+            <p>added map key to highways and corrected semantic property description</p>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6810">
@@ -829,9 +831,9 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
         </tr>
         <tr class="description-row" id="desc-pr-6806" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            Replace mapkey_marker.svg with mapkey_reported.svg
+            <p>Replace mapkey_marker.svg with mapkey_reported.svg</p>
+<p>Removed mapkey_marker.svg and added mapkey_reported.svg to update the map key icon. Updated references in MapPage.xaml.cs to use the new file, ensuring the application reflects the updated visual representation.</p>
 
-Removed mapkey_marker.svg and added mapkey_reported.svg to update the map key icon. Updated references in MapPage.xaml.cs to use the new file, ensuring the application reflects the updated visual representation.
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6800">
@@ -867,15 +869,12 @@ Removed mapkey_marker.svg and added mapkey_reported.svg to update the map key ic
         </tr>
         <tr class="description-row" id="desc-pr-6802" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            If you clicked next on the map page before the map has loaded, it would trigger the WebView code to call the JS to get the location, the WebView code would never return and the loader would stay on the app and the user would have to close/ restart the app
+            <p>If you clicked next on the map page before the map has loaded, it would trigger the WebView code to call the JS to get the location, the WebView code would never return and the loader would stay on the app and the user would have to close/ restart the app</p>
+<p><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6802/attachments/image.png" alt="image.png"> </p>
+<p>Added a 3s timeout too that code to prevent the infinite loader in the future.</p>
+<p>Issue with the timeout the user would see the general error message &quot;something gone wrong...&quot;</p>
+<p>Too prevent the user even getting into this position the next button now doesn&#39;t appear until the map has loaded using a new property <code>MapReady</code> binded to the NextBack button <code>HasContinueButton</code></p>
 
-![image.png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6802/attachments/image.png) 
-
-Added a 3s timeout too that code to prevent the infinite loader in the future.
-
-Issue with the timeout the user would see the general error message "something gone wrong..."
-
-Too prevent the user even getting into this position the next button now doesn't appear until the map has loaded using a new property `MapReady` binded to the NextBack button `HasContinueButton`
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6787">
@@ -892,12 +891,15 @@ Too prevent the user even getting into this position the next button now doesn't
         </tr>
         <tr class="description-row" id="desc-pr-6787" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            Example search that used to fail - 
-- 123 union street
-- 176 and 183 place
-- 146, 148 and 150 PENCISELY ROAD
-- 60 && 62 OAKLEY PLACE
-- 4 and 5 kirkwall crt cf24 2qu
+            <p>Example search that used to fail - </p>
+<ul>
+<li>123 union street</li>
+<li>176 and 183 place</li>
+<li>146, 148 and 150 PENCISELY ROAD</li>
+<li>60 &amp;&amp; 62 OAKLEY PLACE</li>
+<li>4 and 5 kirkwall crt cf24 2qu</li>
+</ul>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6786">
@@ -965,7 +967,8 @@ Too prevent the user even getting into this position the next button now doesn't
         </tr>
         <tr class="description-row" id="desc-pr-6758" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            Same as previous fix, but for SetSemanticFocusForcefully - https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707
+            <p>Same as previous fix, but for SetSemanticFocusForcefully - <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707">https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707</a></p>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6754">
@@ -982,15 +985,12 @@ Too prevent the user even getting into this position the next button now doesn't
         </tr>
         <tr class="description-row" id="desc-pr-6754" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            I added a console log every in the Javascript file, just so i can see where/ what it was doing.
- 
-Using that, after a lot of attempt once it failed, i saw that it called `await window.HybridWebView.InvokeDotNet("MapLoadedCSharp");` before ishare fully loaded, the way it would determine if ishare was loaded was just if the ishare loader wasnt there anymore. But i think it was doing that check a split second before ishare initialised/ started the loader _(very intermittently/ rare)_
- 
-So our code would think ishare has loaded even though it hasnt.
- 
-It would then fail to set the location and get stuck.
- 
-Using the extra logs though i could see that `remove_map_listener` was always getting logged after ishare loaded, which gets triggered via ishares `dataLayersLoaded` event, so moved the map loaded callback to there instead
+            <p>I added a console log every in the Javascript file, just so i can see where/ what it was doing.</p>
+<p>Using that, after a lot of attempt once it failed, i saw that it called <code>await window.HybridWebView.InvokeDotNet(&quot;MapLoadedCSharp&quot;);</code> before ishare fully loaded, the way it would determine if ishare was loaded was just if the ishare loader wasnt there anymore. But i think it was doing that check a split second before ishare initialised/ started the loader <em>(very intermittently/ rare)</em></p>
+<p>So our code would think ishare has loaded even though it hasnt.</p>
+<p>It would then fail to set the location and get stuck.</p>
+<p>Using the extra logs though i could see that <code>remove_map_listener</code> was always getting logged after ishare loaded, which gets triggered via ishares <code>dataLayersLoaded</code> event, so moved the map loaded callback to there instead</p>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6755">
@@ -1058,9 +1058,12 @@ Using the extra logs though i could see that `remove_map_listener` was always ge
         </tr>
         <tr class="description-row" id="desc-pr-6744" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            2 fixes - 
-- Slow loading message/ button appears after 7s (see vid attached to bug)
-- Improved map loading times when centering based on GPS and user is outside cardiff
+            <p>2 fixes - </p>
+<ul>
+<li>Slow loading message/ button appears after 7s (see vid attached to bug)</li>
+<li>Improved map loading times when centering based on GPS and user is outside cardiff</li>
+</ul>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6743">
@@ -1163,7 +1166,8 @@ Using the extra logs though i could see that `remove_map_listener` was always ge
         </tr>
         <tr class="description-row" id="desc-pr-6653" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            This PR adds some unit tests to make it easier to add more later
+            <p>This PR adds some unit tests to make it easier to add more later</p>
+
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6681">
@@ -1180,11 +1184,9 @@ Using the extra logs though i could see that `remove_map_listener` was always ge
         </tr>
         <tr class="description-row" id="desc-pr-6681" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            _MauiForceXamlCForDebug prevented hot reload from working at all, more info here - https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884
-
-Once hot reload was working when you save a change it essential just reloads the XAML. The main content of the page would disappear becuase the base pages set the IsVisble to false by default, and in C# it then uses `IsContentVisible` to set the content visibility manually. Issue is HotReload only re-renders the xaml and does not trigger the C# code behind the page so was never being set back to true.
-
-`IsContentVisible` is not used, and was something just copied over from XF so can just be removed. So hot reload works on all pages now
+            <p>_MauiForceXamlCForDebug prevented hot reload from working at all, more info here - <a href="https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884">https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884</a></p>
+<p>Once hot reload was working when you save a change it essential just reloads the XAML. The main content of the page would disappear becuase the base pages set the IsVisble to false by default, and in C# it then uses <code>IsContentVisible</code> to set the content visibility manually. Issue is HotReload only re-renders the xaml and does not trigger the C# code behind the page so was never being set back to true.</p>
+<p><code>IsContentVisible</code> is not used, and was something just copied over from XF so can just be removed. So hot reload works on all pages now</p>
 
           </td>
         </tr>
@@ -1236,14 +1238,24 @@ Once hot reload was working when you save a change it essential just reloads the
         </tr>
         <tr class="description-row" id="desc-pr-6720" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
-            New pipelines added to run mend reports for Android + iOS
-
-No vunerabilities in MAUI version atm - 
-
-| Before | After |
-| -------- | ------- |
-|  ![image.png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image.png)  |  ![image (2).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%282%29.png)  |
-| ![image (3).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%283%29.png)  | ![image (4).png](https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%284%29.png)  |
+            <p>New pipelines added to run mend reports for Android + iOS</p>
+<p>No vunerabilities in MAUI version atm - </p>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image.png" alt="image.png"></td>
+<td><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%282%29.png" alt="image (2).png"></td>
+</tr>
+<tr>
+<td><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%283%29.png" alt="image (3).png"></td>
+<td><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6720/attachments/image%20%284%29.png" alt="image (4).png"></td>
+</tr>
+</tbody></table>
 
           </td>
         </tr>

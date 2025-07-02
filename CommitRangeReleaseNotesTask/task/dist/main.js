@@ -15,7 +15,6 @@ const fs = require("fs");
 const CommitUtils_1 = require("./utils/CommitUtils");
 const PRUtils_1 = require("./utils/PRUtils");
 const TemplateUtils_1 = require("./utils/TemplateUtils");
-const JsonOutput_1 = require("./utils/JsonOutput");
 (0, TemplateUtils_1.registerHelpers)();
 function GenerateReleaseNotes(startCommit, endCommit, outputFileMarkdown, outputFileHtml, repoRoot, systemAccessToken, project, apiUrl, repositoryId, templateFileMarkdown, templateFileHtml) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -158,7 +157,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFileMarkdown, output
             repositoryId,
             project
         };
-        (0, JsonOutput_1.printJson)(releaseData);
+        //printJson(releaseData);
         (0, TemplateUtils_1.GenerateMarkdownReleaseNotes)(releaseData, outputFileMarkdown, templateFileMarkdown);
         (0, TemplateUtils_1.GenerateHtmlReleaseNotes)(releaseData, outputFileHtml, templateFileHtml);
     });

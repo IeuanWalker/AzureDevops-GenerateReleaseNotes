@@ -181,7 +181,7 @@ export async function GenerateReleaseNotes(
         project
     };
 
-    printJson(releaseData);
+    //printJson(releaseData);
 
     GenerateMarkdownReleaseNotes(releaseData, outputFileMarkdown, templateFileMarkdown);
 
@@ -217,7 +217,7 @@ function getDistinctWorkItemListFromPRs(prs: PullRequest[]): WorkItemList[] {
 
 
 
-interface TemplateData {
+export interface TemplateData {
     commits: Commit[];
     workItems: WorkItemList[];
     pullRequests: PullRequest[];

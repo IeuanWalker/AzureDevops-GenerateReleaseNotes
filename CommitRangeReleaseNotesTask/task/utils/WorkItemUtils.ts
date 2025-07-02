@@ -72,9 +72,7 @@ export async function getWorkItem(
             return null;
         }
 
-        printJson(data);
-
-        console.log("Description for work item", workItemId, ":", data.fields["System.Description"]);
+       // printJson(data);
 
         const workItem: WorkItem = {
             id: data.id,

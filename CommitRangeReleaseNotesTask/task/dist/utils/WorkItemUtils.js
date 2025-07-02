@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWorkItem = void 0;
-const JsonOutput_1 = require("./JsonOutput");
 function getWorkItem(workItemId, apiUrl, project, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
@@ -42,8 +41,7 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
                 console.warn(`Work item ${workItemId} missing required fields`);
                 return null;
             }
-            (0, JsonOutput_1.printJson)(data);
-            console.log("Description for work item", workItemId, ":", data.fields["System.Description"]);
+            // printJson(data);
             const workItem = {
                 id: data.id,
                 title: data.fields["System.Title"],
