@@ -53,7 +53,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 - Git tag (e.g., `v1.0.0`)
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
-## Output Output
+## Output
 The [default markdown template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateMarkdown.hbs) outputs the following format - 
 ```markdown
 ## 📊 Summary
@@ -88,7 +88,7 @@ The [default markdown template](https://github.com/IeuanWalker/AzureDevops-Gener
 | [44](https://dev.azure.com/org/project/_git/pullrequest/44) | Bug fixes and improvements      | Bob Wilson |
 ```
 
-It also generates an interactive html version usign this [template.](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs)
+It also generates an interactive html version using this [template.](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs)
 
 ## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
@@ -197,21 +197,22 @@ interface WorkItemList {
 {{/if}}
 ```
 
-## Console Usage
+## Local testing
 The task can also be run from the command line for testing.
 
 - Clone the repo
 - Run `npm run build`, in the `CommitRangeReleaseNotesTask` folder
 - Run the following command from the folder `CommitRangeReleaseNotesTask\task\dist`
 ```cmd
-node ./mainConsole.js \
-  --startCommit "v1.0.0" \
-  --endCommit "HEAD" \
-  --outputFile "C:\release-notes.md" \
-  --repoRoot "\path\to\repo" \
-  --systemAccessToken "your-token" \
-  --project "your-project" \
-  --repositoryId "your-repo" \
+node ./mainConsole.js 
+  --startCommit "v1.0.0" 
+  --endCommit "HEAD" 
+  --outputFileMarkdown "C:\release-notes.md" 
+  --outputFileHtml "C:\release-notes.html" 
+  --repoRoot "\path\to\repo" 
+  --systemAccessToken "your-token" 
+  --project "your-project" 
+  --repositoryId "your-repo" 
   --apiUrl "https://dev.azure.com/your-org"
 ```
 > To test locally, the `systemAccessToken` will need to be a [Personal Access Token (PAT)](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows).
