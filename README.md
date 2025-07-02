@@ -53,8 +53,8 @@ The extension analyses Git commits in a specified range, looking for merge commi
 - Git tag (e.g., `v1.0.0`)
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
-## Sample Output
-The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplate.hbs) outputs the following format - 
+## Output Output
+The [default markdown template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateMarkdown.hbs) outputs the following format - 
 ```markdown
 ## 📊 Summary
 - **3** Pull Requests
@@ -87,6 +87,8 @@ The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleas
 | [43](https://dev.azure.com/org/project/_git/pullrequest/43) | Implement new dashboard         | Jane Smith | [1235](https://dev.azure.com/org/project/_workitems/edit/1235)                                                                 |
 | [44](https://dev.azure.com/org/project/_git/pullrequest/44) | Bug fixes and improvements      | Bob Wilson |
 ```
+
+It also generates an interactive html version usign this [template.](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs)
 
 ## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
