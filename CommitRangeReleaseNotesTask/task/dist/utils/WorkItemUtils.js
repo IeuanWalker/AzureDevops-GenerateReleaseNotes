@@ -13,13 +13,6 @@ exports.getWorkItem = void 0;
 function getWorkItem(workItemId, apiUrl, project, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        const fields = [
-            "System.Title",
-            "System.WorkItemType",
-            "System.AssignedTo",
-            "System.Description"
-        ];
-        // fields=${fields.join(',')}&
         const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1&$expand=ALL`;
         console.log(`Fetching work item ${workItemId} from ${url}`);
         try {

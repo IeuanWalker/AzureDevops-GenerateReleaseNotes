@@ -36,14 +36,6 @@ export async function getWorkItem(
     project: string,
     accessToken: string
 ): Promise<WorkItem | null> {
-    const fields = [
-        "System.Title",
-        "System.WorkItemType",
-        "System.AssignedTo",
-        "System.Description"
-    ];
-
-    // fields=${fields.join(',')}&
     const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1&$expand=ALL`;
     console.log(`Fetching work item ${workItemId} from ${url}`);
     
