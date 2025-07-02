@@ -201,6 +201,11 @@
     }
 
     /* --- Lightbox Styles --- */
+    html.lightbox-open,
+    body.lightbox-open {
+      overflow: hidden !important;
+      height: 100%;
+    }
     .lightbox-overlay {
       display: none;
       position: fixed;
@@ -431,42 +436,42 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      // Lightbox for images in .desc-content using event delegation
+      let lastScrollY = 0;
+
       document.body.addEventListener('click', function (e) {
         if (e.target.matches('.desc-content img')) {
           var overlay = document.getElementById('lightboxOverlay');
           var overlayImg = document.getElementById('lightboxImg');
           overlayImg.src = e.target.src;
           overlay.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
+          lastScrollY = window.scrollY; // Store scroll position
+          document.body.classList.add('lightbox-open');
+          document.documentElement.classList.add('lightbox-open');
           setTimeout(function () {
             overlay.classList.add('open');
           }, 10);
         }
       });
 
-      // Close lightbox on overlay click or ESC
-      var overlay = document.getElementById('lightboxOverlay');
-      overlay.addEventListener('click', function () {
+      function closeLightbox() {
+        var overlay = document.getElementById('lightboxOverlay');
         overlay.classList.remove('open');
         overlay.classList.add('fade-out');
         setTimeout(function () {
           overlay.style.display = 'none';
           overlay.classList.remove('fade-out');
           document.getElementById('lightboxImg').src = '';
-          document.body.style.overflow = '';
+          document.body.classList.remove('lightbox-open');
+          document.documentElement.classList.remove('lightbox-open');
+          window.scrollTo(0, lastScrollY); // Restore scroll position
         }, 200);
-      });
+      }
+
+      var overlay = document.getElementById('lightboxOverlay');
+      overlay.addEventListener('click', closeLightbox);
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && overlay.classList.contains('open')) {
-          overlay.classList.remove('open');
-          overlay.classList.add('fade-out');
-          setTimeout(function () {
-            overlay.style.display = 'none';
-            overlay.classList.remove('fade-out');
-            document.getElementById('lightboxImg').src = '';
-            document.body.style.overflow = '';
-          }, 200);
+          closeLightbox();
         }
       });
 
