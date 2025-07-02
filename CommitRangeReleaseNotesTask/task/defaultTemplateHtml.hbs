@@ -7,11 +7,68 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
+       /* HTML5 Reset CSS */
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed, 
+    figure, figcaption, footer, header, hgroup, 
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+      box-sizing: border-box;
+    }
+    /* HTML5 display-role reset for older browsers */
+    article, aside, details, figcaption, figure, 
+    footer, header, hgroup, menu, nav, section {
+      display: block;
+    }
+    body {
+      line-height: 1;
+    }
+
+    blockquote, q {
+      quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+      content: '';
+      content: none;
+    }
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+
     body {
       background: #ececec;
       margin: 0;
       padding: 2em 0;
       font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+
+    p{
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+    ol, ul {
+      margin-left: 2em;
+    }
+
+    strong {
+      font-weight: bold;
     }
 
     .document {
@@ -114,6 +171,10 @@
       white-space: pre-line;
     }
 
+    .description-row td div {
+      margin-top: 10px;
+    }
+
     .avatar {
       width: 24px;
       height: 24px;
@@ -208,7 +269,7 @@
       <tbody>
         {{#each items}}
         <tr class="expandable-row dontWrap" data-row-id="workitem-{{id}}">
-          <td><a href="{{url}}">{{id}}</a></td>
+          <td><a href="{{url}}" target="_blank">{{id}}</a></td>
           <td>{{title}}</td>
           <td class="userCell">
             {{#if assignedTo}}
@@ -224,7 +285,7 @@
           <td class="dontWrap">
             {{#if pullRequests.length}}
             {{#each pullRequests}}
-            <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            <a href="{{url}}" target="_blank">{{id}}</a>{{#unless @last}}, {{/unless}}
             {{/each}}
             {{else}}
             &mdash;
@@ -236,7 +297,9 @@
             {{#if description}}
             {{{description}}}
             {{else}}
-            <span class="muted">No description available.</span>
+            <p class="muted">
+            No description available.
+            </p>
             {{/if}}
           </td>
         </tr>
@@ -262,7 +325,7 @@
       <tbody>
         {{#each pullRequests}}
         <tr class="expandable-row dontWrap" data-row-id="pr-{{id}}">
-          <td><a href="{{url}}">{{id}}</a></td>
+          <td><a href="{{url}}" target="_blank">{{id}}</a></td>
           <td>{{title}}</td>
           <td class="userCell">
             {{#if author}}
@@ -278,7 +341,7 @@
           <td class="dontWrap">
             {{#if workItems.length}}
             {{#each workItems}}
-            <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            <a href="{{url}}" target="_blank">{{id}}</a>{{#unless @last}}, {{/unless}}
             {{/each}}
             {{else}}
             &mdash;
@@ -287,11 +350,13 @@
         </tr>
         <tr class="description-row" id="desc-pr-{{id}}" style="display:none;">
           <td colspan="4"><strong>Description:</strong>
+            <p>
             {{#if description}}
             {{{description}}}
             {{else}}
             <span class="muted">No description available.</span>
             {{/if}}
+            </p>
           </td>
         </tr>
         {{/each}}
