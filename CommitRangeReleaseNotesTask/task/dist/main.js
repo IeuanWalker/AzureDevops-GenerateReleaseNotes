@@ -172,6 +172,7 @@ function getDistinctWorkItemListFromPRs(prs) {
                 workItemMap.set(workItem.id, {
                     id: workItem.id,
                     title: workItem.title,
+                    description: workItem.description || '',
                     workItemType: workItem.workItemType,
                     url: workItem.url,
                     assignedTo: workItem.assignedTo,

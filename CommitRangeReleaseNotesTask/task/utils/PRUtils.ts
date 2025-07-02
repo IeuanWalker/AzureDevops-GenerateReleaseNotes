@@ -43,8 +43,6 @@ export async function getPRInfo(
         console.log(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
 
         const prJson = await response.json();
-
-        printJson(prJson);
         
         // Validate required fields
         if (!prJson.title) {

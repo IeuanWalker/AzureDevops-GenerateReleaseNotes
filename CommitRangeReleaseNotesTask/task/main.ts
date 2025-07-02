@@ -197,6 +197,7 @@ function getDistinctWorkItemListFromPRs(prs: PullRequest[]): WorkItemList[] {
                 workItemMap.set(workItem.id, {
                     id: workItem.id,
                     title: workItem.title,
+                    description: workItem.description || '',
                     workItemType: workItem.workItemType,
                     url: workItem.url,
                     assignedTo: workItem.assignedTo,
@@ -230,6 +231,7 @@ interface TemplateData {
 interface WorkItemList {
     id: string;
     title: string;
+    description: string;
     workItemType: string; 
     url: string;
     assignedTo: WorkItemAssignedTo;

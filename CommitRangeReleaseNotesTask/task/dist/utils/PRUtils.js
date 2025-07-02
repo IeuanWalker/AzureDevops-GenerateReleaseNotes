@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPRInfo = void 0;
 const tl = require("azure-pipelines-task-lib/task");
 const WorkItemUtils_1 = require("./WorkItemUtils");
-const JsonOutput_1 = require("./JsonOutput");
 function getPRInfo(pullRequestId, apiUrl, project, repositoryId, accessToken) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     return __awaiter(this, void 0, void 0, function* () {
@@ -32,7 +31,6 @@ function getPRInfo(pullRequestId, apiUrl, project, repositoryId, accessToken) {
             }
             console.log(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
             const prJson = yield response.json();
-            (0, JsonOutput_1.printJson)(prJson);
             // Validate required fields
             if (!prJson.title) {
                 console.warn(`PR ${pullRequestId} missing required title field`);

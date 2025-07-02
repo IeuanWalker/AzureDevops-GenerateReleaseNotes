@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWorkItem = void 0;
+const JsonOutput_1 = require("./JsonOutput");
 function getWorkItem(workItemId, apiUrl, project, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
@@ -17,8 +18,10 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
             "System.Title",
             "System.WorkItemType",
             "System.AssignedTo",
+            "System.Description"
         ];
-        const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
+        // fields=${fields.join(',')}&
+        const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1&$expand=ALL`;
         console.log(`Fetching work item ${workItemId} from ${url}`);
         try {
             const response = yield fetch(url, {
@@ -39,9 +42,12 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
                 console.warn(`Work item ${workItemId} missing required fields`);
                 return null;
             }
+            (0, JsonOutput_1.printJson)(data);
+            console.log("Description for work item", workItemId, ":", data.fields["System.Description"]);
             const workItem = {
                 id: data.id,
                 title: data.fields["System.Title"],
+                description: data.fields["System.Description"] || '',
                 workItemType: data.fields["System.WorkItemType"],
                 url: ((_d = (_c = data._links) === null || _c === void 0 ? void 0 : _c.html) === null || _d === void 0 ? void 0 : _d.href) || data.url,
                 assignedTo: data.fields["System.AssignedTo"] ? {
