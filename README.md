@@ -20,7 +20,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 
 ### Basic Usage
 ```yaml
-- task: CommitRangeReleaseNotes@1
+- task: ReleaseNotes@2
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'HEAD'
@@ -30,7 +30,7 @@ The extension analyses Git commits in a specified range, looking for merge commi
 
 ### With Custom Template
 ```yaml
-- task: CommitRangeReleaseNotes@1
+- task: ReleaseNotes@2
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'v1.1.0'
