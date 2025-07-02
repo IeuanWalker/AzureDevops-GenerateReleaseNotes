@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -6,153 +5,11 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
-    /* HTML5 Reset CSS */
-    html,
-    body,
-    div,
-    span,
-    applet,
-    object,
-    iframe,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    blockquote,
-    pre,
-    a,
-    abbr,
-    acronym,
-    address,
-    big,
-    cite,
-    code,
-    del,
-    dfn,
-    em,
-    img,
-    ins,
-    kbd,
-    q,
-    s,
-    samp,
-    small,
-    strike,
-    strong,
-    sub,
-    sup,
-    tt,
-    var,
-    b,
-    u,
-    i,
-    center,
-    dl,
-    dt,
-    dd,
-    ol,
-    ul,
-    li,
-    fieldset,
-    form,
-    label,
-    legend,
-    table,
-    caption,
-    tbody,
-    tfoot,
-    thead,
-    tr,
-    th,
-    td,
-    article,
-    aside,
-    canvas,
-    details,
-    embed,
-    figure,
-    figcaption,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    output,
-    ruby,
-    section,
-    summary,
-    time,
-    mark,
-    audio,
-    video {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font-size: 100%;
-      font: inherit;
-      vertical-align: baseline;
-      box-sizing: border-box;
-    }
-
-    article,
-    aside,
-    details,
-    figcaption,
-    figure,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    section {
-      display: block;
-    }
-
-    body {
-      line-height: 1;
-    }
-
-    blockquote,
-    q {
-      quotes: none;
-    }
-
-    blockquote:before,
-    blockquote:after,
-    q:before,
-    q:after {
-      content: '';
-      content: none;
-    }
-
-    table {
-      border-collapse: collapse;
-      border-spacing: 0;
-    }
-
-    /* --- Custom styles --- */
     body {
       background: #ececec;
       margin: 0;
       padding: 2em 0;
       font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
-    }
-
-    p {
-      margin-top: 2px;
-      margin-bottom: 2px;
-    }
-
-    ol,
-    ul {
-      margin-left: 2em;
-    }
-
-    strong {
-      font-weight: bold;
     }
 
     .document {
@@ -162,33 +19,6 @@
       padding: 2.5em 3em;
       border-radius: 10px;
       box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
-    }
-
-    h1,
-    h2,
-    h3 {
-      color: #2c3e50;
-      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
-    }
-
-    h1 {
-      font-size: 2.2em;
-      margin-top: 0;
-    }
-
-    h2 {
-      font-size: 1.4em;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 0.2em;
-      margin-bottom: 1em;
-    }
-
-    h3 {
-      font-size: 1.1em;
-      color: #3a4a5d;
-      margin-bottom: 0.7em;
     }
 
     table {
@@ -214,31 +44,6 @@
       color: #2c3e50;
     }
 
-    .summary-list li {
-      margin-bottom: 0.5em;
-    }
-
-    .muted {
-      margin-top: 10px;
-      color: #888;
-      font-style: italic;
-    }
-
-    hr {
-      margin: 2.5em 0 2em 0;
-      border: none;
-      border-top: 1.5px solid #e0e0e0;
-    }
-
-    ul {
-      margin-top: 0.5em;
-      margin-bottom: 0.5em;
-    }
-
-    tr:hover {
-      background-color: #f0f8ff;
-    }
-
     .expandable-row {
       cursor: pointer;
       transition: background 0.2s;
@@ -248,16 +53,36 @@
       background: #e0eaff;
     }
 
-    .description-row td {
-      background: #f9f9f9;
-      border-top: none;
-      font-size: 0.97em;
-      color: #444;
-      white-space: pre-line;
+    .description-row {
+      padding: 0 !important;
+      height: 0 !important;
     }
 
-    .description-row td div {
-      margin-top: 10px;
+    .description-row td {
+      padding: 0 !important;
+      border-top: none;
+      height: 0 !important;
+      vertical-align: top;
+      background: #f9f9f9;
+    }
+
+    .desc-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 12px;
+      margin: 0;
+    }
+
+    .description-row.open td {
+      height: auto !important;
+    }
+
+    .description-row.open .desc-content {
+      max-height: 500px;
+      opacity: 1;
+      padding: 10px 12px;
     }
 
     .avatar {
@@ -291,11 +116,10 @@
       white-space: nowrap;
     }
 
-    /* --- Description cell containment --- */
     .description-cell {
       max-width: 0;
       overflow-x: auto;
-      padding: 10px 12px;
+      padding: 0;
     }
 
     .description-cell>* {
@@ -320,26 +144,9 @@
       word-break: break-all;
     }
 
-    footer {
-      margin-top: 3em;
-      padding: 1.5em 0 0 0;
-      border-top: 1px solid #e0e0e0;
+    .muted {
       color: #888;
-      font-size: 0.97em;
-      text-align: center;
-      background: transparent;
-    }
-
-    footer a {
-      color: #0078d4;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    footer a:hover {
-      color: #005a9e;
-      text-decoration: underline;
+      font-style: italic;
     }
   </style>
 </head>
@@ -348,7 +155,7 @@
   <div class="document">
     <h1>Release Notes</h1>
     <p class="muted">
-      Generated on 02/07/2025 13:15 from <strong>Release-iOS-3.0.1-40-14490</strong> to
+      Generated on 02/07/2025 13:33 from <strong>Release-iOS-3.0.1-40-14490</strong> to
       <strong>HEAD</strong>
     </p>
     <p><strong>Repository:</strong> CardiffMobileApp</p>
@@ -388,9 +195,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6897" target="_blank">6897</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-45102" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-45102">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-45122">
@@ -405,9 +215,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6896" target="_blank">6896</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-45122" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-45122">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44952">
@@ -422,9 +235,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6837" target="_blank">6837</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44952" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44952">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44851">
@@ -439,9 +255,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6806" target="_blank">6806</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44851" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44851">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44806">
@@ -456,9 +275,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6802" target="_blank">6802</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44806" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44806">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-36375">
@@ -473,9 +295,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6787" target="_blank">6787</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-36375" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>The WAF is currently blocking a few address searches in live (location and gazetteer api). We need to apply the WAF workaround to the search fields. </div><div><br> </div><div><ul><li>Doesnt like the word 'and' </li><ul><li><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/wit/attachments/d84a2672-4e21-4bd1-b797-b9491e9b96a3?fileName=image.png" alt=Image> </li> </ul><li>Doesnt like the word 'union' </li><ul><li><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/wit/attachments/6eaf453e-8486-40dd-bf0c-59b4088ffc95?fileName=image.png" alt=Image><br> </li> </ul> </ul> </div>
+        <tr class="description-row" id="desc-workitem-36375">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>The WAF is currently blocking a few address searches in live (location and gazetteer api). We need to apply the WAF workaround to the search fields. </div><div><br> </div><div><ul><li>Doesnt like the word 'and' </li><ul><li><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/wit/attachments/d84a2672-4e21-4bd1-b797-b9491e9b96a3?fileName=image.png" alt=Image> </li> </ul><li>Doesnt like the word 'union' </li><ul><li><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/wit/attachments/6eaf453e-8486-40dd-bf0c-59b4088ffc95?fileName=image.png" alt=Image><br> </li> </ul> </ul> </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-36377">
@@ -491,9 +316,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6784" target="_blank">6784</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-36377" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-36377">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44276">
@@ -510,9 +338,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6744" target="_blank">6744</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44276" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44276">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44139">
@@ -527,9 +358,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6758" target="_blank">6758</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44139" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44139">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44267">
@@ -544,9 +378,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6725" target="_blank">6725</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44267" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44267">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44325">
@@ -561,9 +398,12 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6727" target="_blank">6727</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44325" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44325">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -591,12 +431,15 @@
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6862" target="_blank">6862</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43351" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Proposed dev solution -&nbsp;<span style="font-size:10.5pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#333333;">we
+        <tr class="description-row" id="desc-workitem-43351">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Proposed dev solution -&nbsp;<span style="font-size:10.5pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#333333;">we
 were going to detect the eastings / northings or long / lat of the pin and
 compare it to that of where the pin defaults (the castle). &nbsp;If it's the
 same, we demand they move the pin again.</span> </div><div><span style="font-size:10.5pt;font-family:&quot;Segoe UI&quot;,sans-serif;color:#333333;"><br></span> </div><div><font color="#333333" face="Segoe UI, sans-serif">When at default northern and eastern don't allow user to click next.</font> </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-29426">
@@ -611,10 +454,13 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6834" target="_blank">6834</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-29426" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Make the error message colour a better contrast for accessibility reasons.&nbsp; See task <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/29381" data-vss-mention="version:1.0">#29381</a> for chosen colour<br> </div><div><br> </div><div><pre style="font-family:Cascadia Mono;font-size:13px;color:gainsboro;background:#1e1e1e;"><span style="color:#569cd6;">WarningColor</span>
+        <tr class="description-row" id="desc-workitem-29426">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Make the error message colour a better contrast for accessibility reasons.&nbsp; See task <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/29381" data-vss-mention="version:1.0">#29381</a> for chosen colour<br> </div><div><br> </div><div><pre style="font-family:Cascadia Mono;font-size:13px;color:gainsboro;background:#1e1e1e;"><span style="color:#569cd6;">WarningColor</span>
 </pre>&nbsp;- from dark theme style sheet </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44853">
@@ -629,9 +475,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6808" target="_blank">6808</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44853" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>To add the map key to Highways routes </div>
+        <tr class="description-row" id="desc-workitem-44853">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>To add the map key to Highways routes </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44547">
@@ -646,9 +495,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6810" target="_blank">6810</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44547" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Done alongside MEND work </div>
+        <tr class="description-row" id="desc-workitem-44547">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Done alongside MEND work </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44503">
@@ -663,9 +515,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6800" target="_blank">6800</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44503" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Just adding map key. Can copy the code that we used to use.&nbsp;&nbsp; </div>
+        <tr class="description-row" id="desc-workitem-44503">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Just adding map key. Can copy the code that we used to use.&nbsp;&nbsp; </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44506">
@@ -680,9 +535,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6800" target="_blank">6800</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44506" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div><a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_workitems/edit/44058/" data-vss-mention="version:1.0">#44058</a>&nbsp;for info </div>
+        <tr class="description-row" id="desc-workitem-44506">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div><a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_workitems/edit/44058/" data-vss-mention="version:1.0">#44058</a>&nbsp;for info </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44508">
@@ -697,9 +555,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6800" target="_blank">6800</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44508" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44508">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-43911">
@@ -716,9 +577,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6752" target="_blank">6752</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43911" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>See details in PR description -&nbsp;<a href="https://cardiffcouncilict.visualstudio.com/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6667">https://cardiffcouncilict.visualstudio.com/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6667</a> </div>
+        <tr class="description-row" id="desc-workitem-43911">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>See details in PR description -&nbsp;<a href="https://cardiffcouncilict.visualstudio.com/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6667">https://cardiffcouncilict.visualstudio.com/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6667</a> </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44062">
@@ -733,9 +597,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6743" target="_blank">6743</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44062" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44062">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44712">
@@ -750,9 +617,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6725" target="_blank">6725</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44712" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Test message appears when no enabled browser </div>
+        <tr class="description-row" id="desc-workitem-44712">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Test message appears when no enabled browser </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-43523">
@@ -767,9 +637,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6733" target="_blank">6733</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43523" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-43523">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-43553">
@@ -784,9 +657,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6731" target="_blank">6731</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43553" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <div>Within the Homepage there is a TODO to revert the logic that determines when a whats new should show. Uncomment the alternative logic and remove the workaround if statement </div>
+        <tr class="description-row" id="desc-workitem-43553">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <div>Within the Homepage there is a TODO to revert the logic that determines when a whats new should show. Uncomment the alternative logic and remove the workaround if statement </div>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-43522">
@@ -801,9 +677,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6730" target="_blank">6730</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43522" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-43522">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44330">
@@ -818,9 +697,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6653" target="_blank">6653</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44330" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44330">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-44331">
@@ -835,9 +717,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6681" target="_blank">6681</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-44331" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-44331">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="workitem-43705">
@@ -853,9 +738,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6720" target="_blank">6720</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-43705" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-workitem-43705">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -884,9 +772,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/45102" target="_blank">45102</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6897" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6897">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6896">
@@ -901,9 +792,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/45122" target="_blank">45122</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6896" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6896">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6837">
@@ -918,9 +812,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44952" target="_blank">44952</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6837" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6837">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6862">
@@ -935,9 +832,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43351" target="_blank">43351</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6862" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6862">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6834">
@@ -952,10 +852,13 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/29426" target="_blank">29426</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6834" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>change colour of error messages on dark theme to a ligher yellow (better contrast)</p>
+        <tr class="description-row" id="desc-pr-6834">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>change colour of error messages on dark theme to a ligher yellow (better contrast)</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6808">
@@ -970,10 +873,13 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44853" target="_blank">44853</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6808" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>added map key to highways and corrected semantic property description</p>
+        <tr class="description-row" id="desc-pr-6808">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>added map key to highways and corrected semantic property description</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6810">
@@ -988,9 +894,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44547" target="_blank">44547</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6810" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6810">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6806">
@@ -1005,11 +914,14 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44851" target="_blank">44851</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6806" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>Replace mapkey_marker.svg with mapkey_reported.svg</p>
+        <tr class="description-row" id="desc-pr-6806">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>Replace mapkey_marker.svg with mapkey_reported.svg</p>
 <p>Removed mapkey_marker.svg and added mapkey_reported.svg to update the map key icon. Updated references in MapPage.xaml.cs to use the new file, ensuring the application reflects the updated visual representation.</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6800">
@@ -1026,9 +938,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44508" target="_blank">44508</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6800" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6800">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6802">
@@ -1043,14 +958,17 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44806" target="_blank">44806</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6802" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>If you clicked next on the map page before the map has loaded, it would trigger the WebView code to call the JS to get the location, the WebView code would never return and the loader would stay on the app and the user would have to close/ restart the app</p>
+        <tr class="description-row" id="desc-pr-6802">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>If you clicked next on the map page before the map has loaded, it would trigger the WebView code to call the JS to get the location, the WebView code would never return and the loader would stay on the app and the user would have to close/ restart the app</p>
 <p><img src="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_apis/git/repositories/03ade363-d0a9-43c3-a6d3-43d1f70b8253/pullRequests/6802/attachments/image.png" alt="image.png"> </p>
 <p>Added a 3s timeout too that code to prevent the infinite loader in the future.</p>
 <p>Issue with the timeout the user would see the general error message &quot;something gone wrong...&quot;</p>
 <p>Too prevent the user even getting into this position the next button now doesn&#39;t appear until the map has loaded using a new property <code>MapReady</code> binded to the NextBack button <code>HasContinueButton</code></p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6787">
@@ -1065,9 +983,11 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/36375" target="_blank">36375</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6787" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>Example search that used to fail - </p>
+        <tr class="description-row" id="desc-pr-6787">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>Example search that used to fail - </p>
 <ul>
 <li>123 union street</li>
 <li>176 and 183 place</li>
@@ -1076,6 +996,7 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
 <li>4 and 5 kirkwall crt cf24 2qu</li>
 </ul>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6786">
@@ -1090,9 +1011,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/36377" target="_blank">36377</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6786" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6786">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6784">
@@ -1107,9 +1031,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/36377" target="_blank">36377</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6784" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6784">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6756">
@@ -1124,9 +1051,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44276" target="_blank">44276</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6756" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6756">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6758">
@@ -1141,10 +1071,13 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44139" target="_blank">44139</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6758" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>Same as previous fix, but for SetSemanticFocusForcefully - <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707">https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707</a></p>
+        <tr class="description-row" id="desc-pr-6758">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>Same as previous fix, but for SetSemanticFocusForcefully - <a href="https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707">https://dev.azure.com/cardiffcouncilict/Cardiff%20App/_git/CardiffMobileApp/pullrequest/6707</a></p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6754">
@@ -1159,14 +1092,17 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44276" target="_blank">44276</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6754" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>I added a console log every in the Javascript file, just so i can see where/ what it was doing.</p>
+        <tr class="description-row" id="desc-pr-6754">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>I added a console log every in the Javascript file, just so i can see where/ what it was doing.</p>
 <p>Using that, after a lot of attempt once it failed, i saw that it called <code>await window.HybridWebView.InvokeDotNet(&quot;MapLoadedCSharp&quot;);</code> before ishare fully loaded, the way it would determine if ishare was loaded was just if the ishare loader wasnt there anymore. But i think it was doing that check a split second before ishare initialised/ started the loader <em>(very intermittently/ rare)</em></p>
 <p>So our code would think ishare has loaded even though it hasnt.</p>
 <p>It would then fail to set the location and get stuck.</p>
 <p>Using the extra logs though i could see that <code>remove_map_listener</code> was always getting logged after ishare loaded, which gets triggered via ishares <code>dataLayersLoaded</code> event, so moved the map loaded callback to there instead</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6755">
@@ -1181,9 +1117,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43911" target="_blank">43911</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6755" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6755">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6753">
@@ -1198,9 +1137,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43911" target="_blank">43911</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6753" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6753">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6752">
@@ -1215,9 +1157,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43911" target="_blank">43911</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6752" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6752">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6744">
@@ -1232,14 +1177,17 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44276" target="_blank">44276</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6744" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>2 fixes - </p>
+        <tr class="description-row" id="desc-pr-6744">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>2 fixes - </p>
 <ul>
 <li>Slow loading message/ button appears after 7s (see vid attached to bug)</li>
 <li>Improved map loading times when centering based on GPS and user is outside cardiff</li>
 </ul>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6743">
@@ -1254,9 +1202,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44062" target="_blank">44062</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6743" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6743">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6725">
@@ -1272,9 +1223,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44712" target="_blank">44712</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6725" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6725">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6733">
@@ -1289,9 +1243,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43523" target="_blank">43523</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6733" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6733">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6731">
@@ -1306,9 +1263,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43553" target="_blank">43553</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6731" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6731">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6730">
@@ -1323,9 +1283,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43522" target="_blank">43522</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6730" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6730">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6653">
@@ -1340,10 +1303,13 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44330" target="_blank">44330</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6653" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>This PR adds some unit tests to make it easier to add more later</p>
+        <tr class="description-row" id="desc-pr-6653">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>This PR adds some unit tests to make it easier to add more later</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6681">
@@ -1358,12 +1324,15 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44331" target="_blank">44331</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6681" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>_MauiForceXamlCForDebug prevented hot reload from working at all, more info here - <a href="https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884">https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884</a></p>
+        <tr class="description-row" id="desc-pr-6681">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>_MauiForceXamlCForDebug prevented hot reload from working at all, more info here - <a href="https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884">https://developercommunity.visualstudio.com/t/Hot-reload-not-working-for-NET-MAUI/10883884</a></p>
 <p>Once hot reload was working when you save a change it essential just reloads the XAML. The main content of the page would disappear becuase the base pages set the IsVisble to false by default, and in C# it then uses <code>IsContentVisible</code> to set the content visibility manually. Issue is HotReload only re-renders the xaml and does not trigger the C# code behind the page so was never being set back to true.</p>
 <p><code>IsContentVisible</code> is not used, and was something just copied over from XF so can just be removed. So hot reload works on all pages now</p>
 
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6721">
@@ -1378,9 +1347,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43705" target="_blank">43705</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6721" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6721">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6727">
@@ -1395,9 +1367,12 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/44325" target="_blank">44325</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6727" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p class="muted">No description available.</p>
+        <tr class="description-row" id="desc-pr-6727">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p class="muted">No description available.</p>
+            </div>
           </td>
         </tr>
         <tr class="expandable-row dontWrap" data-row-id="pr-6720">
@@ -1412,9 +1387,11 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
             <a href="https://dev.azure.com/cardiffcouncilict/cb6a55df-bd0b-4370-8556-8c9a0168b86d/_workitems/edit/43705" target="_blank">43705</a>
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-6720" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            <p>New pipelines added to run mend reports for Android + iOS</p>
+        <tr class="description-row" id="desc-pr-6720">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              <p>New pipelines added to run mend reports for Android + iOS</p>
 <p>No vunerabilities in MAUI version atm - </p>
 <table>
 <thead>
@@ -1433,25 +1410,35 @@ same, we demand they move the pin again.</span> </div><div><span style="font-siz
 </tr>
 </tbody></table>
 
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.expandable-row').forEach(function (row) {
-          row.addEventListener('click', function () {
-            var id = row.getAttribute('data-row-id');
-            var descRow = document.getElementById('desc-' + id);
-            if (descRow) {
-              descRow.style.display = descRow.style.display === 'none' ? '' : 'none';
-            }
-          });
-        });
-      });
-    </script>
   </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.expandable-row').forEach(function (row) {
+      row.addEventListener('click', function () {
+        var id = row.getAttribute('data-row-id');
+        var descRow = document.getElementById('desc-' + id);
+        var isOpen = descRow.classList.contains('open');
+        // Collapse all
+        document.querySelectorAll('.description-row').forEach(function (desc) {
+          desc.classList.remove('open');
+        });
+        // Toggle: open if not open, close if open
+        if (!isOpen) {
+          descRow.classList.add('open');
+        }
+      });
+    });
+    // On page load, ensure all are closed
+    document.querySelectorAll('.description-row').forEach(function (desc) {
+      desc.classList.remove('open');
+    });
+  });
+</script>
 
     <footer>
         <p>

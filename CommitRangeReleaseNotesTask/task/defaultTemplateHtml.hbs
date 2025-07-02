@@ -1,5 +1,3 @@
-{{! HTML Release Notes Template }}
-
 <!DOCTYPE html>
 <html>
 
@@ -7,153 +5,11 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
-    /* HTML5 Reset CSS */
-    html,
-    body,
-    div,
-    span,
-    applet,
-    object,
-    iframe,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    blockquote,
-    pre,
-    a,
-    abbr,
-    acronym,
-    address,
-    big,
-    cite,
-    code,
-    del,
-    dfn,
-    em,
-    img,
-    ins,
-    kbd,
-    q,
-    s,
-    samp,
-    small,
-    strike,
-    strong,
-    sub,
-    sup,
-    tt,
-    var,
-    b,
-    u,
-    i,
-    center,
-    dl,
-    dt,
-    dd,
-    ol,
-    ul,
-    li,
-    fieldset,
-    form,
-    label,
-    legend,
-    table,
-    caption,
-    tbody,
-    tfoot,
-    thead,
-    tr,
-    th,
-    td,
-    article,
-    aside,
-    canvas,
-    details,
-    embed,
-    figure,
-    figcaption,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    output,
-    ruby,
-    section,
-    summary,
-    time,
-    mark,
-    audio,
-    video {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font-size: 100%;
-      font: inherit;
-      vertical-align: baseline;
-      box-sizing: border-box;
-    }
-
-    article,
-    aside,
-    details,
-    figcaption,
-    figure,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    section {
-      display: block;
-    }
-
-    body {
-      line-height: 1;
-    }
-
-    blockquote,
-    q {
-      quotes: none;
-    }
-
-    blockquote:before,
-    blockquote:after,
-    q:before,
-    q:after {
-      content: '';
-      content: none;
-    }
-
-    table {
-      border-collapse: collapse;
-      border-spacing: 0;
-    }
-
-    /* --- Custom styles --- */
     body {
       background: #ececec;
       margin: 0;
       padding: 2em 0;
       font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
-    }
-
-    p {
-      margin-top: 2px;
-      margin-bottom: 2px;
-    }
-
-    ol,
-    ul {
-      margin-left: 2em;
-    }
-
-    strong {
-      font-weight: bold;
     }
 
     .document {
@@ -163,33 +19,6 @@
       padding: 2.5em 3em;
       border-radius: 10px;
       box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
-    }
-
-    h1,
-    h2,
-    h3 {
-      color: #2c3e50;
-      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
-    }
-
-    h1 {
-      font-size: 2.2em;
-      margin-top: 0;
-    }
-
-    h2 {
-      font-size: 1.4em;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 0.2em;
-      margin-bottom: 1em;
-    }
-
-    h3 {
-      font-size: 1.1em;
-      color: #3a4a5d;
-      margin-bottom: 0.7em;
     }
 
     table {
@@ -215,31 +44,6 @@
       color: #2c3e50;
     }
 
-    .summary-list li {
-      margin-bottom: 0.5em;
-    }
-
-    .muted {
-      margin-top: 10px;
-      color: #888;
-      font-style: italic;
-    }
-
-    hr {
-      margin: 2.5em 0 2em 0;
-      border: none;
-      border-top: 1.5px solid #e0e0e0;
-    }
-
-    ul {
-      margin-top: 0.5em;
-      margin-bottom: 0.5em;
-    }
-
-    tr:hover {
-      background-color: #f0f8ff;
-    }
-
     .expandable-row {
       cursor: pointer;
       transition: background 0.2s;
@@ -249,16 +53,36 @@
       background: #e0eaff;
     }
 
-    .description-row td {
-      background: #f9f9f9;
-      border-top: none;
-      font-size: 0.97em;
-      color: #444;
-      white-space: pre-line;
+    .description-row {
+      padding: 0 !important;
+      height: 0 !important;
     }
 
-    .description-row td div {
-      margin-top: 10px;
+    .description-row td {
+      padding: 0 !important;
+      border-top: none;
+      height: 0 !important;
+      vertical-align: top;
+      background: #f9f9f9;
+    }
+
+    .desc-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 12px;
+      margin: 0;
+    }
+
+    .description-row.open td {
+      height: auto !important;
+    }
+
+    .description-row.open .desc-content {
+      max-height: 500px;
+      opacity: 1;
+      padding: 10px 12px;
     }
 
     .avatar {
@@ -292,11 +116,10 @@
       white-space: nowrap;
     }
 
-    /* --- Description cell containment --- */
     .description-cell {
       max-width: 0;
       overflow-x: auto;
-      padding: 10px 12px;
+      padding: 0;
     }
 
     .description-cell>* {
@@ -321,26 +144,9 @@
       word-break: break-all;
     }
 
-    footer {
-      margin-top: 3em;
-      padding: 1.5em 0 0 0;
-      border-top: 1px solid #e0e0e0;
+    .muted {
       color: #888;
-      font-size: 0.97em;
-      text-align: center;
-      background: transparent;
-    }
-
-    footer a {
-      color: #0078d4;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    footer a:hover {
-      color: #005a9e;
-      text-decoration: underline;
+      font-style: italic;
     }
   </style>
 </head>
@@ -407,13 +213,16 @@
             {{/if}}
           </td>
         </tr>
-        <tr class="description-row" id="desc-workitem-{{id}}" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            {{#if description}}
-            {{{description}}}
-            {{else}}
-            <p class="muted">No description available.</p>
-            {{/if}}
+        <tr class="description-row" id="desc-workitem-{{id}}">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              {{#if description}}
+              {{{description}}}
+              {{else}}
+              <p class="muted">No description available.</p>
+              {{/if}}
+            </div>
           </td>
         </tr>
         {{/each}}
@@ -461,13 +270,16 @@
             {{/if}}
           </td>
         </tr>
-        <tr class="description-row" id="desc-pr-{{id}}" style="display:none;">
-          <td colspan="4" class="description-cell"><strong>Description:</strong>
-            {{#if description}}
-            {{{description}}}
-            {{else}}
-            <p class="muted">No description available.</p>
-            {{/if}}
+        <tr class="description-row" id="desc-pr-{{id}}">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              {{#if description}}
+              {{{description}}}
+              {{else}}
+              <p class="muted">No description available.</p>
+              {{/if}}
+            </div>
           </td>
         </tr>
         {{/each}}
@@ -476,21 +288,30 @@
     {{else}}
     <p class="muted">No pull requests in this range.</p>
     {{/if}}
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.expandable-row').forEach(function (row) {
-          row.addEventListener('click', function () {
-            var id = row.getAttribute('data-row-id');
-            var descRow = document.getElementById('desc-' + id);
-            if (descRow) {
-              descRow.style.display = descRow.style.display === 'none' ? '' : 'none';
-            }
-          });
-        });
-      });
-    </script>
   </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.expandable-row').forEach(function (row) {
+      row.addEventListener('click', function () {
+        var id = row.getAttribute('data-row-id');
+        var descRow = document.getElementById('desc-' + id);
+        var isOpen = descRow.classList.contains('open');
+        // Collapse all
+        document.querySelectorAll('.description-row').forEach(function (desc) {
+          desc.classList.remove('open');
+        });
+        // Toggle: open if not open, close if open
+        if (!isOpen) {
+          descRow.classList.add('open');
+        }
+      });
+    });
+    // On page load, ensure all are closed
+    document.querySelectorAll('.description-row').forEach(function (desc) {
+      desc.classList.remove('open');
+    });
+  });
+</script>
 </body>
 
 </html>
