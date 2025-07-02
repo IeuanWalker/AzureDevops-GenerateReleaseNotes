@@ -18,11 +18,11 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 ## 📋 Work Items
 {{#groupBy workItems "workItemType"}}
 ### {{key}}s ({{items.length}})
-| ID | Title | Assignee |
-|----|-------|----------|
-  {{#each items}}
-| [{{id}}]({{url}}) | {{title}} | {{#if assignedTo}}{{assignedTo.displayName}}{{else}}—{{/if}} |
-  {{/each}}
+| ID | Title | Assignee | Linked PRs |
+|----|-------|----------|------------|
+{{#each items}}
+| [{{id}}]({{url}}) | {{title}} | {{#if assignedTo}}{{assignedTo.displayName}}{{else}}—{{/if}} | {{#if pullRequests.length}}{{#each pullRequests}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}}{{else}}—{{/if}} |
+{{/each}}
 {{/groupBy}}
 {{else}}
 > _No work items in this range._
