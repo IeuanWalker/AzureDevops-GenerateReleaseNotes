@@ -181,7 +181,7 @@ export async function GenerateReleaseNotes(
         project
     };
 
-    //printJson(releaseData);
+    printJson(releaseData);
 
     GenerateMarkdownReleaseNotes(releaseData, outputFileMarkdown, templateFileMarkdown);
 

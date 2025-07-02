@@ -100,20 +100,12 @@ export function GenerateHtmlReleaseNotes(
     // Convert PR descriptions from markdown to HTML
     const { marked } = require('marked');
     
-    console.log(`Found ${data.pullRequests?.length || 0} pull requests`);
-    console.log(`Found ${data.commits?.length || 0} commits`);
-    
     // Convert descriptions in the pullRequests array
     if (Array.isArray(data.pullRequests) && data.pullRequests.length > 0) {
-        console.log(`Processing ${data.pullRequests.length} pull requests`);
         data.pullRequests = data.pullRequests.map(pr => {
-            console.log(`Checking PR ${pr.id}: has description = ${!!pr.description}, type = ${typeof pr.description}`);
             if (pr && pr.description != null && typeof pr.description === 'string' && pr.description.trim() !== '') {
-                console.log(`Converting PR ${pr.id} description from markdown to HTML`);
-                console.log(`Original (first 200 chars): ${pr.description.substring(0, 200)}`);
                 try {
                     const converted = marked(pr.description);
-                    console.log(`Converted (first 200 chars): ${converted.substring(0, 200)}`);
                     return {
                         ...pr,
                         description: converted
@@ -122,29 +114,20 @@ export function GenerateHtmlReleaseNotes(
                     console.warn(`Failed to convert markdown for PR: ${pr.id || 'unknown'}`, error);
                     return pr;
                 }
-            } else {
-                console.log(`Skipping PR ${pr.id} - no valid description`);
-            }
+            } 
             return pr;
         });
-    } else {
-        console.log('No pull requests to process');
     }
 
     // Convert descriptions in commits.pullRequest objects
     if (Array.isArray(data.commits) && data.commits.length > 0) {
-        console.log(`Processing ${data.commits.length} commits`);
         data.commits = data.commits.map(commit => {
             if (commit && commit.pullRequest) {
-                console.log(`Checking commit PR ${commit.pullRequest.id}: has description = ${!!commit.pullRequest.description}, type = ${typeof commit.pullRequest.description}`);
                 if (commit.pullRequest.description != null && 
                     typeof commit.pullRequest.description === 'string' && 
                     commit.pullRequest.description.trim() !== '') {
-                    console.log(`Converting commit PR ${commit.pullRequest.id} description from markdown to HTML`);
-                    console.log(`Original (first 200 chars): ${commit.pullRequest.description.substring(0, 200)}`);
                     try {
                         const converted = marked(commit.pullRequest.description);
-                        console.log(`Converted (first 200 chars): ${converted.substring(0, 200)}`);
                         return {
                             ...commit,
                             pullRequest: {
@@ -156,20 +139,11 @@ export function GenerateHtmlReleaseNotes(
                         console.warn(`Failed to convert markdown for commit PR: ${commit.pullRequest.id || 'unknown'}`, error);
                         return commit;
                     }
-                } else {
-                    console.log(`Skipping commit PR ${commit.pullRequest.id} - no valid description`);
                 }
             }
             return commit;
         });
-    } else {
-        console.log('No commits to process');
-    }
-
-
-    console.log('Markdown conversion complete, proceeding with template generation...');
-
-    printJson(data);
+    } 
 
     // Get template
     let template: string;
