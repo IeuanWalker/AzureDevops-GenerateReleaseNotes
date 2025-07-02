@@ -33,7 +33,7 @@
       "name": "outputFileMarkdown",
       "type": "filePath",
       "label": "Output File - Markdown",
-      "defaultValue": "$(Build.ArtifactStagingDirectory)/ReleaseNotes.md",
+      "defaultValue": "$(Build.ArtifactStagingDirectory)/release-notes.md",
       "required": true,
       "helpMarkDown": "Path where the generated release notes will be saved"
     },
@@ -41,7 +41,7 @@
       "name": "outputFileHtml",
       "type": "filePath",
       "label": "Output File - HTML",
-      "defaultValue": "$(Build.ArtifactStagingDirectory)/ReleaseNotes.html",
+      "defaultValue": "$(Build.ArtifactStagingDirectory)/release-notes.html",
       "required": true,
       "helpMarkDown": "Path where the generated release notes will be saved"
     },

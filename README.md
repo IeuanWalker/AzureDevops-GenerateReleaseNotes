@@ -24,7 +24,8 @@ The extension analyses Git commits in a specified range, looking for merge commi
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'HEAD'
-    outputFile: '$(Build.ArtifactStagingDirectory)/ReleaseNotes.md'
+    outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
+    outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
 ```
 
 ### With Custom Template
@@ -33,8 +34,10 @@ The extension analyses Git commits in a specified range, looking for merge commi
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'v1.1.0'
-    outputFile: 'release-notes.md'
-    templateFile: 'templates/custom-release-notes.hbs'
+    outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
+    outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
+    templateFileMarkdown: 'templates/custom-release-notes.hbs'
+    templateFileHtml: 'templates/custom-release-notes.hbs'
 ```
 
 ## Parameters
@@ -42,8 +45,8 @@ The extension analyses Git commits in a specified range, looking for merge commi
 |-----------|-------------|----------|---------|
 | `startCommit` | Commit reference for the start of the range (exclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | - |
 | `endCommit` | Commit reference for the end of the range (inclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | `HEAD` |
-| `outputFile` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/ReleaseNotes.md` |
-| `templateFile` | Path to custom Handlebars template file | ❌ | Built-in template |
+| `outputFileMarkdown` and `outputFileHtml` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/release-notes.html` and `$(Build.ArtifactStagingDirectory)/release-notes.html` |
+| `templateFileMarkdown` and `templateFileHtml` | Path to custom Handlebars template file | ❌ | Built-in template |
 
 ### Supported commit reference formats for `startCommit` and `endCommit`
 - Commit hash (e.g., `a1b2c3d`)
