@@ -225,3 +225,4 @@ Tools/**/*.js.map
 
 !jest.config.js
 output/release-notes.md
+output/release-notes.html

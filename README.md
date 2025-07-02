@@ -24,7 +24,8 @@ The extension analyses Git commits in a specified range, looking for merge commi
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'HEAD'
-    outputFile: '$(Build.ArtifactStagingDirectory)/ReleaseNotes.md'
+    outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
+    outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
 ```
 
 ### With Custom Template
@@ -33,8 +34,10 @@ The extension analyses Git commits in a specified range, looking for merge commi
   inputs:
     startCommit: 'v1.0.0'
     endCommit: 'v1.1.0'
-    outputFile: 'release-notes.md'
-    templateFile: 'templates/custom-release-notes.hbs'
+    outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
+    outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
+    templateFileMarkdown: 'templates/custom-release-notes.hbs'
+    templateFileHtml: 'templates/custom-release-notes.hbs'
 ```
 
 ## Parameters
@@ -42,16 +45,16 @@ The extension analyses Git commits in a specified range, looking for merge commi
 |-----------|-------------|----------|---------|
 | `startCommit` | Commit reference for the start of the range (exclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | - |
 | `endCommit` | Commit reference for the end of the range (inclusive). Can be a commit hash, git tag, or a ref like `HEAD` or `HEAD~xx` | ✅ | `HEAD` |
-| `outputFile` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/ReleaseNotes.md` |
-| `templateFile` | Path to custom Handlebars template file | ❌ | Built-in template |
+| `outputFileMarkdown` and `outputFileHtml` | Path where generated release notes will be saved | ✅ | `$(Build.ArtifactStagingDirectory)/release-notes.html` and `$(Build.ArtifactStagingDirectory)/release-notes.html` |
+| `templateFileMarkdown` and `templateFileHtml` | Path to custom Handlebars template file | ❌ | Built-in template |
 
 ### Supported commit reference formats for `startCommit` and `endCommit`
 - Commit hash (e.g., `a1b2c3d`)
 - Git tag (e.g., `v1.0.0`)
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
-## Sample Output
-The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplate.hbs) outputs the following format - 
+## Output
+The [default markdown template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateMarkdown.hbs) outputs the following format - 
 ```markdown
 ## 📊 Summary
 - **3** Pull Requests
@@ -84,6 +87,8 @@ The [default template](https://github.com/IeuanWalker/AzureDevops-GenerateReleas
 | [43](https://dev.azure.com/org/project/_git/pullrequest/43) | Implement new dashboard         | Jane Smith | [1235](https://dev.azure.com/org/project/_workitems/edit/1235)                                                                 |
 | [44](https://dev.azure.com/org/project/_git/pullrequest/44) | Bug fixes and improvements      | Bob Wilson |
 ```
+
+It also generates an interactive html version using this [template.](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs)
 
 ## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
@@ -192,21 +197,22 @@ interface WorkItemList {
 {{/if}}
 ```
 
-## Console Usage
+## Local testing
 The task can also be run from the command line for testing.
 
 - Clone the repo
 - Run `npm run build`, in the `CommitRangeReleaseNotesTask` folder
 - Run the following command from the folder `CommitRangeReleaseNotesTask\task\dist`
 ```cmd
-node ./mainConsole.js \
-  --startCommit "v1.0.0" \
-  --endCommit "HEAD" \
-  --outputFile "C:\release-notes.md" \
-  --repoRoot "\path\to\repo" \
-  --systemAccessToken "your-token" \
-  --project "your-project" \
-  --repositoryId "your-repo" \
+node ./mainConsole.js 
+  --startCommit "v1.0.0" 
+  --endCommit "HEAD" 
+  --outputFileMarkdown "C:\release-notes.md" 
+  --outputFileHtml "C:\release-notes.html" 
+  --repoRoot "\path\to\repo" 
+  --systemAccessToken "your-token" 
+  --project "your-project" 
+  --repositoryId "your-repo" 
   --apiUrl "https://dev.azure.com/your-org"
 ```
 > To test locally, the `systemAccessToken` will need to be a [Personal Access Token (PAT)](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows).

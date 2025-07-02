@@ -28,7 +28,6 @@ const Handlebars = __importStar(require("handlebars"));
 const fs = require("fs");
 const path = require("path");
 const tl = require("azure-pipelines-task-lib/task");
-const JsonOutput_1 = require("./JsonOutput");
 function registerHelpers() {
     // GroupBy helper
     Handlebars.registerHelper('groupBy', function (items, field, options) {
@@ -104,23 +103,15 @@ function GenerateMarkdownReleaseNotes(data, outputFile, templateFile) {
 }
 exports.GenerateMarkdownReleaseNotes = GenerateMarkdownReleaseNotes;
 function GenerateHtmlReleaseNotes(data, outputFile, templateFile) {
-    var _a, _b;
     console.log('Starting HTML release notes generation...');
     // Convert PR descriptions from markdown to HTML
     const { marked } = require('marked');
-    console.log(`Found ${((_a = data.pullRequests) === null || _a === void 0 ? void 0 : _a.length) || 0} pull requests`);
-    console.log(`Found ${((_b = data.commits) === null || _b === void 0 ? void 0 : _b.length) || 0} commits`);
     // Convert descriptions in the pullRequests array
     if (Array.isArray(data.pullRequests) && data.pullRequests.length > 0) {
-        console.log(`Processing ${data.pullRequests.length} pull requests`);
         data.pullRequests = data.pullRequests.map(pr => {
-            console.log(`Checking PR ${pr.id}: has description = ${!!pr.description}, type = ${typeof pr.description}`);
             if (pr && pr.description != null && typeof pr.description === 'string' && pr.description.trim() !== '') {
-                console.log(`Converting PR ${pr.id} description from markdown to HTML`);
-                console.log(`Original (first 200 chars): ${pr.description.substring(0, 200)}`);
                 try {
                     const converted = marked(pr.description);
-                    console.log(`Converted (first 200 chars): ${converted.substring(0, 200)}`);
                     return Object.assign(Object.assign({}, pr), { description: converted });
                 }
                 catch (error) {
@@ -128,29 +119,18 @@ function GenerateHtmlReleaseNotes(data, outputFile, templateFile) {
                     return pr;
                 }
             }
-            else {
-                console.log(`Skipping PR ${pr.id} - no valid description`);
-            }
             return pr;
         });
     }
-    else {
-        console.log('No pull requests to process');
-    }
     // Convert descriptions in commits.pullRequest objects
     if (Array.isArray(data.commits) && data.commits.length > 0) {
-        console.log(`Processing ${data.commits.length} commits`);
         data.commits = data.commits.map(commit => {
             if (commit && commit.pullRequest) {
-                console.log(`Checking commit PR ${commit.pullRequest.id}: has description = ${!!commit.pullRequest.description}, type = ${typeof commit.pullRequest.description}`);
                 if (commit.pullRequest.description != null &&
                     typeof commit.pullRequest.description === 'string' &&
                     commit.pullRequest.description.trim() !== '') {
-                    console.log(`Converting commit PR ${commit.pullRequest.id} description from markdown to HTML`);
-                    console.log(`Original (first 200 chars): ${commit.pullRequest.description.substring(0, 200)}`);
                     try {
                         const converted = marked(commit.pullRequest.description);
-                        console.log(`Converted (first 200 chars): ${converted.substring(0, 200)}`);
                         return Object.assign(Object.assign({}, commit), { pullRequest: Object.assign(Object.assign({}, commit.pullRequest), { description: converted }) });
                     }
                     catch (error) {
@@ -158,18 +138,10 @@ function GenerateHtmlReleaseNotes(data, outputFile, templateFile) {
                         return commit;
                     }
                 }
-                else {
-                    console.log(`Skipping commit PR ${commit.pullRequest.id} - no valid description`);
-                }
             }
             return commit;
         });
     }
-    else {
-        console.log('No commits to process');
-    }
-    console.log('Markdown conversion complete, proceeding with template generation...');
-    (0, JsonOutput_1.printJson)(data);
     // Get template
     let template;
     try {
