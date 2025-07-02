@@ -18,14 +18,16 @@ function run() {
             // Set variables
             let startCommit = tl.getInput('startCommit', true);
             const endCommit = tl.getInput('endCommit', true);
-            const outputFile = tl.getInput('outputFile', true);
-            const templateFile = tl.getInput('templateFile', false) || undefined;
+            const outputFileMarkdown = tl.getInput('outputFileMarkdown', true);
+            const outputFileHtml = tl.getInput('outputFileHtml', true);
+            const templateFileMarkdown = tl.getInput('templateFileMarkdown', false) || undefined;
+            const templateFileHtml = tl.getInput('templateFileHtml', false) || undefined;
             const repoRoot = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
             const systemAccessToken = tl.getVariable('System.AccessToken') || undefined;
             const project = tl.getVariable('System.TeamProject') || undefined;
             const apiUrl = tl.getVariable('System.TeamFoundationCollectionUri') || undefined;
             const repositoryId = tl.getVariable('Build.Repository.Name') || undefined;
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, `Bearer ${systemAccessToken}`, project, apiUrl, repositoryId, templateFile);
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFileMarkdown, outputFileHtml, repoRoot, `Bearer ${systemAccessToken}`, project, apiUrl, repositoryId, templateFileMarkdown, templateFileHtml);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

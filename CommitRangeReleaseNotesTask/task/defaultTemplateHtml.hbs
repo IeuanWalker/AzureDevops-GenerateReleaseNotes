@@ -1,0 +1,162 @@
+{{! HTML Release Notes Template }}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Release Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #2c3e50;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 2em;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
+
+    .summary-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .summary-list li {
+      margin-bottom: 0.5em;
+    }
+
+    .muted {
+      color: #888;
+      font-style: italic;
+    }
+
+    hr {
+      margin: 2em 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Release Notes</h1>
+  <p class="muted">
+    Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from <strong>{{startCommit}}</strong> to
+    <strong>{{endCommit}}</strong>
+  </p>
+  <p><strong>Repository:</strong> {{repositoryId}}</p>
+  <hr>
+
+  <h2>📊 Summary</h2>
+  <ul class="summary-list">
+    <li><strong>{{pullRequests.length}}</strong> Pull Requests</li>
+    {{#if workItems.length}}
+    <li><strong>{{workItems.length}}</strong> Work Items</li>
+    {{/if}}
+    {{#groupBy workItems "workItemType"}}
+    <li><strong>{{key}}s:</strong> {{items.length}}</li>
+    {{/groupBy}}
+  </ul>
+  <hr>
+
+  {{#if workItems.length}}
+  <h2>📋 Work Items</h2>
+  {{#groupBy workItems "workItemType"}}
+  <h3>{{key}}s ({{items.length}})</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Assignee</th>
+        <th>Linked PRs</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each items}}
+      <tr>
+        <td><a href="{{url}}">{{id}}</a></td>
+        <td>{{title}}</td>
+        <td>
+          {{#if assignedTo}}
+          {{assignedTo.displayName}}
+          {{else}}
+          &mdash;
+          {{/if}}
+        </td>
+        <td>
+          {{#if pullRequests.length}}
+          {{#each pullRequests}}
+          <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+          {{/each}}
+          {{else}}
+          &mdash;
+          {{/if}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/groupBy}}
+  {{else}}
+  <p class="muted">No work items in this range.</p>
+  {{/if}}
+  <hr>
+
+  {{#if pullRequests.length}}
+  <h2>🔀 Pull Requests</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Linked Work Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each pullRequests}}
+      <tr>
+        <td><a href="{{url}}">{{id}}</a></td>
+        <td>{{title}}</td>
+        <td>
+          {{#if author}}
+          {{author}}
+          {{else}}
+          &mdash;
+          {{/if}}
+        </td>
+        <td>
+          {{#if workItems.length}}
+          {{#each workItems}}
+          <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+          {{/each}}
+          {{else}}
+          &mdash;
+          {{/if}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="muted">No pull requests in this range.</p>
+{{/if}}
+</body>
+</html>
