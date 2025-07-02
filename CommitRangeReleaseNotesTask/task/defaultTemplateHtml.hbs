@@ -71,9 +71,7 @@
       transition: background 0.2s;
       outline: none;
     }
-
-    .expandable-row:active,
-    .expandable-row:focus {
+    .expandable-row:hover {
       background: #e0eaff;
     }
 
@@ -496,14 +494,19 @@
         document.querySelectorAll('.description-row').forEach(function (desc) {
           desc.classList.remove('open');
         });
-        // Update ARIA
+        // Update ARIA and remove highlight immediately
         document.querySelectorAll('.expandable-row').forEach(function (r) {
           r.setAttribute('aria-expanded', 'false');
+          r.classList.remove('highlight');
         });
         // Toggle: open if not open, close if open
         if (!isOpen) {
           descRow.classList.add('open');
           row.setAttribute('aria-expanded', 'true');
+          row.classList.add('highlight');
+          setTimeout(function () {
+            row.classList.remove('highlight');
+          }, 1500);
         }
       }
 
