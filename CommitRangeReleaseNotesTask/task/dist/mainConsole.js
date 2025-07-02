@@ -19,8 +19,10 @@ function run() {
             // Set variables
             const startCommit = argv["startCommit"];
             const endCommit = argv["endCommit"];
-            const outputFile = argv["outputFile"];
-            const templateFile = argv["templateFile"] || undefined;
+            const outputFileMarkdown = argv["outputFileMarkdown"];
+            const outputFileHtml = argv["outputFileHtml"];
+            const templateFileMarkdown = argv["templateFileMarkdown"] || undefined;
+            const templateFileHtml = argv["templateFileHtml"] || undefined;
             const repoRoot = argv["repoRoot"];
             const systemAccessToken = argv["systemAccessToken"];
             const project = argv["project"];
@@ -36,7 +38,7 @@ function run() {
             // TODO: Validate devops variables - systemAccessToken, teamProject, repositoryName
             // Test api call
             const encodedSystemAccessToken = Buffer.from(`:${systemAccessToken}`).toString('base64');
-            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFile, repoRoot, `Basic ${encodedSystemAccessToken}`, project, apiUrl, repositoryId, templateFile);
+            yield (0, main_1.GenerateReleaseNotes)(startCommit, endCommit, outputFileMarkdown, outputFileHtml, repoRoot, `Basic ${encodedSystemAccessToken}`, project, apiUrl, repositoryId, templateFileMarkdown, templateFileHtml);
         }
         catch (error) {
             tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

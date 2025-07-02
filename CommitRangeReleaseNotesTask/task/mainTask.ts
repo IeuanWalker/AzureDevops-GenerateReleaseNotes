@@ -8,8 +8,10 @@ export default async function run(): Promise<void> {
         // Set variables
         let startCommit: string = tl.getInput('startCommit', true) as string;
         const endCommit: string = tl.getInput('endCommit', true) as string;
-        const outputFile: string = tl.getInput('outputFile', true) as string;
-        const templateFile: string | undefined = tl.getInput('templateFile', false) || undefined;
+        const outputFileMarkdown: string = tl.getInput('outputFileMarkdown', true) as string;
+        const outputFileHtml: string = tl.getInput('outputFileHtml', true) as string;
+        const templateFileMarkdown: string | undefined = tl.getInput('templateFileMarkdown', false) || undefined;
+        const templateFileHtml: string | undefined = tl.getInput('templateFileHtml', false) || undefined;
         const repoRoot: string = tl.getVariable('System.DefaultWorkingDirectory') || process.cwd();
         const systemAccessToken: string | undefined = tl.getVariable('System.AccessToken') || undefined;
         const project: string | undefined = tl.getVariable('System.TeamProject') || undefined;
@@ -19,13 +21,15 @@ export default async function run(): Promise<void> {
         await GenerateReleaseNotes(
             startCommit,
             endCommit,
-            outputFile,
+            outputFileMarkdown,
+            outputFileHtml,
             repoRoot,
             `Bearer ${systemAccessToken}`,
             project,
             apiUrl,
             repositoryId,
-            templateFile
+            templateFileMarkdown,
+            templateFileHtml
         );
     } catch (error: any) {
         tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

@@ -10,8 +10,10 @@ export default async function run(): Promise<void> {
         // Set variables
         const startCommit: string = argv["startCommit"] as string;
         const endCommit: string = argv["endCommit"] as string;
-        const outputFile: string = argv["outputFile"] as string;
-        const templateFile: string | undefined = argv["templateFile"] as string || undefined;
+        const outputFileMarkdown: string = argv["outputFileMarkdown"] as string;
+        const outputFileHtml: string = argv["outputFileHtml"] as string;
+        const templateFileMarkdown: string | undefined = argv["templateFileMarkdown"] as string || undefined;
+        const templateFileHtml: string | undefined = argv["templateFileHtml"] as string || undefined;
         const repoRoot: string = argv["repoRoot"] as string;
         const systemAccessToken: string = argv["systemAccessToken"];
         const project: string = argv["project"];
@@ -34,13 +36,15 @@ export default async function run(): Promise<void> {
         await GenerateReleaseNotes(
             startCommit,
             endCommit,
-            outputFile,
+            outputFileMarkdown,
+            outputFileHtml,
             repoRoot,
             `Basic ${encodedSystemAccessToken}`,
             project,
             apiUrl,
             repositoryId,
-            templateFile
+            templateFileMarkdown,
+            templateFileHtml
         );
     } catch (error: any) {
         tl.setResult(tl.TaskResult.Failed, `Release notes generation failed: ${error.message}`);

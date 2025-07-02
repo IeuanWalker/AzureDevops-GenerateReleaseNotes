@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Release Notes</title>
+  <style>
+    body {
+      background: #ececec;
+      margin: 0;
+      padding: 2em 0;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+
+    .document {
+      background: #fff;
+      max-width: 900px;
+      margin: 2em auto;
+      padding: 2.5em 3em;
+      border-radius: 10px;
+      box-shadow: 0 4px 32px rgba(44, 62, 80, 0.10), 0 1.5px 6px rgba(44, 62, 80, 0.07);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 2em;
+      background: #fafbfc;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.03);
+    }
+
+    th,
+    td {
+      border: 1px solid #e0e0e0;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #f7f7fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .expandable-row {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .expandable-row:active {
+      background: #e0eaff;
+    }
+
+    .description-row {
+      padding: 0 !important;
+      height: 0 !important;
+    }
+
+    .description-row td {
+      padding: 0 !important;
+      border-top: none;
+      height: 0 !important;
+      vertical-align: top;
+      background: #f9f9f9;
+    }
+
+    .desc-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 12px;
+      margin: 0;
+    }
+
+    .description-row.open td {
+      height: auto !important;
+    }
+
+    .description-row.open .desc-content {
+      max-height: 500px;
+      opacity: 1;
+      padding: 10px 12px;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+      box-shadow: 0 1px 2px rgba(44, 62, 80, 0.10);
+      background: #eee;
+      object-fit: cover;
+    }
+
+    a {
+      color: #2c3e50;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #0078d4;
+    }
+
+    th.dontWrap,
+    td.dontWrap {
+      white-space: nowrap;
+      width: 1%;
+    }
+
+    .userCell {
+      white-space: nowrap;
+    }
+
+    .description-cell {
+      max-width: 0;
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    .description-cell>* {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .description-cell img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .description-cell table {
+      max-width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+    }
+
+    .description-cell pre {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+.expandable-row.highlight {
+  background: #e0eaff !important;
+  transition: background 0.4s;
+}
+    .muted {
+      color: #888;
+      font-style: italic;
+    }
+
+        footer {
+      margin-top: 3em;
+      padding: 1.5em 0 0 0;
+      border-top: 1px solid #e0e0e0;
+      color: #888;
+      font-size: 0.97em;
+      text-align: center;
+      background: transparent;
+    }
+    footer a {
+      color: #0078d4;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    footer a:hover {
+      color: #005a9e;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="document">
+    <h1>Release Notes</h1>
+    <p class="muted">
+      Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from <strong>{{startCommit}}</strong> to
+      <strong>{{endCommit}}</strong>
+    </p>
+    <p><strong>Repository:</strong> {{repositoryId}}</p>
+
+    <h2>📊 Summary</h2>
+    <ul class="summary-list">
+      <li><strong>{{pullRequests.length}}</strong> Pull Requests</li>
+      {{#if workItems.length}}
+      <li><strong>{{workItems.length}}</strong> Work Items
+        <ul>
+          {{#groupBy workItems "workItemType"}}
+          <li><strong>{{key}}s:</strong> {{items.length}}</li>
+          {{/groupBy}}
+        </ul>
+      </li>
+      {{/if}}
+    </ul>
+
+    {{#if workItems.length}}
+    <h2>📋 Work Items</h2>
+    {{#groupBy workItems "workItemType"}}
+    <h3>{{key}}s ({{items.length}})</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th class="dontWrap">Assignee</th>
+          <th class="dontWrap">Linked PRs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each items}}
+        <tr class="expandable-row dontWrap" data-row-id="workitem-{{id}}">
+          <td><a href="{{url}}" target="_blank">{{id}}</a></td>
+          <td>{{title}}</td>
+          <td class="userCell">
+            {{#if assignedTo}}
+            {{#if assignedTo.imageUrl}}
+            <img src="{{assignedTo.imageUrl}}" alt="{{assignedTo.displayName}}" class="avatar"
+              onerror="this.style.display='none';">
+            {{/if}}
+            {{assignedTo.displayName}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+          <td class="dontWrap">
+            {{#if pullRequests.length}}
+            {{#each pullRequests}}
+            <a href="#pr-{{id}}" class="pr-link" data-pr-id="{{id}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            {{/each}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+        </tr>
+        <tr class="description-row" id="desc-workitem-{{id}}">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              {{#if description}}
+              {{{description}}}
+              {{else}}
+              <p class="muted">No description available.</p>
+              {{/if}}
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{/groupBy}}
+    {{else}}
+    <p class="muted">No work items in this range.</p>
+    {{/if}}
+
+    {{#if pullRequests.length}}
+    <h2>🔀 Pull Requests</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th class="dontWrap">Author</th>
+          <th class="dontWrap">Linked Work Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each pullRequests}}
+        <tr class="expandable-row dontWrap" data-row-id="pr-{{id}}">
+          <td><a href="{{url}}" target="_blank">{{id}}</a></td>
+          <td>{{title}}</td>
+          <td class="userCell">
+            {{#if author}}
+            {{#if author.imageUrl}}
+            <img src="{{author.imageUrl}}" alt="{{author.displayName}}" class="avatar"
+              onerror="this.style.display='none';">
+            {{/if}}
+            {{author.displayName}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+          <td class="dontWrap">
+            {{#if workItems.length}}
+            {{#each workItems}}
+            <a href="#workitem-{{id}}" class="workitem-link" data-workitem-id="{{id}}">{{id}}</a>{{#unless @last}}, {{/unless}}
+            {{/each}}
+            {{else}}
+            &mdash;
+            {{/if}}
+          </td>
+        </tr>
+        <tr class="description-row" id="desc-pr-{{id}}">
+          <td colspan="4" class="description-cell">
+            <div class="desc-content">
+              <strong>Description:</strong>
+              {{#if description}}
+              {{{description}}}
+              {{else}}
+              <p class="muted">No description available.</p>
+              {{/if}}
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p class="muted">No pull requests in this range.</p>
+    {{/if}}
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.expandable-row').forEach(function (row) {
+      row.addEventListener('click', function () {
+        var id = row.getAttribute('data-row-id');
+        var descRow = document.getElementById('desc-' + id);
+        var isOpen = descRow.classList.contains('open');
+        // Collapse all
+        document.querySelectorAll('.description-row').forEach(function (desc) {
+          desc.classList.remove('open');
+        });
+        // Toggle: open if not open, close if open
+        if (!isOpen) {
+          descRow.classList.add('open');
+        }
+      });
+    });
+    // On page load, ensure all are closed
+    document.querySelectorAll('.description-row').forEach(function (desc) {
+      desc.classList.remove('open');
+    });
+
+    // Add handler for PR links in work items
+   document.querySelectorAll('.pr-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var prId = link.getAttribute('data-pr-id');
+        var prRow = document.querySelector('.expandable-row[data-row-id="pr-' + prId + '"]');
+        var descRow = document.getElementById('desc-pr-' + prId);
+        if (prRow && descRow) {
+          prRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Collapse all
+          document.querySelectorAll('.description-row').forEach(function (desc) {
+            desc.classList.remove('open');
+          });
+          // Remove highlight from all rows
+          document.querySelectorAll('.expandable-row').forEach(function (row) {
+            row.classList.remove('highlight');
+          });
+          // Expand and highlight the PR row
+          setTimeout(function () {
+            descRow.classList.add('open');
+            prRow.classList.add('highlight');
+            setTimeout(function () {
+              prRow.classList.remove('highlight');
+            }, 1500);
+          }, 100); // slight delay to ensure collapse completes before opening
+        }
+      });
+    });
+
+    document.querySelectorAll('.workitem-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var workItemId = link.getAttribute('data-workitem-id');
+        var workItemRow = document.querySelector('.expandable-row[data-row-id="workitem-' + workItemId + '"]');
+        var descRow = document.getElementById('desc-workitem-' + workItemId);
+        if (workItemRow && descRow) {
+          workItemRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Collapse all
+          document.querySelectorAll('.description-row').forEach(function (desc) {
+            desc.classList.remove('open');
+          });
+          // Remove highlight from all rows
+          document.querySelectorAll('.expandable-row').forEach(function (row) {
+            row.classList.remove('highlight');
+          });
+          // Expand and highlight the Work Item row
+          setTimeout(function () {
+            descRow.classList.add('open');
+            workItemRow.classList.add('highlight');
+            setTimeout(function () {
+              workItemRow.classList.remove('highlight');
+            }, 1500);
+          }, 100);
+        }
+      });
+    });
+  });
+</script>
+</body>
+
+</html>

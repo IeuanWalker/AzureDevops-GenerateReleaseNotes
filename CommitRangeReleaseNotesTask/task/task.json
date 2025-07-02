@@ -17,7 +17,7 @@
       "name": "startCommit",
       "type": "string",
       "label": "Start Commit",
-      "defaultValue": "",
+      "defaultValue": "HEAD~10",
       "required": true,
       "helpMarkDown": "The SHA or reference (like a tag) for the start of the commit range (exclusive)"
     },
@@ -30,17 +30,33 @@
       "helpMarkDown": "The SHA or reference (like a tag) for the end of the commit range (inclusive)"
     },
     {
-      "name": "outputFile",
+      "name": "outputFileMarkdown",
       "type": "filePath",
-      "label": "Output File",
+      "label": "Output File - Markdown",
       "defaultValue": "$(Build.ArtifactStagingDirectory)/ReleaseNotes.md",
       "required": true,
       "helpMarkDown": "Path where the generated release notes will be saved"
     },
     {
-      "name": "templateFile",
+      "name": "outputFileHtml",
       "type": "filePath",
-      "label": "Template File",
+      "label": "Output File - HTML",
+      "defaultValue": "$(Build.ArtifactStagingDirectory)/ReleaseNotes.html",
+      "required": true,
+      "helpMarkDown": "Path where the generated release notes will be saved"
+    },
+    {
+      "name": "templateFileMarkdown",
+      "type": "filePath",
+      "label": "Template File - Markdown",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Optional path to a Handlebars template file for formatting the release notes. If not provided, a default template will be used."
+    },
+    {
+      "name": "templateFileHtml",
+      "type": "filePath",
+      "label": "Template File - HTML",
       "defaultValue": "",
       "required": false,
       "helpMarkDown": "Optional path to a Handlebars template file for formatting the release notes. If not provided, a default template will be used."

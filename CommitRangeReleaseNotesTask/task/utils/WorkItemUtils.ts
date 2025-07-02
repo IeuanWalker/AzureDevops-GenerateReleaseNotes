@@ -1,6 +1,9 @@
+import { printJson } from "./JsonOutput";
+
 export interface WorkItem {
   id: string;
   title: string;
+  description: string;
   workItemType: string; 
   url: string;
   assignedTo: WorkItemAssignedTo;
@@ -19,11 +22,13 @@ export interface WorkItemApiResponse {
         "System.Title": string;
         "System.WorkItemType": string;
         "System.AssignedTo"?: WorkItemAssignedTo;
+        "System.Description"?: string;
     };
     _links?: {
         html?: { href: string };
     };
 }
+
 
 export async function getWorkItem(
     workItemId: string,
@@ -35,9 +40,11 @@ export async function getWorkItem(
         "System.Title",
         "System.WorkItemType",
         "System.AssignedTo",
+        "System.Description"
     ];
 
-    const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?fields=${fields.join(',')}&api-version=7.1`;
+    // fields=${fields.join(',')}&
+    const url = `${apiUrl}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.1&$expand=ALL`;
     console.log(`Fetching work item ${workItemId} from ${url}`);
     
     try {
@@ -65,9 +72,12 @@ export async function getWorkItem(
             return null;
         }
 
+       // printJson(data);
+
         const workItem: WorkItem = {
             id: data.id,
             title: data.fields["System.Title"],
+            description: data.fields["System.Description"] || '',
             workItemType: data.fields["System.WorkItemType"],
             url: data._links?.html?.href || data.url,
             assignedTo: data.fields["System.AssignedTo"] ? {
