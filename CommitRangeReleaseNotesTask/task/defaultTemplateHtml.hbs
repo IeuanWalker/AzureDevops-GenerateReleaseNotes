@@ -133,10 +133,13 @@
     a:hover {
       color: #0078d4;
     }
-    th.assignee-col,
-    td.assignee-col {
+    th.dontWrap,
+    td.dontWrap {
       white-space: nowrap;
       width: 1%;
+    }
+    .userCell {
+      white-space: nowrap;
     }
 
     footer {
@@ -194,16 +197,16 @@
         <tr>
           <th>ID</th>
           <th>Title</th>
-          <th class="assignee-col">Assignee</th>
-          <th>Linked PRs</th>
+          <th class="dontWrap">Assignee</th>
+          <th class="dontWrap">Linked PRs</th>
         </tr>
       </thead>
       <tbody>
         {{#each items}}
-        <tr class="expandable-row" data-row-id="workitem-{{id}}">
+        <tr class="dontWrap" data-row-id="workitem-{{id}}">
           <td><a href="{{url}}">{{id}}</a></td>
           <td>{{title}}</td>
-          <td class="assignee-col">
+          <td class="assignee-col userCell">
             {{#if assignedTo}}
             {{#if assignedTo.imageUrl}}
             <img src="{{assignedTo.imageUrl}}" alt="{{assignedTo.displayName}}" class="avatar"
@@ -214,7 +217,7 @@
             &mdash;
             {{/if}}
           </td>
-          <td>
+          <td class="dontWrap">
             {{#if pullRequests.length}}
             {{#each pullRequests}}
             <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}
@@ -250,16 +253,16 @@
         <tr>
           <th>ID</th>
           <th>Title</th>
-          <th class="assignee-col">Author</th>
-          <th>Linked Work Items</th>
+          <th class="dontWrap">Author</th>
+          <th class="dontWrap">Linked Work Items</th>
         </tr>
       </thead>
       <tbody>
         {{#each pullRequests}}
-        <tr class="expandable-row" data-row-id="pr-{{id}}">
+        <tr class="dontWrap" data-row-id="pr-{{id}}">
           <td><a href="{{url}}">{{id}}</a></td>
           <td>{{title}}</td>
-          <td class="assignee-col">
+          <td class="assignee-col userCell">
             {{#if author}}
             {{#if author.imageUrl}}
             <img src="{{author.imageUrl}}" alt="{{author.displayName}}" class="avatar"
@@ -270,7 +273,7 @@
             &mdash;
             {{/if}}
           </td>
-          <td>
+          <td class="dontWrap">
             {{#if workItems.length}}
             {{#each workItems}}
             <a href="{{url}}">{{id}}</a>{{#unless @last}}, {{/unless}}

@@ -1,12 +1,18 @@
 import tl = require("azure-pipelines-task-lib/task");
 import { getWorkItem, type WorkItem } from './WorkItemUtils';
+import { printJson } from "./JsonOutput";
 
 export interface PullRequest {
   id: number;
   title: string;
   url: string;
-  author: string;
+  author: PrAuthor;
   workItems: WorkItem[]; 
+}
+export interface PrAuthor {
+    displayName: string;
+    uniqueName: string;
+    imageUrl: string;
 }
 
 export async function getPRInfo(
@@ -36,6 +42,8 @@ export async function getPRInfo(
         console.log(`Response status for PR ${pullRequestId}: ${response.status} ${response.statusText}`);
 
         const prJson = await response.json();
+
+        printJson(prJson);
         
         // Validate required fields
         if (!prJson.title) {
@@ -48,11 +56,18 @@ export async function getPRInfo(
                 ? `${prJson.repository.webUrl}/pullrequest/${pullRequestId}`
                 : (prJson._links?.web?.href || `${apiUrl}/${project}/_git/pullrequest/${pullRequestId}`);
 
+        const prAuthor: PrAuthor = {
+            displayName: prJson.createdBy?.displayName || '',
+            uniqueName: prJson.createdBy?.uniqueName || '',
+            imageUrl: prJson.createdBy?.imageUrl 
+                || prJson.createdBy?._links?.avatar?.href 
+                || '',
+        };
         const prResult: PullRequest = {
             id: pullRequestId,
             title: prJson.title,
             url: webUrl,
-            author: prJson.createdBy?.displayName || prJson.createdBy?.uniqueName || 'Unknown',
+            author: prAuthor,
             workItems: []
         };
 
