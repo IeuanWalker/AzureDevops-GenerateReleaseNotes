@@ -267,4 +267,4 @@ interface WorkItemList {
     url: string;
     assignedTo: WorkItemAssignedTo;
     pullRequests: PullRequest[];
-  }
+}
