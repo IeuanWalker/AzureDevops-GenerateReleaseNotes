@@ -172,6 +172,36 @@
       color: #005a9e;
       text-decoration: underline;
     }
+
+    /* ...existing styles... */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+      transition: opacity 0.2s;
+    }
+    .lightbox-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      box-shadow: 0 4px 32px rgba(44,62,80,0.25);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+      animation: lightbox-in 0.2s;
+    }
+    @keyframes lightbox-in {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 
@@ -313,6 +343,10 @@
     <p class="muted">No pull requests in this range.</p>
     {{/if}}
   </div>
+  <!-- Lightbox overlay -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <img class="lightbox-img" id="lightboxImg" src="" alt="Enlarged image">
+  </div>
 <script>
   // Smooth scroll helper
   function smoothScrollTo(element, duration = 600, offset = -120) {
@@ -338,6 +372,39 @@
     }
 
   document.addEventListener('DOMContentLoaded', function () {
+    // Lightbox for images in .desc-content
+    document.querySelectorAll('.desc-content img').forEach(function (img) {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', function (e) {
+        var overlay = document.getElementById('lightboxOverlay');
+        var overlayImg = document.getElementById('lightboxImg');
+        overlayImg.src = img.src;
+        overlay.style.display = 'flex';
+        setTimeout(function () {
+          overlay.classList.add('open');
+        }, 10);
+      });
+    });
+
+    // Close lightbox on overlay click or ESC
+    var overlay = document.getElementById('lightboxOverlay');
+    overlay.addEventListener('click', function () {
+      overlay.classList.remove('open');
+      setTimeout(function () {
+        overlay.style.display = 'none';
+        document.getElementById('lightboxImg').src = '';
+      }, 200);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) {
+        overlay.classList.remove('open');
+        setTimeout(function () {
+          overlay.style.display = 'none';
+          document.getElementById('lightboxImg').src = '';
+        }, 200);
+      }
+    });
+    
     document.querySelectorAll('.expandable-row').forEach(function (row) {
       row.addEventListener('click', function () {
         var id = row.getAttribute('data-row-id');
