@@ -7,20 +7,88 @@
   <meta charset="UTF-8">
   <title>Release Notes</title>
   <style>
-       /* HTML5 Reset CSS */
-    html, body, div, span, applet, object, iframe,
-    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-    a, abbr, acronym, address, big, cite, code,
-    del, dfn, em, img, ins, kbd, q, s, samp,
-    small, strike, strong, sub, sup, tt, var,
-    b, u, i, center,
-    dl, dt, dd, ol, ul, li,
-    fieldset, form, label, legend,
-    table, caption, tbody, tfoot, thead, tr, th, td,
-    article, aside, canvas, details, embed, 
-    figure, figcaption, footer, header, hgroup, 
-    menu, nav, output, ruby, section, summary,
-    time, mark, audio, video {
+    /* HTML5 Reset CSS */
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
       margin: 0;
       padding: 0;
       border: 0;
@@ -29,29 +97,44 @@
       vertical-align: baseline;
       box-sizing: border-box;
     }
-    /* HTML5 display-role reset for older browsers */
-    article, aside, details, figcaption, figure, 
-    footer, header, hgroup, menu, nav, section {
+
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
       display: block;
     }
+
     body {
       line-height: 1;
     }
 
-    blockquote, q {
+    blockquote,
+    q {
       quotes: none;
     }
-    blockquote:before, blockquote:after,
-    q:before, q:after {
+
+    blockquote:before,
+    blockquote:after,
+    q:before,
+    q:after {
       content: '';
       content: none;
     }
+
     table {
       border-collapse: collapse;
       border-spacing: 0;
     }
 
-
+    /* --- Custom styles --- */
     body {
       background: #ececec;
       margin: 0;
@@ -59,11 +142,13 @@
       font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
 
-    p{
+    p {
       margin-top: 2px;
       margin-bottom: 2px;
     }
-    ol, ul {
+
+    ol,
+    ul {
       margin-left: 2em;
     }
 
@@ -206,6 +291,36 @@
       white-space: nowrap;
     }
 
+    /* --- Description cell containment --- */
+    .description-cell {
+      max-width: 0;
+      overflow-x: auto;
+      padding: 10px 12px;
+    }
+
+    .description-cell>* {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .description-cell img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .description-cell table {
+      max-width: 100%;
+      overflow-x: auto;
+      display: block;
+      border-collapse: collapse;
+    }
+
+    .description-cell pre {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
     footer {
       margin-top: 3em;
       padding: 1.5em 0 0 0;
@@ -293,13 +408,11 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-workitem-{{id}}" style="display:none;">
-          <td colspan="4"><strong>Description:</strong>
+          <td colspan="4" class="description-cell"><strong>Description:</strong>
             {{#if description}}
             {{{description}}}
             {{else}}
-            <p class="muted">
-            No description available.
-            </p>
+            <span class="muted">No description available.</span>
             {{/if}}
           </td>
         </tr>
@@ -349,14 +462,12 @@
           </td>
         </tr>
         <tr class="description-row" id="desc-pr-{{id}}" style="display:none;">
-          <td colspan="4"><strong>Description:</strong>
-            <p>
+          <td colspan="4" class="description-cell"><strong>Description:</strong>
             {{#if description}}
             {{{description}}}
             {{else}}
             <span class="muted">No description available.</span>
             {{/if}}
-            </p>
           </td>
         </tr>
         {{/each}}
