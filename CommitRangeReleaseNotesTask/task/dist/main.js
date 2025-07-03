@@ -15,6 +15,7 @@ const fs = require("fs");
 const CommitUtils_1 = require("./utils/CommitUtils");
 const PRUtils_1 = require("./utils/PRUtils");
 const TemplateUtils_1 = require("./utils/TemplateUtils");
+const WorkItemUtils_1 = require("./utils/WorkItemUtils");
 const JsonOutput_1 = require("./utils/JsonOutput");
 (0, TemplateUtils_1.registerHelpers)();
 function GenerateReleaseNotes(startCommit, endCommit, outputFileMarkdown, outputFileHtml, repoRoot, systemAccessToken, project, apiUrl, repositoryId, templateFileMarkdown, templateFileHtml) {
@@ -146,7 +147,7 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFileMarkdown, output
             .filter((pr) => pr !== undefined && pr !== null)
             .filter((pr, idx, arr) => arr.findIndex(x => x.id === pr.id) === idx);
         // Get all work items from all pull requests (flattened, unique by id)
-        const allWorkItems = getDistinctWorkItemListFromPRs(allPullRequests);
+        const allWorkItems = (0, WorkItemUtils_1.getDistinctWorkItemListFromPRs)(allPullRequests);
         // Data for Handlebars template
         const releaseData = {
             commits,
@@ -164,28 +165,3 @@ function GenerateReleaseNotes(startCommit, endCommit, outputFileMarkdown, output
     });
 }
 exports.GenerateReleaseNotes = GenerateReleaseNotes;
-function getDistinctWorkItemListFromPRs(prs) {
-    const workItemMap = new Map();
-    for (const pr of prs) {
-        for (const workItem of pr.workItems || []) {
-            if (!workItemMap.has(workItem.id)) {
-                workItemMap.set(workItem.id, {
-                    id: workItem.id,
-                    title: workItem.title,
-                    description: workItem.description || '',
-                    workItemType: workItem.workItemType,
-                    url: workItem.url,
-                    assignedTo: workItem.assignedTo,
-                    pullRequests: [pr]
-                });
-            }
-            else {
-                const wiList = workItemMap.get(workItem.id);
-                if (!wiList.pullRequests.some(existingPr => existingPr.id === pr.id)) {
-                    wiList.pullRequests.push(pr);
-                }
-            }
-        }
-    }
-    return Array.from(workItemMap.values());
-}
