@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWorkItem = void 0;
+exports.getDistinctWorkItemListFromPRs = exports.getWorkItem = void 0;
 function getWorkItem(workItemId, apiUrl, project, accessToken) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
@@ -60,3 +60,29 @@ function getWorkItem(workItemId, apiUrl, project, accessToken) {
     });
 }
 exports.getWorkItem = getWorkItem;
+function getDistinctWorkItemListFromPRs(prs) {
+    const workItemMap = new Map();
+    for (const pr of prs) {
+        for (const workItem of pr.workItems || []) {
+            if (!workItemMap.has(workItem.id)) {
+                workItemMap.set(workItem.id, {
+                    id: workItem.id,
+                    title: workItem.title,
+                    description: workItem.description || '',
+                    workItemType: workItem.workItemType,
+                    url: workItem.url,
+                    assignedTo: workItem.assignedTo,
+                    pullRequests: [pr]
+                });
+            }
+            else {
+                const wiList = workItemMap.get(workItem.id);
+                if (!wiList.pullRequests.some(existingPr => existingPr.id === pr.id)) {
+                    wiList.pullRequests.push(pr);
+                }
+            }
+        }
+    }
+    return Array.from(workItemMap.values());
+}
+exports.getDistinctWorkItemListFromPRs = getDistinctWorkItemListFromPRs;

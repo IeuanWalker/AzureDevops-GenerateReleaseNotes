@@ -1,4 +1,5 @@
 import { printJson } from "./JsonOutput";
+import { PullRequest } from "./PRUtils";
 
 export interface WorkItem {
   id: string;
@@ -13,6 +14,16 @@ export interface WorkItemAssignedTo {
     displayName: string;
     uniqueName: string;
     imageUrl: string;
+}
+
+export interface WorkItemList {
+    id: string;
+    title: string;
+    description: string;
+    workItemType: string; 
+    url: string;
+    assignedTo: WorkItemAssignedTo;
+    pullRequests: PullRequest[];
 }
 
 export interface WorkItemApiResponse {
@@ -88,4 +99,31 @@ export async function getWorkItem(
         console.error(`Error fetching work item ${workItemId}: ${error}`);
         return null;
     }
+}
+
+export function getDistinctWorkItemListFromPRs(prs: PullRequest[]): WorkItemList[] {
+    const workItemMap = new Map<string, WorkItemList>();
+
+    for (const pr of prs) {
+        for (const workItem of pr.workItems || []) {
+            if (!workItemMap.has(workItem.id)) {
+                workItemMap.set(workItem.id, {
+                    id: workItem.id,
+                    title: workItem.title,
+                    description: workItem.description || '',
+                    workItemType: workItem.workItemType,
+                    url: workItem.url,
+                    assignedTo: workItem.assignedTo,
+                    pullRequests: [pr]
+                });
+            } else {
+                const wiList = workItemMap.get(workItem.id)!;
+                if (!wiList.pullRequests.some(existingPr => existingPr.id === pr.id)) {
+                    wiList.pullRequests.push(pr);
+                }
+            }
+        }
+    }
+
+    return Array.from(workItemMap.values());
 }
