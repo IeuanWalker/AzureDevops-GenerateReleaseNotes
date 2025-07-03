@@ -2,7 +2,7 @@
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/IeuanWalker.ReleaseNotesGenerator)](https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator)
 [![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/IeuanWalker.ReleaseNotesGenerator)](https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator)
 
-An Azure DevOps extension that generates release notes from a git commit range. This task analyses merge commits to extract the pull request IDs, which are then used to call Azure DevOps API's to get the pull request data and the associated work items.
+An Azure DevOps extension that generates release notes from a git commit range. This task analyses merge commits to extract the pull request IDs, which are then used to call Azure DevOps APIs to get the pull request data and the associated work items.
 
 Only works with squash merges, as it operates based on the commit message. It finds the PR ID from commit messages in the format: `Merged PR {id}: {title}`.
 
