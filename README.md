@@ -50,7 +50,7 @@ Here is what the templates look like -
 
 ## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
-There are some built in handlebar helpers - 
+There are some built-in Handlebars helpers - 
 - [Handlebars helpers](https://github.com/helpers/handlebars-helpers) is built in and loaded by default
 - A [custom grouping](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
 
