@@ -6,7 +6,7 @@ An Azure DevOps extension that generates release notes from a git commit range. 
 
 Only works with squash merges, as it operates based on the commit message. It finds the PR ID from commit messages in the format: `Merged PR {id}: {title}`.
 
-## How to use it?
+## How to use it
 - Install the extension - https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator
 - Then add the task to the pipeline - 
 ```yaml
