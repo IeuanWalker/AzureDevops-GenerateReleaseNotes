@@ -35,7 +35,7 @@ _Generated on {{moment generatedDate "DD/MM/YYYY HH:mm"}} from **{{startCommit}}
 | ID | Title | Author | Linked Work Items |
 |----|-------|--------|------------------|
 {{#each pullRequests}}
-| [{{id}}]({{url}}) | {{title}} | {{#if author}}{{author}}{{else}}—{{/if}} | {{#if workItems.length}}{{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}}{{else}}—{{/if}} |
+| [{{id}}]({{url}}) | {{title}} | {{#if author}}{{author.displayName}}{{else}}—{{/if}} | {{#if workItems.length}}{{#each workItems}}[{{id}}]({{url}}){{#unless @last}}, {{/unless}}{{/each}}{{else}}—{{/if}} |
 {{/each}}
 {{else}}
 > _No pull requests in this range._

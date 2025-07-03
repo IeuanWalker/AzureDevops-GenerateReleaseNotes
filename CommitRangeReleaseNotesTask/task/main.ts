@@ -4,7 +4,7 @@ import { validateCommit, getCommitCount, getFirstCommit, getCommitsInRange } fro
 import { PullRequest, getPRInfo } from './utils/PRUtils';
 import { registerHelpers, GenerateMarkdownReleaseNotes, GenerateHtmlReleaseNotes } from './utils/TemplateUtils';
 import type { Commit } from './utils/CommitUtils'; 
-import { WorkItemAssignedTo } from './utils/WorkItemUtils';
+import { WorkItemList, getDistinctWorkItemListFromPRs } from './utils/WorkItemUtils';
 import { printJson } from './utils/JsonOutput';
 
 registerHelpers();
@@ -187,36 +187,6 @@ export async function GenerateReleaseNotes(
 
     GenerateHtmlReleaseNotes(releaseData, outputFileHtml, templateFileHtml);
 }
-
-function getDistinctWorkItemListFromPRs(prs: PullRequest[]): WorkItemList[] {
-    const workItemMap = new Map<string, WorkItemList>();
-
-    for (const pr of prs) {
-        for (const workItem of pr.workItems || []) {
-            if (!workItemMap.has(workItem.id)) {
-                workItemMap.set(workItem.id, {
-                    id: workItem.id,
-                    title: workItem.title,
-                    description: workItem.description || '',
-                    workItemType: workItem.workItemType,
-                    url: workItem.url,
-                    assignedTo: workItem.assignedTo,
-                    pullRequests: [pr]
-                });
-            } else {
-                const wiList = workItemMap.get(workItem.id)!;
-                if (!wiList.pullRequests.some(existingPr => existingPr.id === pr.id)) {
-                    wiList.pullRequests.push(pr);
-                }
-            }
-        }
-    }
-
-    return Array.from(workItemMap.values());
-}
-
-
-
 export interface TemplateData {
     commits: Commit[];
     workItems: WorkItemList[];
@@ -226,14 +196,4 @@ export interface TemplateData {
     generatedDate: string;
     repositoryId?: string;
     project?: string;
-}
-
-interface WorkItemList {
-    id: string;
-    title: string;
-    description: string;
-    workItemType: string; 
-    url: string;
-    assignedTo: WorkItemAssignedTo;
-    pullRequests: PullRequest[];
 }
