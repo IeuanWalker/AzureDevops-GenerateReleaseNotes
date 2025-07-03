@@ -2,28 +2,13 @@
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/IeuanWalker.ReleaseNotesGenerator)](https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator)
 [![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/IeuanWalker.ReleaseNotesGenerator)](https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator)
 
-
-
-An Azure DevOps extension that generates release notes from commit ranges in Git repositories. This task analyses merge commits to extract pull request information and associated work items, creating comprehensive release notes with proper Azure DevOps links.
+An Azure DevOps extension that generates release notes from a git commit range. This task analyses merge commits to extract the pull request IDs, which are then used to call Azure DevOps APIs to get the pull request data and the associated work items.
 
 Only works with squash merges, as it operates based on the commit message. It finds the PR ID from commit messages in the format: `Merged PR {id}: {title}`.
 
-## Features
-- **Git-based**: Extract release notes directly from Git commit history
-- **Pull Request Detection**: Automatically identifies merge commits and fetches PR details via Azure DevOps API
-- **Work Item Integration**: Discovers work items linked to pull requests and includes them in release notes
-- **Flexible Templates**: Customizable Handlebars templates with built-in helpers
-
-## How It Works
-The extension analyses Git commits in a specified range, looking for merge commits that follow the pattern `Merged PR {id}: {title}`. For each identified pull request, it:
-
-1. Fetches PR details from Azure DevOps API
-2. Retrieves associated work items
-3. Generates formatted release notes using Handlebars templates
-
-## Task Usage
-
-### Basic Usage
+## How to use it
+- Install the extension - https://marketplace.visualstudio.com/items?itemName=IeuanWalker.ReleaseNotesGenerator
+- Then add the task to the pipeline - 
 ```yaml
 - task: ReleaseNotes@2
   inputs:
@@ -32,17 +17,13 @@ The extension analyses Git commits in a specified range, looking for merge commi
     outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
     outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
 ```
-
-### With Custom Template
+- Once the task has finished both a markdown and a html file will be generated. Which can then be used/ saved -
 ```yaml
-- task: ReleaseNotes@2
+- task: PublishBuildArtifacts@1
   inputs:
-    startCommit: 'v1.0.0'
-    endCommit: 'v1.1.0'
-    outputFileMarkdown: '$(Build.ArtifactStagingDirectory)/release-notes.md'
-    outputFileHtml: '$(Build.ArtifactStagingDirectory)/release-notes.html'
-    templateFileMarkdown: 'templates/custom-release-notes.hbs'
-    templateFileHtml: 'templates/custom-release-notes.hbs'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'release-notes'
+    publishLocation: 'Container'
 ```
 
 ## Parameters
@@ -60,47 +41,21 @@ The extension analyses Git commits in a specified range, looking for merge commi
 - `HEAD` or `HEAD~xx` (where `xx` is the number of commits before HEAD)
 
 ## Output
-The [default markdown template](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateMarkdown.hbs) outputs the following format - 
-```markdown
-## 📊 Summary
-- **3** Pull Requests
-- **5** Work Items
-  - **Tasks**: 2
-  - **Bugs**: 3
+The task generates both a markdown and an interactive HTML file, using the default templates. You can see the default templates here - [Markdown](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateMarkdown.hbs)/ [HTML](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs).
 
----
-
-## 📋 Work Items
-### Tasks (2)
-| ID                                                             | Title                   | Assignee   | Linked PRs                                                  |
-| -------------------------------------------------------------- | ----------------------- | ---------- | ----------------------------------------------------------- |
-| [1234](https://dev.azure.com/org/project/_workitems/edit/1234) | Add user authentication | John Doe   | [42](https://dev.azure.com/org/project/_git/pullrequest/42) |
-| [1235](https://dev.azure.com/org/project/_workitems/edit/1235) | Implement dashboard     | Jane Smith | [43](https://dev.azure.com/org/project/_git/pullrequest/43) |
-
-### Bugs (3)
-| ID                                                             | Title                    | Assignee   | Linked PRs                                                  |
-| -------------------------------------------------------------- | ------------------------ | ---------- | ----------------------------------------------------------- |
-| [1236](https://dev.azure.com/org/project/_workitems/edit/1236) | Fix login validation     | John Doe   | [42](https://dev.azure.com/org/project/_git/pullrequest/42) |
-| [1237](https://dev.azure.com/org/project/_workitems/edit/1237) | Resolve timeout issues   | Jane Smith | [44](https://dev.azure.com/org/project/_git/pullrequest/44) |
-| [1238](https://dev.azure.com/org/project/_workitems/edit/1238) | Fix null reference error | Bob Wilson | [44](https://dev.azure.com/org/project/_git/pullrequest/44) |
-
----
-
-## 🔀 Pull Requests
-| ID                                                          | Title                           | Author     | Linked Work Items                                                                                                              |
-| ----------------------------------------------------------- | ------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [42](https://dev.azure.com/org/project/_git/pullrequest/42) | Add user authentication feature | John Doe   | [1234](https://dev.azure.com/org/project/_workitems/edit/1234), [1236](https://dev.azure.com/org/project/_workitems/edit/1236) |
-| [43](https://dev.azure.com/org/project/_git/pullrequest/43) | Implement new dashboard         | Jane Smith | [1235](https://dev.azure.com/org/project/_workitems/edit/1235)                                                                 |
-| [44](https://dev.azure.com/org/project/_git/pullrequest/44) | Bug fixes and improvements      | Bob Wilson |
-```
-
-It also generates an interactive html version using this [template.](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/defaultTemplateHtml.hbs)
+Here is what the templates look like - 
+| Markdown | HTML |
+|---|---|
+| ![image](https://github.com/user-attachments/assets/f39bb498-41a0-4514-9c25-007246b7b62e) | ![screencapture-file-C-Users-ieuan-Downloads-release-notes-8-html-2025-07-03-15_15_02](https://github.com/user-attachments/assets/4b2529a8-4597-460f-b90d-341677c3153a) |
 
 ## Template Customisation
 The task uses Handlebars templates to format output. You can provide a custom template file or use the built-in default template.
+There are some built-in Handlebars helpers - 
+- [Handlebars helpers](https://github.com/helpers/handlebars-helpers) are built in and loaded by default
+- A [custom grouping](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
 
 ### Template Data Structure
-Your template has access to the following data:
+Your template has access to the following data, via `TemplateData` object:
 
 ```typescript
 interface TemplateData {
@@ -158,53 +113,8 @@ interface WorkItemList {
 }
 ```
 
-### Built-in Handlebars Helpers
-- [Handlebars helpers](https://github.com/helpers/handlebars-helpers) is built in and loaded by default
-- A [custom grouping](https://github.com/IeuanWalker/AzureDevops-GenerateReleaseNotes/blob/master/CommitRangeReleaseNotesTask/task/utils/TemplateUtils.ts) handler is included, `{{groupBy items "field"}}` - Groups array items by specified field
-
-### Custom Template Example
-```handlebars
-# Release Notes - v{{endCommit}}
-
-**Generated:** {{formatDate generatedDate}}
-**Commit Range:** {{startCommit}}..{{endCommit}}
-**Project:** {{project}}
-
----
-
-## 📊 Summary
-{{#if pullRequests.length}}
-- {{pullRequests.length}} pull request(s) merged
-{{/if}}
-{{#if workItems.length}}
-- {{workItems.length}} work item(s) resolved
-{{/if}}
-
-{{#if workItems.length}}
-## 🎯 Work Items by Type
-{{#groupBy workItems "workItemType"}}
-### {{key}}
-{{#each items}}
-- {{workItemLink this}} - {{title}}{{#if assignedTo.displayName}} ({{assignedTo.displayName}}){{/if}}
-{{/each}}
-{{/groupBy}}
-{{/if}}
-
-{{#if pullRequests.length}}
-## 🔀 Pull Requests
-{{#each pullRequests}}
-### {{pullRequestLink this}} - {{title}}
-**Author:** {{author}}
-{{#if workItems.length}}
-**Work Items:** {{#each workItems}}{{workItemLink this}}{{#unless @last}}, {{/unless}}{{/each}}
-{{/if}}
-
-{{/each}}
-{{/if}}
-```
-
 ## Local testing
-The task can also be run from the command line for testing.
+The task can also be run from the command line for testing out custom templates.
 
 - Clone the repo
 - Run `npm run build`, in the `CommitRangeReleaseNotesTask` folder
